@@ -143,7 +143,7 @@ def fix_wav_headers(data):
     data[pos + 4 : pos + 8] = struct.pack("<I", len(data) - pos - 8)
 
 
-class AudioSegment(object):
+class AudioSegment:
     """
     AudioSegments are *immutable* objects representing segments of audio
     that can be manipulated using python code.
@@ -226,8 +226,6 @@ class AudioSegment(object):
             if self.sample_width == 1:
                 # convert from unsigned integers in wav
                 self._data = audioop.bias(self._data, 1, -128)
-
-        super(AudioSegment, self).__init__(*args, **kwargs)
 
     @property
     def raw_data(self):

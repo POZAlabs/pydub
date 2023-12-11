@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pydub"
+name = "pozalabs-pydub"
 version = "0.25.1"
 description = "Manipulate audio with an simple and easy high level interface"
 classifiers = [

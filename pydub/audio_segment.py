@@ -227,29 +227,6 @@ class AudioSegment(object):
                 # convert from unsigned integers in wav
                 self._data = audioop.bias(self._data, 1, -128)
 
-        # Convert 24-bit audio to 32-bit audio.
-        # (stdlib audioop and array modules do not support 24-bit data)
-        if self.sample_width == 3:
-            byte_buffer = io.BytesIO()
-
-            # Workaround for python 2 vs python 3. _data in 2.x are length-1 strings,
-            # And in 3.x are ints.
-            pack_fmt = "BBB" if isinstance(self._data[0], int) else "ccc"
-
-            # This conversion maintains the 24 bit values.  The values are
-            # not scaled up to the 32 bit range.  Other conversions could be
-            # implemented.
-            i = iter(self._data)
-            padding = {False: b"\x00", True: b"\xFF"}
-            for b0, b1, b2 in izip(i, i, i):
-                byte_buffer.write(padding[b2 > b"\x7f"[0]])
-                old_bytes = struct.pack(pack_fmt, b0, b1, b2)
-                byte_buffer.write(old_bytes)
-
-            self._data = byte_buffer.getvalue()
-            self.sample_width = 4
-            self.frame_width = self.channels * self.sample_width
-
         super(AudioSegment, self).__init__(*args, **kwargs)
 
     @property

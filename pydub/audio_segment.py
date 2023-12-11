@@ -11,14 +11,6 @@ import wave
 from collections import namedtuple
 from tempfile import NamedTemporaryFile
 
-from .logging_utils import log_conversion, log_subprocess_output
-from .utils import fsdecode, mediainfo_json
-
-try:
-    from itertools import izip
-except ImportError:
-    izip = zip
-
 from .exceptions import (
     CouldntDecodeError,
     CouldntEncodeError,
@@ -28,12 +20,15 @@ from .exceptions import (
     MissingAudioParameter,
     TooManyMissingFrames,
 )
+from .logging_utils import log_conversion, log_subprocess_output
 from .utils import (
     _fd_or_path_or_tempfile,
     audioop,
     db_to_float,
+    fsdecode,
     get_array_type,
     get_encoder_name,
+    mediainfo_json,
     ratio_to_db,
 )
 

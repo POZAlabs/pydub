@@ -1,5 +1,6 @@
 [tool.poetry]
 name = "pozalabs-pydub"
+packages = [{ include = "pydub"}]
 version = "0.25.1"
 description = "Manipulate audio with an simple and easy high level interface"
 classifiers = [

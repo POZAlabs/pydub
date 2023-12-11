@@ -1,5 +1,3 @@
-from __future__ import division
-
 import array
 import base64
 import io
@@ -31,10 +29,6 @@ from .utils import (
     mediainfo_json,
     ratio_to_db,
 )
-
-if sys.version_info >= (3, 0):
-    basestring = str
-    xrange = range
 
 
 class ClassPropertyDescriptor(object):
@@ -200,7 +194,7 @@ class AudioSegment:
         else:
             # normal construction
             try:
-                data = data if isinstance(data, (basestring, bytes)) else data.read()
+                data = data if isinstance(data, (str, bytes)) else data.read()
             except OSError:
                 d = b""
                 reader = data.read(2**31 - 1)
@@ -262,13 +256,13 @@ class AudioSegment:
         return not (self == other)
 
     def __iter__(self):
-        return (self[i] for i in xrange(len(self)))
+        return (self[i] for i in range(len(self)))
 
     def __getitem__(self, millisecond):
         if isinstance(millisecond, slice):
             if millisecond.step:
                 return (
-                    self[i : i + millisecond.step] for i in xrange(*millisecond.indices(len(self)))
+                    self[i : i + millisecond.step] for i in range(*millisecond.indices(len(self)))
                 )
 
             start = millisecond.start if millisecond.start is not None else 0
@@ -481,7 +475,7 @@ class AudioSegment:
             f = f.lower()
             if format == f:
                 return True
-            if isinstance(orig_file, basestring):
+            if isinstance(orig_file, str):
                 return orig_file.lower().endswith(".{0}".format(f))
             if isinstance(orig_file, bytes):
                 return orig_file.lower().endswith((".{0}".format(f)).encode("utf8"))

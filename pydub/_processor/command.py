@@ -62,3 +62,18 @@ class MergeAudioCommand(ProcessAudioCommand):
 class MergeAudiosCommand(ProcessAudioCommand):
     inputs: list[AudioMergeInput]
     policy: enums.OverlayPolicy = enums.OverlayPolicy.FIRST
+
+
+@dataclass
+class AudioConversionOptions:
+    format: str = "mp3"
+    bitrate: str | None = None
+    codec: str | None = None
+    parameters: list[str] | None = None
+    tags: dict[str, str] | None = None
+
+
+@dataclass
+class ConvertAudio(ProcessAudioCommand):
+    input: AudioSegment
+    options: AudioConversionOptions = field(default_factory=AudioConversionOptions)

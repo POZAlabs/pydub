@@ -1,8 +1,16 @@
+import abc
+
 from ..audio_segment import AudioSegment
 from . import command
 
 
-class MergeAudio:
+class ProcessAudio(abc.ABC):
+    @abc.abstractmethod
+    def __call__(self, cmd: command.ProcessAudioCommand) -> AudioSegment:
+        raise NotImplementedError
+
+
+class MergeAudio(ProcessAudio):
     def __call__(self, cmd: command.MergeAudioCommand) -> AudioSegment:
         result = cmd.to
         overlay_options = cmd.input.options.to_overlay_options(len(result))
@@ -13,7 +21,7 @@ class MergeAudio:
         return result
 
 
-class MergeAudios:
+class MergeAudios(ProcessAudio):
     def __call__(self, cmd: command.MergeAudiosCommand) -> AudioSegment:
         overlay_policy = cmd.policy
         inputs = sorted(cmd.inputs, key=lambda x: overlay_policy.sort_key(x.audio))

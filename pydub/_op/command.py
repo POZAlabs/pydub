@@ -6,6 +6,11 @@ from . import enums
 
 
 @dataclass
+class ProcessAudioCommand:
+    ...
+
+
+@dataclass
 class AudioMergeOptions:
     def to_overlay_options(self, *args, **kwargs) -> list[dict[str, Any]]:
         return [asdict(self)]
@@ -48,12 +53,12 @@ class AudioMergeInput:
 
 
 @dataclass
-class MergeAudioCommand:
+class MergeAudioCommand(ProcessAudioCommand):
     to: AudioSegment
     input: AudioMergeInput
 
 
 @dataclass
-class MergeAudiosCommand:
+class MergeAudiosCommand(ProcessAudioCommand):
     inputs: list[AudioMergeInput]
     policy: enums.OverlayPolicy = enums.OverlayPolicy.FIRST

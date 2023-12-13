@@ -35,3 +35,10 @@ class MergeAudios(ProcessAudio):
             result = MergeAudio()(command.MergeAudioCommand(to=result, input=inp))
 
         return result
+
+
+class ConvertAudio(ProcessAudio):
+    def process(self, cmd: command.ConvertAudioCommand) -> AudioSegment:
+        audio = cmd.audio
+        result = audio.export(**cmd.options.to_options())
+        return AudioSegment.from_file(result, format=cmd.options.format)

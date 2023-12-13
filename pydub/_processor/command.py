@@ -72,8 +72,11 @@ class AudioConversionOptions:
     parameters: list[str] | None = None
     tags: dict[str, str] | None = None
 
+    def to_options(self) -> dict[str, Any]:
+        return asdict(self)
+
 
 @dataclass
-class ConvertAudio(ProcessAudioCommand):
-    input: AudioSegment
+class ConvertAudioCommand(ProcessAudioCommand):
+    audio: AudioSegment
     options: AudioConversionOptions = field(default_factory=AudioConversionOptions)

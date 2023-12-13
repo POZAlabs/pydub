@@ -129,16 +129,5 @@ dmypy.json
 
 # IDE
 .idea/
-*.db
-config.yaml
-redis-volume
-mongo-volume
-midi_upload_folder_ids.json
-
-tmp*.py
-.env*
-.venv*
-backoffice-backend-ecs-cdk
-node_modules/
-tmp/
-.tool-versions
+.DS_Store
+tmp*

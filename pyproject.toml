@@ -28,8 +28,12 @@ python = ">=3.10,<4.0"
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.0"
 
+[tool.poetry.build]
+generate-setup-file = false
+script = "build.py"
+
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core", "Cython", "setuptools"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.black]

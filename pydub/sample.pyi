@@ -1,0 +1,3 @@
+import array
+
+def convert_24bit_to_32bit(data: bytearray) -> array.array: ...

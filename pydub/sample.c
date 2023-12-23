@@ -8,9 +8,6 @@
             "-march=native",
             "-O3"
         ],
-        "libraries": [
-            "m"
-        ],
         "name": "pydub.sample",
         "sources": [
             "pydub/sample.pyx"
@@ -17386,8 +17383,8 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
   return __pyx_r;
 }
 
-/* "pydub/sample.pyx":5
- * from libc.stdlib cimport malloc, free
+/* "pydub/sample.pyx":7
+ * 
  * 
  * @cython.boundscheck(False)             # <<<<<<<<<<<<<<
  * @cython.wraparound(False)
@@ -17447,23 +17444,23 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 5, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 7, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "convert_24bit_to_32bit") < 0)) __PYX_ERR(0, 5, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "convert_24bit_to_32bit") < 0)) __PYX_ERR(0, 7, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_Arg_FASTCALL(__pyx_args, 0);
     }
-    __pyx_v_data = __Pyx_PyObject_to_MemoryviewSlice_ds_unsigned_char(values[0], PyBUF_WRITABLE); if (unlikely(!__pyx_v_data.memview)) __PYX_ERR(0, 7, __pyx_L3_error)
+    __pyx_v_data = __Pyx_PyObject_to_MemoryviewSlice_ds_unsigned_char(values[0], PyBUF_WRITABLE); if (unlikely(!__pyx_v_data.memview)) __PYX_ERR(0, 9, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("convert_24bit_to_32bit", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 5, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("convert_24bit_to_32bit", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 7, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -17525,7 +17522,7 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("convert_24bit_to_32bit", 1);
 
-  /* "pydub/sample.pyx":9
+  /* "pydub/sample.pyx":11
  * def convert_24bit_to_32bit(unsigned char[:] data):
  *     cdef int i
  *     cdef int p = 0             # <<<<<<<<<<<<<<
@@ -17534,23 +17531,23 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
  */
   __pyx_v_p = 0;
 
-  /* "pydub/sample.pyx":10
+  /* "pydub/sample.pyx":12
  *     cdef int i
  *     cdef int p = 0
  *     cdef int len_data = data.size             # <<<<<<<<<<<<<<
  *     cdef int len_result = len_data // 3 * 4
  *     cdef unsigned char b0, b1, b2
  */
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_data, 1, (PyObject *(*)(char *)) __pyx_memview_get_unsigned_char, (int (*)(char *, PyObject *)) __pyx_memview_set_unsigned_char, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_data, 1, (PyObject *(*)(char *)) __pyx_memview_get_unsigned_char, (int (*)(char *, PyObject *)) __pyx_memview_set_unsigned_char, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 10, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 10, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_len_data = __pyx_t_3;
 
-  /* "pydub/sample.pyx":11
+  /* "pydub/sample.pyx":13
  *     cdef int p = 0
  *     cdef int len_data = data.size
  *     cdef int len_result = len_data // 3 * 4             # <<<<<<<<<<<<<<
@@ -17559,7 +17556,7 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
  */
   __pyx_v_len_result = (__Pyx_div_long(__pyx_v_len_data, 3) * 4);
 
-  /* "pydub/sample.pyx":13
+  /* "pydub/sample.pyx":15
  *     cdef int len_result = len_data // 3 * 4
  *     cdef unsigned char b0, b1, b2
  *     cdef unsigned char *result_bytes = <unsigned char *> malloc(len_result * sizeof(unsigned char))             # <<<<<<<<<<<<<<
@@ -17568,7 +17565,7 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
  */
   __pyx_v_result_bytes = ((unsigned char *)malloc((__pyx_v_len_result * (sizeof(unsigned char)))));
 
-  /* "pydub/sample.pyx":15
+  /* "pydub/sample.pyx":17
  *     cdef unsigned char *result_bytes = <unsigned char *> malloc(len_result * sizeof(unsigned char))
  * 
  *     if result_bytes == NULL:             # <<<<<<<<<<<<<<
@@ -17578,20 +17575,20 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
   __pyx_t_4 = (__pyx_v_result_bytes == NULL);
   if (unlikely(__pyx_t_4)) {
 
-    /* "pydub/sample.pyx":16
+    /* "pydub/sample.pyx":18
  * 
  *     if result_bytes == NULL:
  *         raise MemoryError("Could not allocate memory for result array")             # <<<<<<<<<<<<<<
  * 
  *     try:
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 16, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 18, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 16, __pyx_L1_error)
+    __PYX_ERR(0, 18, __pyx_L1_error)
 
-    /* "pydub/sample.pyx":15
+    /* "pydub/sample.pyx":17
  *     cdef unsigned char *result_bytes = <unsigned char *> malloc(len_result * sizeof(unsigned char))
  * 
  *     if result_bytes == NULL:             # <<<<<<<<<<<<<<
@@ -17600,7 +17597,7 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
  */
   }
 
-  /* "pydub/sample.pyx":18
+  /* "pydub/sample.pyx":20
  *         raise MemoryError("Could not allocate memory for result array")
  * 
  *     try:             # <<<<<<<<<<<<<<
@@ -17609,7 +17606,7 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
  */
   /*try:*/ {
 
-    /* "pydub/sample.pyx":19
+    /* "pydub/sample.pyx":21
  * 
  *     try:
  *         for i in range(0, len_data, 3):             # <<<<<<<<<<<<<<
@@ -17621,7 +17618,7 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=3) {
       __pyx_v_i = __pyx_t_6;
 
-      /* "pydub/sample.pyx":20
+      /* "pydub/sample.pyx":22
  *     try:
  *         for i in range(0, len_data, 3):
  *             b0 = data[i]             # <<<<<<<<<<<<<<
@@ -17631,7 +17628,7 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
       __pyx_t_7 = __pyx_v_i;
       __pyx_v_b0 = (*((unsigned char *) ( /* dim=0 */ (__pyx_v_data.data + __pyx_t_7 * __pyx_v_data.strides[0]) )));
 
-      /* "pydub/sample.pyx":21
+      /* "pydub/sample.pyx":23
  *         for i in range(0, len_data, 3):
  *             b0 = data[i]
  *             b1 = data[i + 1]             # <<<<<<<<<<<<<<
@@ -17641,7 +17638,7 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
       __pyx_t_7 = (__pyx_v_i + 1);
       __pyx_v_b1 = (*((unsigned char *) ( /* dim=0 */ (__pyx_v_data.data + __pyx_t_7 * __pyx_v_data.strides[0]) )));
 
-      /* "pydub/sample.pyx":22
+      /* "pydub/sample.pyx":24
  *             b0 = data[i]
  *             b1 = data[i + 1]
  *             b2 = data[i + 2]             # <<<<<<<<<<<<<<
@@ -17651,7 +17648,7 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
       __pyx_t_7 = (__pyx_v_i + 2);
       __pyx_v_b2 = (*((unsigned char *) ( /* dim=0 */ (__pyx_v_data.data + __pyx_t_7 * __pyx_v_data.strides[0]) )));
 
-      /* "pydub/sample.pyx":24
+      /* "pydub/sample.pyx":26
  *             b2 = data[i + 2]
  * 
  *             result_bytes[p] = 0xFF if b2 > 0x7f else 0x00             # <<<<<<<<<<<<<<
@@ -17666,7 +17663,7 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
       }
       (__pyx_v_result_bytes[__pyx_v_p]) = __pyx_t_8;
 
-      /* "pydub/sample.pyx":25
+      /* "pydub/sample.pyx":27
  * 
  *             result_bytes[p] = 0xFF if b2 > 0x7f else 0x00
  *             result_bytes[p + 1] = b0             # <<<<<<<<<<<<<<
@@ -17675,7 +17672,7 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
  */
       (__pyx_v_result_bytes[(__pyx_v_p + 1)]) = __pyx_v_b0;
 
-      /* "pydub/sample.pyx":26
+      /* "pydub/sample.pyx":28
  *             result_bytes[p] = 0xFF if b2 > 0x7f else 0x00
  *             result_bytes[p + 1] = b0
  *             result_bytes[p + 2] = b1             # <<<<<<<<<<<<<<
@@ -17684,7 +17681,7 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
  */
       (__pyx_v_result_bytes[(__pyx_v_p + 2)]) = __pyx_v_b1;
 
-      /* "pydub/sample.pyx":27
+      /* "pydub/sample.pyx":29
  *             result_bytes[p + 1] = b0
  *             result_bytes[p + 2] = b1
  *             result_bytes[p + 3] = b2             # <<<<<<<<<<<<<<
@@ -17693,7 +17690,7 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
  */
       (__pyx_v_result_bytes[(__pyx_v_p + 3)]) = __pyx_v_b2;
 
-      /* "pydub/sample.pyx":29
+      /* "pydub/sample.pyx":31
  *             result_bytes[p + 3] = b2
  * 
  *             p += 4             # <<<<<<<<<<<<<<
@@ -17703,7 +17700,7 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
       __pyx_v_p = (__pyx_v_p + 4);
     }
 
-    /* "pydub/sample.pyx":31
+    /* "pydub/sample.pyx":33
  *             p += 4
  * 
  *         return array.array("B", result_bytes[:len_result])             # <<<<<<<<<<<<<<
@@ -17711,12 +17708,12 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
  *         free(result_bytes)
  */
     __Pyx_XDECREF(__pyx_r);
-    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 31, __pyx_L5_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 33, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 31, __pyx_L5_error)
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 33, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyBytes_FromStringAndSize(((const char*)__pyx_v_result_bytes) + 0, __pyx_v_len_result - 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 31, __pyx_L5_error)
+    __pyx_t_1 = __Pyx_PyBytes_FromStringAndSize(((const char*)__pyx_v_result_bytes) + 0, __pyx_v_len_result - 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 33, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_t_10 = NULL;
     __pyx_t_3 = 0;
@@ -17737,7 +17734,7 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
       __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_9, __pyx_callargs+1-__pyx_t_3, 2+__pyx_t_3);
       __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 31, __pyx_L5_error)
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 33, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     }
@@ -17746,7 +17743,7 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
     goto __pyx_L4_return;
   }
 
-  /* "pydub/sample.pyx":33
+  /* "pydub/sample.pyx":35
  *         return array.array("B", result_bytes[:len_result])
  *     finally:
  *         free(result_bytes)             # <<<<<<<<<<<<<<
@@ -17797,8 +17794,8 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
     }
   }
 
-  /* "pydub/sample.pyx":5
- * from libc.stdlib cimport malloc, free
+  /* "pydub/sample.pyx":7
+ * 
  * 
  * @cython.boundscheck(False)             # <<<<<<<<<<<<<<
  * @cython.wraparound(False)
@@ -18919,8 +18916,8 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
 }
 /* #### Code section: cached_builtins ### */
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(0, 16, __pyx_L1_error)
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 19, __pyx_L1_error)
+  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(0, 18, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 21, __pyx_L1_error)
   __pyx_builtin___import__ = __Pyx_GetBuiltinName(__pyx_n_s_import); if (!__pyx_builtin___import__) __PYX_ERR(1, 100, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(1, 141, __pyx_L1_error)
   __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(1, 159, __pyx_L1_error)
@@ -18975,14 +18972,14 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__8);
   __Pyx_GIVEREF(__pyx_tuple__8);
 
-  /* "pydub/sample.pyx":16
+  /* "pydub/sample.pyx":18
  * 
  *     if result_bytes == NULL:
  *         raise MemoryError("Could not allocate memory for result array")             # <<<<<<<<<<<<<<
  * 
  *     try:
  */
-  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_u_Could_not_allocate_memory_for_re); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 16, __pyx_L1_error)
+  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_u_Could_not_allocate_memory_for_re); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 18, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__9);
   __Pyx_GIVEREF(__pyx_tuple__9);
 
@@ -19087,17 +19084,17 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__19);
   __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_pyx_unpickle_Enum, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(1, 1, __pyx_L1_error)
 
-  /* "pydub/sample.pyx":5
- * from libc.stdlib cimport malloc, free
+  /* "pydub/sample.pyx":7
+ * 
  * 
  * @cython.boundscheck(False)             # <<<<<<<<<<<<<<
  * @cython.wraparound(False)
  * def convert_24bit_to_32bit(unsigned char[:] data):
  */
-  __pyx_tuple__21 = PyTuple_Pack(9, __pyx_n_s_data, __pyx_n_s_i, __pyx_n_s_p, __pyx_n_s_len_data, __pyx_n_s_len_result, __pyx_n_s_b0, __pyx_n_s_b1, __pyx_n_s_b2, __pyx_n_s_result_bytes); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 5, __pyx_L1_error)
+  __pyx_tuple__21 = PyTuple_Pack(9, __pyx_n_s_data, __pyx_n_s_i, __pyx_n_s_p, __pyx_n_s_len_data, __pyx_n_s_len_result, __pyx_n_s_b0, __pyx_n_s_b1, __pyx_n_s_b2, __pyx_n_s_result_bytes); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 7, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__21);
   __Pyx_GIVEREF(__pyx_tuple__21);
-  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 9, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_pydub_sample_pyx, __pyx_n_s_convert_24bit_to_32bit, 5, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 5, __pyx_L1_error)
+  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 9, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_pydub_sample_pyx, __pyx_n_s_convert_24bit_to_32bit, 7, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 7, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -20150,30 +20147,30 @@ if (!__Pyx_RefNanny) {
 
   /* "pydub/sample.pyx":1
  * import array             # <<<<<<<<<<<<<<
+ * 
  * cimport cython
- * from libc.stdlib cimport malloc, free
  */
   __pyx_t_7 = __Pyx_ImportDottedModule(__pyx_n_s_array, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_array, __pyx_t_7) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "pydub/sample.pyx":5
- * from libc.stdlib cimport malloc, free
+  /* "pydub/sample.pyx":7
+ * 
  * 
  * @cython.boundscheck(False)             # <<<<<<<<<<<<<<
  * @cython.wraparound(False)
  * def convert_24bit_to_32bit(unsigned char[:] data):
  */
-  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5pydub_6sample_1convert_24bit_to_32bit, 0, __pyx_n_s_convert_24bit_to_32bit, NULL, __pyx_n_s_pydub_sample, __pyx_d, ((PyObject *)__pyx_codeobj__22)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 5, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5pydub_6sample_1convert_24bit_to_32bit, 0, __pyx_n_s_convert_24bit_to_32bit, NULL, __pyx_n_s_pydub_sample, __pyx_d, ((PyObject *)__pyx_codeobj__22)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 7, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_convert_24bit_to_32bit, __pyx_t_7) < 0) __PYX_ERR(0, 5, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_convert_24bit_to_32bit, __pyx_t_7) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
   /* "pydub/sample.pyx":1
  * import array             # <<<<<<<<<<<<<<
+ * 
  * cimport cython
- * from libc.stdlib cimport malloc, free
  */
   __pyx_t_7 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);

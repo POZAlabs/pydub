@@ -11,7 +11,6 @@ def build() -> None:
         Extension(
             "*",
             sources=["pydub/*.pyx"],
-            libraries=["m"],  # math library
             include_dirs=[],
             extra_compile_args=["-march=native", "-O3"],
         )

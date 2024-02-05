@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import array
 import base64
+import gzip
 import io
 import os
 import struct
@@ -8,6 +11,7 @@ import sys
 import wave
 from collections import namedtuple
 from tempfile import NamedTemporaryFile
+from typing import IO
 
 from .exceptions import (
     CouldntDecodeError,
@@ -645,6 +649,17 @@ class AudioSegment:
                 return filename.lower().endswith(".{0}".format(f))
 
             return False
+
+        if is_gzip(file):
+            return cls.from_file(
+                file=io.BytesIO(gzip.decompress(file.read())),
+                format=format,
+                codec=codec,
+                parameters=parameters,
+                start_second=start_second,
+                duration=duration,
+                **kwargs,
+            )
 
         if is_format("wav"):
             try:
@@ -1429,6 +1444,13 @@ class AudioSegment:
     def to_io(self) -> io.BytesIO:
         stream = io.BytesIO()
         return self.export(stream, format="raw")
+
+
+def is_gzip(file: IO[bytes]) -> bool:
+    file.seek(0)
+    result = file.read(2) == b"\x1f\x8b"
+    file.seek(0)
+    return result
 
 
 from . import effects  # noqa: E402, F401, F403

@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import array
 import base64
+import gzip
 import io
 import os
 import struct
@@ -8,6 +11,7 @@ import sys
 import wave
 from collections import namedtuple
 from tempfile import NamedTemporaryFile
+from typing import IO, Literal
 
 from .exceptions import (
     CouldntDecodeError,
@@ -646,6 +650,17 @@ class AudioSegment:
 
             return False
 
+        if is_gzip(file):
+            return cls.from_file(
+                file=io.BytesIO(gzip.decompress(file.read())),
+                format=format,
+                codec=codec,
+                parameters=parameters,
+                start_second=start_second,
+                duration=duration,
+                **kwargs,
+            )
+
         if is_format("wav"):
             try:
                 if start_second is None and duration is None:
@@ -830,6 +845,34 @@ class AudioSegment:
         return obj
 
     def export(
+        self,
+        out_f: str | os.PathLike | None = None,
+        format: str = "mp3",
+        codec: str | None = None,
+        bitrate: str | None = None,
+        parameters: list[str] | None = None,
+        tags: dict[str, str] | None = None,
+        id3v2_version: str = "4",
+        cover: str | None = None,
+        compressor: Literal["gzip"] | None = None,
+    ) -> IO[bytes]:
+        compressors = {"gzip": gzip.compress}
+
+        result = self._export(
+            out_f=out_f,
+            format=format,
+            codec=codec,
+            bitrate=bitrate,
+            parameters=parameters,
+            tags=tags,
+            id3v2_version=id3v2_version,
+            cover=cover,
+        )
+        if compressor is not None:
+            result = io.BytesIO(compressors[compressor](result.read()))
+        return result
+
+    def _export(
         self,
         out_f=None,
         format="mp3",
@@ -1426,9 +1469,12 @@ class AudioSegment:
         data = base64.b64encode(fh.read()).decode("ascii")
         return src.format(base64=data)
 
-    def to_io(self) -> io.BytesIO:
-        stream = io.BytesIO()
-        return self.export(stream, format="raw")
+
+def is_gzip(file: IO[bytes]) -> bool:
+    file.seek(0)
+    result = file.read(2) == b"\x1f\x8b"
+    file.seek(0)
+    return result
 
 
 from . import effects  # noqa: E402, F401, F403

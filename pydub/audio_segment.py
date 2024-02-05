@@ -1469,10 +1469,6 @@ class AudioSegment:
         data = base64.b64encode(fh.read()).decode("ascii")
         return src.format(base64=data)
 
-    def to_io(self) -> io.BytesIO:
-        stream = io.BytesIO()
-        return self.export(stream, format="raw")
-
 
 def is_gzip(file: IO[bytes]) -> bool:
     file.seek(0)

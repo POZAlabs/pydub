@@ -11,7 +11,7 @@ import sys
 import wave
 from collections import namedtuple
 from tempfile import NamedTemporaryFile
-from typing import IO
+from typing import IO, Literal
 
 from .exceptions import (
     CouldntDecodeError,
@@ -845,6 +845,34 @@ class AudioSegment:
         return obj
 
     def export(
+        self,
+        out_f: str | os.PathLike | None = None,
+        format: str = "mp3",
+        codec: str | None = None,
+        bitrate: str | None = None,
+        parameters: list[str] | None = None,
+        tags: dict[str, str] | None = None,
+        id3v2_version: str = "4",
+        cover: str | None = None,
+        compressor: Literal["gzip"] | None = None,
+    ) -> IO[bytes]:
+        compressors = {"gzip": gzip.compress}
+
+        result = self._export(
+            out_f=out_f,
+            format=format,
+            codec=codec,
+            bitrate=bitrate,
+            parameters=parameters,
+            tags=tags,
+            id3v2_version=id3v2_version,
+            cover=cover,
+        )
+        if compressor is not None:
+            result = io.BytesIO(compressors[compressor](result.read()))
+        return result
+
+    def _export(
         self,
         out_f=None,
         format="mp3",

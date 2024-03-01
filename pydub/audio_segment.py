@@ -366,6 +366,9 @@ class AudioSegment:
         else:
             return self._spawn(data=self._data * arg)
 
+    def __deepcopy__(self, memo: dict[int, object]) -> AudioSegment:
+        return self._spawn(self._data)
+
     def _spawn(self, data, overrides={}):
         """
         Creates a new audio segment using the metadata from the current one

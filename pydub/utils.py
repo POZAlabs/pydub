@@ -1,13 +1,14 @@
+import functools
+import io
 import json
+import math
 import os
 import re
+import shutil
+import subprocess
 import sys
-from functools import wraps
-from io import BufferedReader
-from math import ceil, log
-from subprocess import PIPE, Popen
-from tempfile import TemporaryFile
-from warnings import warn
+import tempfile as _tempfile
+import warnings
 
 try:
     import audioop
@@ -50,14 +51,14 @@ def get_min_max_value(bit_depth):
 def _fd_or_path_or_tempfile(fd, mode="w+b", tempfile=True):
     close_fd = False
     if fd is None and tempfile:
-        fd = TemporaryFile(mode=mode)
+        fd = _tempfile.TemporaryFile(mode=mode)
         close_fd = True
 
     if isinstance(fd, str):
         fd = open(fd, mode=mode)
         close_fd = True
 
-    if isinstance(fd, BufferedReader):
+    if isinstance(fd, io.BufferedReader):
         close_fd = True
 
     try:
@@ -100,9 +101,9 @@ def ratio_to_db(ratio, val2=None, using_amplitude=True):
         return -float("inf")
 
     if using_amplitude:
-        return 20 * log(ratio, 10)
+        return 20 * math.log(ratio, 10)
     else:  # using power
-        return 10 * log(ratio, 10)
+        return 10 * math.log(ratio, 10)
 
 
 def register_pydub_effect(fn, name=None):
@@ -137,40 +138,24 @@ def make_chunks(audio_segment, chunk_length):
     if chunk_length is 50 then you'll get a list of 50 millisecond long audio
     segments back (except the last one, which can be shorter)
     """
-    number_of_chunks = ceil(len(audio_segment) / float(chunk_length))
+    number_of_chunks = math.ceil(len(audio_segment) / float(chunk_length))
     return [
         audio_segment[i * chunk_length : (i + 1) * chunk_length]
         for i in range(int(number_of_chunks))
     ]
 
 
-def which(program):
-    """
-    Mimics behavior of UNIX which command.
-    """
-    # Add .exe program extension for windows support
-    if os.name == "nt" and not program.endswith(".exe"):
-        program += ".exe"
-
-    envdir_list = [os.curdir] + os.environ["PATH"].split(os.pathsep)
-
-    for envdir in envdir_list:
-        program_path = os.path.join(envdir, program)
-        if os.path.isfile(program_path) and os.access(program_path, os.X_OK):
-            return program_path
-
-
 def get_encoder_name():
     """
     Return enconder default application for system, either avconv or ffmpeg
     """
-    if which("avconv"):
+    if shutil.which("avconv") is not None:
         return "avconv"
-    elif which("ffmpeg"):
+    elif shutil.which("ffmpeg") is not None:
         return "ffmpeg"
     else:
         # should raise exception
-        warn(
+        warnings.warn(
             "Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work",
             RuntimeWarning,
         )
@@ -181,13 +166,13 @@ def get_player_name():
     """
     Return enconder default application for system, either avconv or ffmpeg
     """
-    if which("avplay"):
+    if shutil.which("avplay"):
         return "avplay"
-    elif which("ffplay"):
+    elif shutil.which("ffplay"):
         return "ffplay"
     else:
         # should raise exception
-        warn(
+        warnings.warn(
             "Couldn't find ffplay or avplay - defaulting to ffplay, but may not work",
             RuntimeWarning,
         )
@@ -198,35 +183,17 @@ def get_prober_name():
     """
     Return probe application, either avconv or ffmpeg
     """
-    if which("avprobe"):
+    if shutil.which("avprobe"):
         return "avprobe"
-    elif which("ffprobe"):
+    elif shutil.which("ffprobe"):
         return "ffprobe"
     else:
         # should raise exception
-        warn(
+        warnings.warn(
             "Couldn't find ffprobe or avprobe - defaulting to ffprobe, but may not work",
             RuntimeWarning,
         )
         return "ffprobe"
-
-
-def fsdecode(filename):
-    """Wrapper for os.fsdecode which was introduced in python 3.2 ."""
-
-    if sys.version_info >= (3, 2):
-        PathLikeTypes = (str, bytes)
-        if sys.version_info >= (3, 6):
-            PathLikeTypes += (os.PathLike,)
-        if isinstance(filename, PathLikeTypes):
-            return os.fsdecode(filename)
-    else:
-        if isinstance(filename, bytes):
-            return filename.decode(sys.getfilesystemencoding())
-        if isinstance(filename, str):
-            return filename
-
-    raise TypeError("type {0} not accepted by fsdecode".format(type(filename)))
 
 
 def get_extra_info(stderr):
@@ -267,7 +234,7 @@ def mediainfo_json(filepath, read_ahead_limit=-1):
         "-show_streams",
     ]
     try:
-        command_args += [fsdecode(filepath)]
+        command_args += [os.fsdecode(filepath)]
         stdin_parameter = None
         stdin_data = None
     except TypeError:
@@ -275,7 +242,7 @@ def mediainfo_json(filepath, read_ahead_limit=-1):
             command_args += ["-read_ahead_limit", str(read_ahead_limit), "cache:pipe:0"]
         else:
             command_args += ["-"]
-        stdin_parameter = PIPE
+        stdin_parameter = subprocess.PIPE
         file, close_file = _fd_or_path_or_tempfile(filepath, "rb", tempfile=False)
         file.seek(0)
         stdin_data = file.read()
@@ -283,7 +250,9 @@ def mediainfo_json(filepath, read_ahead_limit=-1):
             file.close()
 
     command = [prober, "-of", "json"] + command_args
-    res = Popen(command, stdin=stdin_parameter, stdout=PIPE, stderr=PIPE)
+    res = subprocess.Popen(
+        command, stdin=stdin_parameter, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
     output, stderr = res.communicate(input=stdin_data)
     output = output.decode("utf-8", "ignore")
     stderr = stderr.decode("utf-8", "ignore")
@@ -339,12 +308,12 @@ def mediainfo(filepath):
     command_args = ["-v", "quiet", "-show_format", "-show_streams", filepath]
 
     command = [prober, "-of", "old"] + command_args
-    res = Popen(command, stdout=PIPE)
+    res = subprocess.Popen(command, stdout=subprocess.PIPE)
     output = res.communicate()[0].decode("utf-8")
 
     if res.returncode != 0:
         command = [prober] + command_args
-        output = Popen(command, stdout=PIPE).communicate()[0].decode("utf-8")
+        output = subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].decode("utf-8")
 
     rgx = re.compile(r"(?:(?P<inner_dict>.*?):)?(?P<key>.*?)\=(?P<value>.*?)$")
     info = {}
@@ -375,7 +344,7 @@ def mediainfo(filepath):
 def cache_codecs(function):
     cache = {}
 
-    @wraps(function)
+    @functools.wraps(function)
     def wrapper():
         try:
             return cache[0]
@@ -390,7 +359,7 @@ def cache_codecs(function):
 def get_supported_codecs():
     encoder = get_encoder_name()
     command = [encoder, "-codecs"]
-    res = Popen(command, stdout=PIPE, stderr=PIPE)
+    res = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output = res.communicate()[0].decode("utf-8")
     if res.returncode != 0:
         return []
@@ -413,7 +382,7 @@ def get_supported_codecs():
         if flags[1] == "E":
             encoders.add(codec)
 
-    return (decoders, encoders)
+    return decoders, encoders
 
 
 def get_supported_decoders():

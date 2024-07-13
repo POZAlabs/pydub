@@ -28,7 +28,6 @@ from .utils import (
     _fd_or_path_or_tempfile,
     audioop,
     db_to_float,
-    fsdecode,
     get_array_type,
     get_encoder_name,
     mediainfo_json,
@@ -634,7 +633,7 @@ class AudioSegment:
     ):
         orig_file = file
         try:
-            filename = fsdecode(file)
+            filename = os.fsdecode(file)
         except TypeError:
             filename = None
         file, close_file = _fd_or_path_or_tempfile(file, "rb", tempfile=False)

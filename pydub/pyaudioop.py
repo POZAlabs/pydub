@@ -1,15 +1,6 @@
-try:
-    from __builtin__ import max as builtin_max
-    from __builtin__ import min as builtin_min
-except ImportError:
-    from builtins import max as builtin_max
-    from builtins import min as builtin_min
+import builtins
 import math
 import struct
-try:
-    from fractions import gcd
-except ImportError:  # Python 3.9+
-    from math import gcd
 from ctypes import create_string_buffer
 
 
@@ -50,7 +41,7 @@ def _get_sample(cp, size, i, signed=True):
     fmt = _struct_format(size, signed)
     start = i * size
     end = start + size
-    return struct.unpack_from(fmt, buffer(cp)[start:end])[0]
+    return struct.unpack_from(fmt, memoryview(cp)[start:end])[0]
 
 
 def _put_sample(cp, size, i, val, signed=True):
@@ -60,17 +51,17 @@ def _put_sample(cp, size, i, val, signed=True):
 
 def _get_maxval(size, signed=True):
     if signed and size == 1:
-        return 0x7f
+        return 0x7F
     elif size == 1:
-        return 0xff
+        return 0xFF
     elif signed and size == 2:
-        return 0x7fff
+        return 0x7FFF
     elif size == 2:
-        return 0xffff
+        return 0xFFFF
     elif signed and size == 4:
-        return 0x7fffffff
+        return 0x7FFFFFFF
     elif size == 4:
-        return 0xffffffff
+        return 0xFFFFFFFF
 
 
 def _get_minval(size, signed=True):
@@ -87,7 +78,7 @@ def _get_minval(size, signed=True):
 def _get_clipfn(size, signed=True):
     maxval = _get_maxval(size, signed)
     minval = _get_minval(size, signed)
-    return lambda val: builtin_max(min(val, maxval), minval)
+    return lambda val: builtins.max(min(val, maxval), minval)
 
 
 def _overflow(val, size, signed=True):
@@ -98,7 +89,7 @@ def _overflow(val, size, signed=True):
 
     bits = size * 8
     if signed:
-        offset = 2**(bits-1)
+        offset = 2 ** (bits - 1)
         return ((val + offset) % (2**bits)) - offset
     else:
         return val % (2**bits)
@@ -117,7 +108,7 @@ def max(cp, size):
     if len(cp) == 0:
         return 0
 
-    return builtin_max(abs(sample) for sample in _get_samples(cp, size))
+    return builtins.max(abs(sample) for sample in _get_samples(cp, size))
 
 
 def minmax(cp, size):
@@ -125,8 +116,8 @@ def minmax(cp, size):
 
     max_sample, min_sample = 0, 0
     for sample in _get_samples(cp, size):
-        max_sample = builtin_max(sample, max_sample)
-        min_sample = builtin_min(sample, min_sample)
+        max_sample = builtins.max(sample, max_sample)
+        min_sample = builtins.min(sample, min_sample)
 
     return min_sample, max_sample
 
@@ -184,7 +175,7 @@ def findfit(cp1, cp2):
         aj_lm1 = _get_sample(cp1, size, i + len2 - 1)
 
         sum_aij_2 += aj_lm1**2 - aj_m1**2
-        sum_aij_ri = _sum2(buffer(cp1)[i*size:], cp2, len2)
+        sum_aij_ri = _sum2(memoryview(cp1)[i * size :], cp2, len2)
 
         result = (sum_ri_2 * sum_aij_2 - sum_aij_ri * sum_aij_ri) / sum_aij_2
 
@@ -192,7 +183,7 @@ def findfit(cp1, cp2):
             best_result = result
             best_i = i
 
-    factor = _sum2(buffer(cp1)[best_i*size:], cp2, len2) / sum_ri_2
+    factor = _sum2(memoryview(cp1)[best_i * size :], cp2, len2) / sum_ri_2
 
     return best_i, factor
 
@@ -468,7 +459,7 @@ def ratecv(cp, size, nchannels, inrate, outrate, state, weightA=1, weightB=0):
     if inrate <= 0 or outrate <= 0:
         raise error("sampling rate not > 0")
 
-    d = gcd(inrate, outrate)
+    d = math.gcd(inrate, outrate)
     inrate /= d
     outrate /= d
 
@@ -502,7 +493,7 @@ def ratecv(cp, size, nchannels, inrate, outrate, state, weightA=1, weightB=0):
 
                 # slice off extra bytes
                 trim_index = (out_i * bytes_per_frame) - len(retval)
-                retval = buffer(retval)[:trim_index]
+                retval = memoryview(retval)[:trim_index]
 
                 return (retval, (d, tuple(samps)))
 
@@ -510,20 +501,14 @@ def ratecv(cp, size, nchannels, inrate, outrate, state, weightA=1, weightB=0):
                 prev_i[chan] = cur_i[chan]
                 cur_i[chan] = samples.next()
 
-                cur_i[chan] = (
-                    (weightA * cur_i[chan] + weightB * prev_i[chan])
-                    / (weightA + weightB)
-                )
+                cur_i[chan] = (weightA * cur_i[chan] + weightB * prev_i[chan]) / (weightA + weightB)
 
             frame_count -= 1
             d += outrate
 
         while d >= 0:
             for chan in range(nchannels):
-                cur_o = (
-                    (prev_i[chan] * d + cur_i[chan] * (outrate - d))
-                    / outrate
-                )
+                cur_o = (prev_i[chan] * d + cur_i[chan] * (outrate - d)) / outrate
                 _put_sample(result, size, out_i, _overflow(cur_o, size))
                 out_i += 1
             d -= inrate

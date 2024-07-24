@@ -221,7 +221,7 @@ class AudioSegment:
                 self._data = audioop.bias(self._data, 1, -128)
 
         if self.sample_width == 3:
-            self._data = convert_24bit_to_32bit(bytearray(self._data)).tobytes()
+            self._data = convert_24bit_to_32bit(self._data)
             self.sample_width = 4
             self.frame_width = self.channels * self.sample_width
 

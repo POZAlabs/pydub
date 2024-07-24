@@ -30,6 +30,6 @@ def convert_24bit_to_32bit(unsigned char[:] data):
 
             p += 4
 
-        return array.array("B", result_bytes[:len_result])
+        return bytes(result_bytes[:len_result])
     finally:
         free(result_bytes)

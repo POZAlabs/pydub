@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pozalabs-pydub"
 packages = [{ include = "pydub"}]
-version = "0.28.0"
+version = "0.29.0"
 description = "Manipulate audio with an simple and easy high level interface (POZAlabs forked)"
 classifiers = [
     "Development Status :: 5 - Production/Stable",

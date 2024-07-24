@@ -6,7 +6,7 @@ from libc.stdlib cimport free, malloc
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-def convert_24bit_to_32bit(unsigned char[:] data):
+def convert_24bit_to_32bit(const unsigned char[:] data):
     cdef int i
     cdef int p = 0
     cdef int len_data = data.size
@@ -30,6 +30,6 @@ def convert_24bit_to_32bit(unsigned char[:] data):
 
             p += 4
 
-        return array.array("B", result_bytes[:len_result])
+        return bytes(result_bytes[:len_result])
     finally:
         free(result_bytes)

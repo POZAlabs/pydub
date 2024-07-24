@@ -1,8 +1,8 @@
 name: Release package
 on:
-  release:
-    types:
-      - published
+  push:
+    tags:
+      - 'v*.*.*'
 
 jobs:
   publish-release:

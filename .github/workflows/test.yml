@@ -1,0 +1,35 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+          - 3.11
+          - 3.12
+      fail-fast: false
+
+    name: Python ${{ matrix.python-version }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: POZAlabs/actions/.github/actions/setup-python@v1-beta
+        with:
+          python-version: ${{ matrix.python-version }}
+          setup-command: |
+            poetry install --all-extras --no-interaction
+
+      - name: Run tests
+        run: |
+          poetry run python -m unittest discover -s test -v

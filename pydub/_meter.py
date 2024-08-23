@@ -3,7 +3,7 @@ from __future__ import annotations
 import functools
 import tempfile
 from collections.abc import Callable
-from typing import TYPE_CHECKING, ParamSpec, TypeAlias, TypedDict, TypeVar
+from typing import TYPE_CHECKING, ParamSpec, TypedDict, TypeVar
 
 if TYPE_CHECKING:
     from .audio_segment import AudioSegment
@@ -17,9 +17,6 @@ except ImportError:
 
 P = ParamSpec("P")
 R = TypeVar("R")
-
-dBFS: TypeAlias = float
-LUFS: TypeAlias = float
 
 
 def audiometer_required(func: Callable[P, R]) -> Callable[P, R]:

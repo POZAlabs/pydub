@@ -11,8 +11,9 @@ import sys
 import wave
 from collections import namedtuple
 from tempfile import NamedTemporaryFile
-from typing import IO, Literal
+from typing import IO, Literal, Unpack
 
+from . import _meter
 from .exceptions import (
     CouldntDecodeError,
     CouldntEncodeError,
@@ -1470,6 +1471,16 @@ class AudioSegment:
         fh = self.export()
         data = base64.b64encode(fh.read()).decode("ascii")
         return src.format(base64=data)
+
+    def measure_audio_level(
+        self, *names: Unpack[tuple[Literal["rms", "peak", "loudness"], ...]]
+    ) -> _meter.AudioLevel:
+        meter_to_measurer = {
+            "rms": _meter.measure_rms,
+            "peak": _meter.measure_peak,
+            "loudness": _meter.measure_loudness,
+        }
+        return {name: meter_to_measurer[name](self) for name in names}
 
 
 def is_gzip(file: IO[bytes]) -> bool:

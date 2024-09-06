@@ -1,11 +1,12 @@
-name: Release package
+name: Build
+
 on:
-  push:
-    tags:
-      - 'v*'
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  publish-release:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -16,9 +17,9 @@ jobs:
         uses: abatilo/actions-poetry@v2
         with:
           poetry-version: 1.8.0
-      - name: Publish package
-        env:
-          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+      - name: Build package
         run: |
-          poetry config pypi-token.pypi $PYPI_TOKEN
-          poetry publish --build
+          poetry build
+      - name: Test import
+        run: |
+          poetry run python -c "import pydub"

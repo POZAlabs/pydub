@@ -38,7 +38,11 @@ generate-setup-file = false
 script = "build.py"
 
 [build-system]
-requires = ["poetry-core", "Cython", "setuptools"]
+requires = [
+    "poetry-core",
+    "Cython>=3.0.2,<3.0.10",
+    "setuptools"
+]
 build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]

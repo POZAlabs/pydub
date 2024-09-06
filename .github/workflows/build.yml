@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  publish-release:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -17,6 +17,9 @@ jobs:
         uses: abatilo/actions-poetry@v2
         with:
           poetry-version: 1.8.0
+      - name: Build package
+        run: |
+          poetry build
       - name: Test import
         run: |
           poetry run python -c "import pydub"

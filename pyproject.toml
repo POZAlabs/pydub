@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pozalabs-pydub"
 packages = [{ include = "pydub"}]
-version = "0.30.1"
+version = "0.30.0"
 description = "Manipulate audio with an simple and easy high level interface (POZAlabs forked)"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -38,7 +38,11 @@ generate-setup-file = false
 script = "build.py"
 
 [build-system]
-requires = ["poetry-core", "Cython", "setuptools"]
+requires = [
+    "poetry-core",
+    "Cython>=3.0.2,<3.0.10",
+    "setuptools"
+]
 build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]

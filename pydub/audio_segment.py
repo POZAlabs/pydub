@@ -11,7 +11,7 @@ import sys
 import wave
 from collections import namedtuple
 from tempfile import NamedTemporaryFile
-from typing import IO, Literal, Unpack
+from typing import IO, Any, Literal, Self, Unpack
 
 from . import _meter
 from .exceptions import (
@@ -163,7 +163,7 @@ class AudioSegment:
 
     DEFAULT_CODECS = {"ogg": "libvorbis"}
 
-    def __init__(self, data=None, *args, **kwargs):
+    def __init__(self, data: bytes | array.array | io.BytesIO, *args, **kwargs):
         self.sample_width = kwargs.pop("sample_width", None)
         self.frame_rate = kwargs.pop("frame_rate", None)
         self.channels = kwargs.pop("channels", None)
@@ -366,7 +366,7 @@ class AudioSegment:
     def __deepcopy__(self, memo: dict[int, object]) -> AudioSegment:
         return self._spawn(self._data)
 
-    def _spawn(self, data, overrides={}):
+    def _spawn(self, data, overrides: dict[str, Any] | None = None) -> Self:
         """
         Creates a new audio segment using the metadata from the current one
         and the data passed in. Should be used whenever an AudioSegment is

@@ -171,10 +171,7 @@ class AudioSegment:
         audio_params = (self.sample_width, self.frame_rate, self.channels)
 
         if isinstance(data, array.array):
-            try:
-                data = data.tobytes()
-            except AttributeError:
-                data = data.tostring()
+            data = data.tobytes()
 
         # prevent partial specification of arguments
         if any(audio_params) and None in audio_params:
@@ -381,10 +378,7 @@ class AudioSegment:
             data = b"".join(data)
 
         if isinstance(data, array.array):
-            try:
-                data = data.tobytes()
-            except:  # noqa: E722
-                data = data.tostring()
+            data = data.tobytes()
 
         # accept file-like objects
         if hasattr(data, "read"):
@@ -398,7 +392,7 @@ class AudioSegment:
             "frame_width": self.frame_width,
             "channels": self.channels,
         }
-        metadata.update(overrides)
+        metadata.update(overrides or {})
         return self.__class__(data=data, metadata=metadata)
 
     @classmethod
@@ -1149,12 +1143,7 @@ class AudioSegment:
         mono_channels = []
         for i in range(self.channels):
             samples_for_current_channel = samples[i :: self.channels]
-
-            try:
-                mono_data = samples_for_current_channel.tobytes()
-            except AttributeError:
-                mono_data = samples_for_current_channel.tostring()
-
+            mono_data = samples_for_current_channel.tobytes()
             mono_channels.append(
                 self._spawn(mono_data, overrides={"channels": 1, "frame_width": self.sample_width})
             )

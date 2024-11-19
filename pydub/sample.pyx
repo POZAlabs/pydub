@@ -7,7 +7,7 @@ from cython.parallel import prange
 @cython.cdivision(True)
 def convert_24bit_to_32bit(const unsigned char[:] data):
     cdef:
-        int chunk_size = 1024 * 1024  # 1MB chunks
+        int chunk_size = 1024 * 1024 * 10  # 1MB chunks
         int len_data = data.size
         int len_result = len_data // 3 * 4
         unsigned char *result_bytes = <unsigned char *> malloc(len_result * sizeof(unsigned char))

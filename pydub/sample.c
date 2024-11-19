@@ -2326,15 +2326,6 @@ static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name);
 static CYTHON_INLINE int __Pyx_HasAttr(PyObject *, PyObject *);
 #endif
 
-/* ErrOccurredWithGIL.proto */
-static CYTHON_INLINE int __Pyx_ErrOccurredWithGIL(void);
-
-/* BufferIndexError.proto */
-static void __Pyx_RaiseBufferIndexError(int axis);
-
-/* BufferIndexErrorNogil.proto */
-static void __Pyx_RaiseBufferIndexErrorNogil(int axis);
-
 /* PyObject_GenericGetAttrNoDict.proto */
 #if CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP && PY_VERSION_HEX < 0x03070000
 static CYTHON_INLINE PyObject* __Pyx_PyObject_GenericGetAttrNoDict(PyObject* obj, PyObject* attr_name);
@@ -2721,7 +2712,6 @@ static PyObject *contiguous = 0;
 static PyObject *indirect_contiguous = 0;
 static int __pyx_memoryview_thread_locks_used;
 static PyThread_type_lock __pyx_memoryview_thread_locks[8];
-static int __pyx_f_5pydub_6sample__process_chunks_parallel(__Pyx_memviewslice, unsigned char *, int, int, int); /*proto*/
 static int __pyx_array_allocate_buffer(struct __pyx_array_obj *); /*proto*/
 static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char *, char *); /*proto*/
 static PyObject *__pyx_memoryview_new(PyObject *, int, int, __Pyx_TypeInfo *); /*proto*/
@@ -2779,10 +2769,15 @@ static PyObject *__pyx_builtin_IndexError;
 static const char __pyx_k_[] = ": ";
 static const char __pyx_k_O[] = "O";
 static const char __pyx_k_c[] = "c";
+static const char __pyx_k_i[] = "i";
+static const char __pyx_k_p[] = "p";
 static const char __pyx_k__2[] = ".";
 static const char __pyx_k__3[] = "*";
 static const char __pyx_k__6[] = "'";
 static const char __pyx_k__7[] = ")";
+static const char __pyx_k_b0[] = "b0";
+static const char __pyx_k_b1[] = "b1";
+static const char __pyx_k_b2[] = "b2";
 static const char __pyx_k_gc[] = "gc";
 static const char __pyx_k_id[] = "id";
 static const char __pyx_k__23[] = "?";
@@ -2806,6 +2801,7 @@ static const char __pyx_k_step[] = "step";
 static const char __pyx_k_stop[] = "stop";
 static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_ASCII[] = "ASCII";
+static const char __pyx_k_array[] = "array";
 static const char __pyx_k_class[] = "__class__";
 static const char __pyx_k_count[] = "count";
 static const char __pyx_k_error[] = "error";
@@ -2836,6 +2832,7 @@ static const char __pyx_k_pyx_type[] = "__pyx_type";
 static const char __pyx_k_register[] = "register";
 static const char __pyx_k_setstate[] = "__setstate__";
 static const char __pyx_k_TypeError[] = "TypeError";
+static const char __pyx_k_chunk_end[] = "chunk_end";
 static const char __pyx_k_enumerate[] = "enumerate";
 static const char __pyx_k_isenabled[] = "isenabled";
 static const char __pyx_k_pyx_state[] = "__pyx_state";
@@ -2844,11 +2841,11 @@ static const char __pyx_k_IndexError[] = "IndexError";
 static const char __pyx_k_ValueError[] = "ValueError";
 static const char __pyx_k_chunk_size[] = "chunk_size";
 static const char __pyx_k_len_result[] = "len_result";
-static const char __pyx_k_num_chunks[] = "num_chunks";
 static const char __pyx_k_pyx_result[] = "__pyx_result";
 static const char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
 static const char __pyx_k_MemoryError[] = "MemoryError";
 static const char __pyx_k_PickleError[] = "PickleError";
+static const char __pyx_k_chunk_start[] = "chunk_start";
 static const char __pyx_k_collections[] = "collections";
 static const char __pyx_k_initializing[] = "_initializing";
 static const char __pyx_k_is_coroutine[] = "_is_coroutine";
@@ -3035,11 +3032,17 @@ typedef struct {
   PyObject *__pyx_n_s_abc;
   PyObject *__pyx_n_s_allocate_buffer;
   PyObject *__pyx_kp_u_and;
+  PyObject *__pyx_n_s_array;
   PyObject *__pyx_n_s_asyncio_coroutines;
+  PyObject *__pyx_n_s_b0;
+  PyObject *__pyx_n_s_b1;
+  PyObject *__pyx_n_s_b2;
   PyObject *__pyx_n_s_base;
   PyObject *__pyx_n_s_c;
   PyObject *__pyx_n_u_c;
+  PyObject *__pyx_n_s_chunk_end;
   PyObject *__pyx_n_s_chunk_size;
+  PyObject *__pyx_n_s_chunk_start;
   PyObject *__pyx_n_s_class;
   PyObject *__pyx_n_s_class_getitem;
   PyObject *__pyx_n_s_cline_in_traceback;
@@ -3065,6 +3068,7 @@ typedef struct {
   PyObject *__pyx_n_s_getstate;
   PyObject *__pyx_kp_u_got;
   PyObject *__pyx_kp_u_got_differing_extents_in_dimensi;
+  PyObject *__pyx_n_s_i;
   PyObject *__pyx_n_s_id;
   PyObject *__pyx_n_s_import;
   PyObject *__pyx_n_s_index;
@@ -3083,8 +3087,8 @@ typedef struct {
   PyObject *__pyx_n_s_ndim;
   PyObject *__pyx_n_s_new;
   PyObject *__pyx_kp_s_no_default___reduce___due_to_non;
-  PyObject *__pyx_n_s_num_chunks;
   PyObject *__pyx_n_s_obj;
+  PyObject *__pyx_n_s_p;
   PyObject *__pyx_n_s_pack;
   PyObject *__pyx_n_s_pickle;
   PyObject *__pyx_n_s_pydub_sample;
@@ -3236,11 +3240,17 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_abc);
   Py_CLEAR(clear_module_state->__pyx_n_s_allocate_buffer);
   Py_CLEAR(clear_module_state->__pyx_kp_u_and);
+  Py_CLEAR(clear_module_state->__pyx_n_s_array);
   Py_CLEAR(clear_module_state->__pyx_n_s_asyncio_coroutines);
+  Py_CLEAR(clear_module_state->__pyx_n_s_b0);
+  Py_CLEAR(clear_module_state->__pyx_n_s_b1);
+  Py_CLEAR(clear_module_state->__pyx_n_s_b2);
   Py_CLEAR(clear_module_state->__pyx_n_s_base);
   Py_CLEAR(clear_module_state->__pyx_n_s_c);
   Py_CLEAR(clear_module_state->__pyx_n_u_c);
+  Py_CLEAR(clear_module_state->__pyx_n_s_chunk_end);
   Py_CLEAR(clear_module_state->__pyx_n_s_chunk_size);
+  Py_CLEAR(clear_module_state->__pyx_n_s_chunk_start);
   Py_CLEAR(clear_module_state->__pyx_n_s_class);
   Py_CLEAR(clear_module_state->__pyx_n_s_class_getitem);
   Py_CLEAR(clear_module_state->__pyx_n_s_cline_in_traceback);
@@ -3266,6 +3276,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_getstate);
   Py_CLEAR(clear_module_state->__pyx_kp_u_got);
   Py_CLEAR(clear_module_state->__pyx_kp_u_got_differing_extents_in_dimensi);
+  Py_CLEAR(clear_module_state->__pyx_n_s_i);
   Py_CLEAR(clear_module_state->__pyx_n_s_id);
   Py_CLEAR(clear_module_state->__pyx_n_s_import);
   Py_CLEAR(clear_module_state->__pyx_n_s_index);
@@ -3284,8 +3295,8 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_ndim);
   Py_CLEAR(clear_module_state->__pyx_n_s_new);
   Py_CLEAR(clear_module_state->__pyx_kp_s_no_default___reduce___due_to_non);
-  Py_CLEAR(clear_module_state->__pyx_n_s_num_chunks);
   Py_CLEAR(clear_module_state->__pyx_n_s_obj);
+  Py_CLEAR(clear_module_state->__pyx_n_s_p);
   Py_CLEAR(clear_module_state->__pyx_n_s_pack);
   Py_CLEAR(clear_module_state->__pyx_n_s_pickle);
   Py_CLEAR(clear_module_state->__pyx_n_s_pydub_sample);
@@ -3415,11 +3426,17 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_abc);
   Py_VISIT(traverse_module_state->__pyx_n_s_allocate_buffer);
   Py_VISIT(traverse_module_state->__pyx_kp_u_and);
+  Py_VISIT(traverse_module_state->__pyx_n_s_array);
   Py_VISIT(traverse_module_state->__pyx_n_s_asyncio_coroutines);
+  Py_VISIT(traverse_module_state->__pyx_n_s_b0);
+  Py_VISIT(traverse_module_state->__pyx_n_s_b1);
+  Py_VISIT(traverse_module_state->__pyx_n_s_b2);
   Py_VISIT(traverse_module_state->__pyx_n_s_base);
   Py_VISIT(traverse_module_state->__pyx_n_s_c);
   Py_VISIT(traverse_module_state->__pyx_n_u_c);
+  Py_VISIT(traverse_module_state->__pyx_n_s_chunk_end);
   Py_VISIT(traverse_module_state->__pyx_n_s_chunk_size);
+  Py_VISIT(traverse_module_state->__pyx_n_s_chunk_start);
   Py_VISIT(traverse_module_state->__pyx_n_s_class);
   Py_VISIT(traverse_module_state->__pyx_n_s_class_getitem);
   Py_VISIT(traverse_module_state->__pyx_n_s_cline_in_traceback);
@@ -3445,6 +3462,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_getstate);
   Py_VISIT(traverse_module_state->__pyx_kp_u_got);
   Py_VISIT(traverse_module_state->__pyx_kp_u_got_differing_extents_in_dimensi);
+  Py_VISIT(traverse_module_state->__pyx_n_s_i);
   Py_VISIT(traverse_module_state->__pyx_n_s_id);
   Py_VISIT(traverse_module_state->__pyx_n_s_import);
   Py_VISIT(traverse_module_state->__pyx_n_s_index);
@@ -3463,8 +3481,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_ndim);
   Py_VISIT(traverse_module_state->__pyx_n_s_new);
   Py_VISIT(traverse_module_state->__pyx_kp_s_no_default___reduce___due_to_non);
-  Py_VISIT(traverse_module_state->__pyx_n_s_num_chunks);
   Py_VISIT(traverse_module_state->__pyx_n_s_obj);
+  Py_VISIT(traverse_module_state->__pyx_n_s_p);
   Py_VISIT(traverse_module_state->__pyx_n_s_pack);
   Py_VISIT(traverse_module_state->__pyx_n_s_pickle);
   Py_VISIT(traverse_module_state->__pyx_n_s_pydub_sample);
@@ -3614,11 +3632,17 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_abc __pyx_mstate_global->__pyx_n_s_abc
 #define __pyx_n_s_allocate_buffer __pyx_mstate_global->__pyx_n_s_allocate_buffer
 #define __pyx_kp_u_and __pyx_mstate_global->__pyx_kp_u_and
+#define __pyx_n_s_array __pyx_mstate_global->__pyx_n_s_array
 #define __pyx_n_s_asyncio_coroutines __pyx_mstate_global->__pyx_n_s_asyncio_coroutines
+#define __pyx_n_s_b0 __pyx_mstate_global->__pyx_n_s_b0
+#define __pyx_n_s_b1 __pyx_mstate_global->__pyx_n_s_b1
+#define __pyx_n_s_b2 __pyx_mstate_global->__pyx_n_s_b2
 #define __pyx_n_s_base __pyx_mstate_global->__pyx_n_s_base
 #define __pyx_n_s_c __pyx_mstate_global->__pyx_n_s_c
 #define __pyx_n_u_c __pyx_mstate_global->__pyx_n_u_c
+#define __pyx_n_s_chunk_end __pyx_mstate_global->__pyx_n_s_chunk_end
 #define __pyx_n_s_chunk_size __pyx_mstate_global->__pyx_n_s_chunk_size
+#define __pyx_n_s_chunk_start __pyx_mstate_global->__pyx_n_s_chunk_start
 #define __pyx_n_s_class __pyx_mstate_global->__pyx_n_s_class
 #define __pyx_n_s_class_getitem __pyx_mstate_global->__pyx_n_s_class_getitem
 #define __pyx_n_s_cline_in_traceback __pyx_mstate_global->__pyx_n_s_cline_in_traceback
@@ -3644,6 +3668,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_getstate __pyx_mstate_global->__pyx_n_s_getstate
 #define __pyx_kp_u_got __pyx_mstate_global->__pyx_kp_u_got
 #define __pyx_kp_u_got_differing_extents_in_dimensi __pyx_mstate_global->__pyx_kp_u_got_differing_extents_in_dimensi
+#define __pyx_n_s_i __pyx_mstate_global->__pyx_n_s_i
 #define __pyx_n_s_id __pyx_mstate_global->__pyx_n_s_id
 #define __pyx_n_s_import __pyx_mstate_global->__pyx_n_s_import
 #define __pyx_n_s_index __pyx_mstate_global->__pyx_n_s_index
@@ -3662,8 +3687,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_ndim __pyx_mstate_global->__pyx_n_s_ndim
 #define __pyx_n_s_new __pyx_mstate_global->__pyx_n_s_new
 #define __pyx_kp_s_no_default___reduce___due_to_non __pyx_mstate_global->__pyx_kp_s_no_default___reduce___due_to_non
-#define __pyx_n_s_num_chunks __pyx_mstate_global->__pyx_n_s_num_chunks
 #define __pyx_n_s_obj __pyx_mstate_global->__pyx_n_s_obj
+#define __pyx_n_s_p __pyx_mstate_global->__pyx_n_s_p
 #define __pyx_n_s_pack __pyx_mstate_global->__pyx_n_s_pack
 #define __pyx_n_s_pickle __pyx_mstate_global->__pyx_n_s_pickle
 #define __pyx_n_s_pydub_sample __pyx_mstate_global->__pyx_n_s_pydub_sample
@@ -17353,8 +17378,8 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
   return __pyx_r;
 }
 
-/* "pydub/sample.pyx":5
- * from cython.parallel import prange
+/* "pydub/sample.pyx":10
+ * 
  * 
  * @cython.boundscheck(False)             # <<<<<<<<<<<<<<
  * @cython.wraparound(False)
@@ -17414,23 +17439,23 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 5, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 10, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "convert_24bit_to_32bit") < 0)) __PYX_ERR(0, 5, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "convert_24bit_to_32bit") < 0)) __PYX_ERR(0, 10, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_Arg_FASTCALL(__pyx_args, 0);
     }
-    __pyx_v_data = __Pyx_PyObject_to_MemoryviewSlice_ds_unsigned_char__const__(values[0], 0); if (unlikely(!__pyx_v_data.memview)) __PYX_ERR(0, 8, __pyx_L3_error)
+    __pyx_v_data = __Pyx_PyObject_to_MemoryviewSlice_ds_unsigned_char__const__(values[0], 0); if (unlikely(!__pyx_v_data.memview)) __PYX_ERR(0, 13, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("convert_24bit_to_32bit", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 5, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("convert_24bit_to_32bit", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 10, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -17460,84 +17485,97 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 }
 
 static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_data) {
-  int __pyx_v_chunk_size;
   int __pyx_v_len_data;
   int __pyx_v_len_result;
+  int __pyx_v_i;
+  int __pyx_v_p;
+  int __pyx_v_chunk_start;
+  int __pyx_v_chunk_end;
+  int __pyx_v_chunk_size;
+  unsigned char __pyx_v_b0;
+  unsigned char __pyx_v_b1;
+  unsigned char __pyx_v_b2;
   unsigned char *__pyx_v_result_bytes;
-  int __pyx_v_num_chunks;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   int __pyx_t_3;
   int __pyx_t_4;
-  int __pyx_t_5;
-  char const *__pyx_t_6;
-  PyObject *__pyx_t_7 = NULL;
-  PyObject *__pyx_t_8 = NULL;
-  PyObject *__pyx_t_9 = NULL;
-  PyObject *__pyx_t_10 = NULL;
-  PyObject *__pyx_t_11 = NULL;
-  PyObject *__pyx_t_12 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  Py_ssize_t __pyx_t_6;
+  PyObject *(*__pyx_t_7)(PyObject *);
+  long __pyx_t_8;
+  long __pyx_t_9;
+  int __pyx_t_10;
+  int __pyx_t_11;
+  Py_ssize_t __pyx_t_12;
+  char const *__pyx_t_13;
+  PyObject *__pyx_t_14 = NULL;
+  PyObject *__pyx_t_15 = NULL;
+  PyObject *__pyx_t_16 = NULL;
+  PyObject *__pyx_t_17 = NULL;
+  PyObject *__pyx_t_18 = NULL;
+  PyObject *__pyx_t_19 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("convert_24bit_to_32bit", 1);
 
-  /* "pydub/sample.pyx":10
+  /* "pydub/sample.pyx":14
+ * @cython.cdivision(True)
  * def convert_24bit_to_32bit(const unsigned char[:] data):
- *     cdef:
- *         int chunk_size = 1024 * 1024 * 10  # 1MB chunks             # <<<<<<<<<<<<<<
- *         int len_data = data.size
- *         int len_result = len_data // 3 * 4
+ *     cdef int len_data = data.size             # <<<<<<<<<<<<<<
+ *     cdef int len_result = len_data // 3 * 4
+ *     cdef int i, p = 0
  */
-  __pyx_v_chunk_size = 0xa00000;
-
-  /* "pydub/sample.pyx":11
- *     cdef:
- *         int chunk_size = 1024 * 1024 * 10  # 1MB chunks
- *         int len_data = data.size             # <<<<<<<<<<<<<<
- *         int len_result = len_data // 3 * 4
- *         unsigned char *result_bytes = <unsigned char *> malloc(len_result * sizeof(unsigned char))
- */
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_data, 1, (PyObject *(*)(char *)) __pyx_memview_get_unsigned_char__const__, (int (*)(char *, PyObject *)) NULL, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 11, __pyx_L1_error)
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_data, 1, (PyObject *(*)(char *)) __pyx_memview_get_unsigned_char__const__, (int (*)(char *, PyObject *)) NULL, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 14, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 11, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 14, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 11, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 14, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_len_data = __pyx_t_3;
 
-  /* "pydub/sample.pyx":12
- *         int chunk_size = 1024 * 1024 * 10  # 1MB chunks
- *         int len_data = data.size
- *         int len_result = len_data // 3 * 4             # <<<<<<<<<<<<<<
- *         unsigned char *result_bytes = <unsigned char *> malloc(len_result * sizeof(unsigned char))
- *         int num_chunks = (len_data + chunk_size - 1) // chunk_size
+  /* "pydub/sample.pyx":15
+ * def convert_24bit_to_32bit(const unsigned char[:] data):
+ *     cdef int len_data = data.size
+ *     cdef int len_result = len_data // 3 * 4             # <<<<<<<<<<<<<<
+ *     cdef int i, p = 0
+ *     cdef int chunk_start, chunk_end
  */
   __pyx_v_len_result = ((__pyx_v_len_data / 3) * 4);
 
-  /* "pydub/sample.pyx":13
- *         int len_data = data.size
- *         int len_result = len_data // 3 * 4
- *         unsigned char *result_bytes = <unsigned char *> malloc(len_result * sizeof(unsigned char))             # <<<<<<<<<<<<<<
- *         int num_chunks = (len_data + chunk_size - 1) // chunk_size
- * 
+  /* "pydub/sample.pyx":16
+ *     cdef int len_data = data.size
+ *     cdef int len_result = len_data // 3 * 4
+ *     cdef int i, p = 0             # <<<<<<<<<<<<<<
+ *     cdef int chunk_start, chunk_end
+ *     cdef int chunk_size = BUFFER_SIZE
  */
-  __pyx_v_result_bytes = ((unsigned char *)malloc((__pyx_v_len_result * (sizeof(unsigned char)))));
+  __pyx_v_p = 0;
 
-  /* "pydub/sample.pyx":14
- *         int len_result = len_data // 3 * 4
- *         unsigned char *result_bytes = <unsigned char *> malloc(len_result * sizeof(unsigned char))
- *         int num_chunks = (len_data + chunk_size - 1) // chunk_size             # <<<<<<<<<<<<<<
+  /* "pydub/sample.pyx":18
+ *     cdef int i, p = 0
+ *     cdef int chunk_start, chunk_end
+ *     cdef int chunk_size = BUFFER_SIZE             # <<<<<<<<<<<<<<
+ *     cdef unsigned char b0, b1, b2
+ *     cdef unsigned char *result_bytes = <unsigned char *> malloc(len_result * sizeof(unsigned char))
+ */
+  __pyx_v_chunk_size = 0x10000;
+
+  /* "pydub/sample.pyx":20
+ *     cdef int chunk_size = BUFFER_SIZE
+ *     cdef unsigned char b0, b1, b2
+ *     cdef unsigned char *result_bytes = <unsigned char *> malloc(len_result * sizeof(unsigned char))             # <<<<<<<<<<<<<<
  * 
  *     if result_bytes == NULL:
  */
-  __pyx_v_num_chunks = (((__pyx_v_len_data + __pyx_v_chunk_size) - 1) / __pyx_v_chunk_size);
+  __pyx_v_result_bytes = ((unsigned char *)malloc((__pyx_v_len_result * (sizeof(unsigned char)))));
 
-  /* "pydub/sample.pyx":16
- *         int num_chunks = (len_data + chunk_size - 1) // chunk_size
+  /* "pydub/sample.pyx":22
+ *     cdef unsigned char *result_bytes = <unsigned char *> malloc(len_result * sizeof(unsigned char))
  * 
  *     if result_bytes == NULL:             # <<<<<<<<<<<<<<
  *         raise MemoryError("Could not allocate memory for result array")
@@ -17546,21 +17584,21 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
   __pyx_t_4 = (__pyx_v_result_bytes == NULL);
   if (unlikely(__pyx_t_4)) {
 
-    /* "pydub/sample.pyx":17
+    /* "pydub/sample.pyx":23
  * 
  *     if result_bytes == NULL:
  *         raise MemoryError("Could not allocate memory for result array")             # <<<<<<<<<<<<<<
  * 
  *     try:
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 17, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 23, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 17, __pyx_L1_error)
+    __PYX_ERR(0, 23, __pyx_L1_error)
 
-    /* "pydub/sample.pyx":16
- *         int num_chunks = (len_data + chunk_size - 1) // chunk_size
+    /* "pydub/sample.pyx":22
+ *     cdef unsigned char *result_bytes = <unsigned char *> malloc(len_result * sizeof(unsigned char))
  * 
  *     if result_bytes == NULL:             # <<<<<<<<<<<<<<
  *         raise MemoryError("Could not allocate memory for result array")
@@ -17568,138 +17606,282 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
  */
   }
 
-  /* "pydub/sample.pyx":19
+  /* "pydub/sample.pyx":25
  *         raise MemoryError("Could not allocate memory for result array")
  * 
  *     try:             # <<<<<<<<<<<<<<
- *         with nogil:
- *             _process_chunks_parallel(data, result_bytes, len_data, chunk_size, num_chunks)
+ *         for chunk_start in range(0, len_data, chunk_size):
+ *             chunk_end = min(chunk_start + chunk_size, len_data - 2)
  */
   /*try:*/ {
 
-    /* "pydub/sample.pyx":20
+    /* "pydub/sample.pyx":26
  * 
  *     try:
- *         with nogil:             # <<<<<<<<<<<<<<
- *             _process_chunks_parallel(data, result_bytes, len_data, chunk_size, num_chunks)
- *         return bytes(result_bytes[:len_result])
- */
-    {
-        #ifdef WITH_THREAD
-        PyThreadState *_save;
-        _save = NULL;
-        Py_UNBLOCK_THREADS
-        __Pyx_FastGIL_Remember();
-        #endif
-        /*try:*/ {
-
-          /* "pydub/sample.pyx":21
- *     try:
- *         with nogil:
- *             _process_chunks_parallel(data, result_bytes, len_data, chunk_size, num_chunks)             # <<<<<<<<<<<<<<
- *         return bytes(result_bytes[:len_result])
- *     finally:
- */
-          __pyx_t_3 = __pyx_f_5pydub_6sample__process_chunks_parallel(__pyx_v_data, __pyx_v_result_bytes, __pyx_v_len_data, __pyx_v_chunk_size, __pyx_v_num_chunks); if (unlikely(__pyx_t_3 == ((int)-1) && __Pyx_ErrOccurredWithGIL())) __PYX_ERR(0, 21, __pyx_L8_error)
-        }
-
-        /* "pydub/sample.pyx":20
+ *         for chunk_start in range(0, len_data, chunk_size):             # <<<<<<<<<<<<<<
+ *             chunk_end = min(chunk_start + chunk_size, len_data - 2)
  * 
- *     try:
- *         with nogil:             # <<<<<<<<<<<<<<
- *             _process_chunks_parallel(data, result_bytes, len_data, chunk_size, num_chunks)
- *         return bytes(result_bytes[:len_result])
  */
-        /*finally:*/ {
-          /*normal exit:*/{
-            #ifdef WITH_THREAD
-            __Pyx_FastGIL_Forget();
-            Py_BLOCK_THREADS
-            #endif
-            goto __pyx_L9;
-          }
-          __pyx_L8_error: {
-            #ifdef WITH_THREAD
-            __Pyx_FastGIL_Forget();
-            Py_BLOCK_THREADS
-            #endif
-            goto __pyx_L5_error;
-          }
-          __pyx_L9:;
-        }
+    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_len_data); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 26, __pyx_L5_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_chunk_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L5_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 26, __pyx_L5_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_INCREF(__pyx_int_0);
+    __Pyx_GIVEREF(__pyx_int_0);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_int_0)) __PYX_ERR(0, 26, __pyx_L5_error);
+    __Pyx_GIVEREF(__pyx_t_2);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_2)) __PYX_ERR(0, 26, __pyx_L5_error);
+    __Pyx_GIVEREF(__pyx_t_1);
+    if (__Pyx_PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_1)) __PYX_ERR(0, 26, __pyx_L5_error);
+    __pyx_t_2 = 0;
+    __pyx_t_1 = 0;
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_range, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L5_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    if (likely(PyList_CheckExact(__pyx_t_1)) || PyTuple_CheckExact(__pyx_t_1)) {
+      __pyx_t_5 = __pyx_t_1; __Pyx_INCREF(__pyx_t_5);
+      __pyx_t_6 = 0;
+      __pyx_t_7 = NULL;
+    } else {
+      __pyx_t_6 = -1; __pyx_t_5 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 26, __pyx_L5_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_7 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 26, __pyx_L5_error)
     }
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    for (;;) {
+      if (likely(!__pyx_t_7)) {
+        if (likely(PyList_CheckExact(__pyx_t_5))) {
+          {
+            Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_5);
+            #if !CYTHON_ASSUME_SAFE_MACROS
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 26, __pyx_L5_error)
+            #endif
+            if (__pyx_t_6 >= __pyx_temp) break;
+          }
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          __pyx_t_1 = PyList_GET_ITEM(__pyx_t_5, __pyx_t_6); __Pyx_INCREF(__pyx_t_1); __pyx_t_6++; if (unlikely((0 < 0))) __PYX_ERR(0, 26, __pyx_L5_error)
+          #else
+          __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_5, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L5_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          #endif
+        } else {
+          {
+            Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_5);
+            #if !CYTHON_ASSUME_SAFE_MACROS
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 26, __pyx_L5_error)
+            #endif
+            if (__pyx_t_6 >= __pyx_temp) break;
+          }
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_5, __pyx_t_6); __Pyx_INCREF(__pyx_t_1); __pyx_t_6++; if (unlikely((0 < 0))) __PYX_ERR(0, 26, __pyx_L5_error)
+          #else
+          __pyx_t_1 = __Pyx_PySequence_ITEM(__pyx_t_5, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L5_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          #endif
+        }
+      } else {
+        __pyx_t_1 = __pyx_t_7(__pyx_t_5);
+        if (unlikely(!__pyx_t_1)) {
+          PyObject* exc_type = PyErr_Occurred();
+          if (exc_type) {
+            if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+            else __PYX_ERR(0, 26, __pyx_L5_error)
+          }
+          break;
+        }
+        __Pyx_GOTREF(__pyx_t_1);
+      }
+      __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 26, __pyx_L5_error)
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __pyx_v_chunk_start = __pyx_t_3;
 
-    /* "pydub/sample.pyx":22
- *         with nogil:
- *             _process_chunks_parallel(data, result_bytes, len_data, chunk_size, num_chunks)
+      /* "pydub/sample.pyx":27
+ *     try:
+ *         for chunk_start in range(0, len_data, chunk_size):
+ *             chunk_end = min(chunk_start + chunk_size, len_data - 2)             # <<<<<<<<<<<<<<
+ * 
+ *             for i in range(chunk_start, chunk_end, 3):
+ */
+      __pyx_t_8 = (__pyx_v_len_data - 2);
+      __pyx_t_3 = (__pyx_v_chunk_start + __pyx_v_chunk_size);
+      __pyx_t_4 = (__pyx_t_8 < __pyx_t_3);
+      if (__pyx_t_4) {
+        __pyx_t_9 = __pyx_t_8;
+      } else {
+        __pyx_t_9 = __pyx_t_3;
+      }
+      __pyx_v_chunk_end = __pyx_t_9;
+
+      /* "pydub/sample.pyx":29
+ *             chunk_end = min(chunk_start + chunk_size, len_data - 2)
+ * 
+ *             for i in range(chunk_start, chunk_end, 3):             # <<<<<<<<<<<<<<
+ *                 b0 = data[i]
+ *                 b1 = data[i + 1]
+ */
+      __pyx_t_3 = __pyx_v_chunk_end;
+      __pyx_t_10 = __pyx_t_3;
+      for (__pyx_t_11 = __pyx_v_chunk_start; __pyx_t_11 < __pyx_t_10; __pyx_t_11+=3) {
+        __pyx_v_i = __pyx_t_11;
+
+        /* "pydub/sample.pyx":30
+ * 
+ *             for i in range(chunk_start, chunk_end, 3):
+ *                 b0 = data[i]             # <<<<<<<<<<<<<<
+ *                 b1 = data[i + 1]
+ *                 b2 = data[i + 2]
+ */
+        __pyx_t_12 = __pyx_v_i;
+        __pyx_v_b0 = (*((unsigned char const  *) ( /* dim=0 */ (__pyx_v_data.data + __pyx_t_12 * __pyx_v_data.strides[0]) )));
+
+        /* "pydub/sample.pyx":31
+ *             for i in range(chunk_start, chunk_end, 3):
+ *                 b0 = data[i]
+ *                 b1 = data[i + 1]             # <<<<<<<<<<<<<<
+ *                 b2 = data[i + 2]
+ * 
+ */
+        __pyx_t_12 = (__pyx_v_i + 1);
+        __pyx_v_b1 = (*((unsigned char const  *) ( /* dim=0 */ (__pyx_v_data.data + __pyx_t_12 * __pyx_v_data.strides[0]) )));
+
+        /* "pydub/sample.pyx":32
+ *                 b0 = data[i]
+ *                 b1 = data[i + 1]
+ *                 b2 = data[i + 2]             # <<<<<<<<<<<<<<
+ * 
+ *                 result_bytes[p] = (b2 >> 7) * 0xff
+ */
+        __pyx_t_12 = (__pyx_v_i + 2);
+        __pyx_v_b2 = (*((unsigned char const  *) ( /* dim=0 */ (__pyx_v_data.data + __pyx_t_12 * __pyx_v_data.strides[0]) )));
+
+        /* "pydub/sample.pyx":34
+ *                 b2 = data[i + 2]
+ * 
+ *                 result_bytes[p] = (b2 >> 7) * 0xff             # <<<<<<<<<<<<<<
+ *                 result_bytes[p + 1] = b0
+ *                 result_bytes[p + 2] = b1
+ */
+        (__pyx_v_result_bytes[__pyx_v_p]) = ((__pyx_v_b2 >> 7) * 0xff);
+
+        /* "pydub/sample.pyx":35
+ * 
+ *                 result_bytes[p] = (b2 >> 7) * 0xff
+ *                 result_bytes[p + 1] = b0             # <<<<<<<<<<<<<<
+ *                 result_bytes[p + 2] = b1
+ *                 result_bytes[p + 3] = b2
+ */
+        (__pyx_v_result_bytes[(__pyx_v_p + 1)]) = __pyx_v_b0;
+
+        /* "pydub/sample.pyx":36
+ *                 result_bytes[p] = (b2 >> 7) * 0xff
+ *                 result_bytes[p + 1] = b0
+ *                 result_bytes[p + 2] = b1             # <<<<<<<<<<<<<<
+ *                 result_bytes[p + 3] = b2
+ * 
+ */
+        (__pyx_v_result_bytes[(__pyx_v_p + 2)]) = __pyx_v_b1;
+
+        /* "pydub/sample.pyx":37
+ *                 result_bytes[p + 1] = b0
+ *                 result_bytes[p + 2] = b1
+ *                 result_bytes[p + 3] = b2             # <<<<<<<<<<<<<<
+ * 
+ *                 p += 4
+ */
+        (__pyx_v_result_bytes[(__pyx_v_p + 3)]) = __pyx_v_b2;
+
+        /* "pydub/sample.pyx":39
+ *                 result_bytes[p + 3] = b2
+ * 
+ *                 p += 4             # <<<<<<<<<<<<<<
+ * 
+ *         return bytes(result_bytes[:len_result])
+ */
+        __pyx_v_p = (__pyx_v_p + 4);
+      }
+
+      /* "pydub/sample.pyx":26
+ * 
+ *     try:
+ *         for chunk_start in range(0, len_data, chunk_size):             # <<<<<<<<<<<<<<
+ *             chunk_end = min(chunk_start + chunk_size, len_data - 2)
+ * 
+ */
+    }
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+
+    /* "pydub/sample.pyx":41
+ *                 p += 4
+ * 
  *         return bytes(result_bytes[:len_result])             # <<<<<<<<<<<<<<
  *     finally:
  *         free(result_bytes)
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_2 = __Pyx_PyBytes_FromStringAndSize(((const char*)__pyx_v_result_bytes) + 0, __pyx_v_len_result - 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 22, __pyx_L5_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyBytes_Type)), __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 22, __pyx_L5_error)
+    __pyx_t_5 = __Pyx_PyBytes_FromStringAndSize(((const char*)__pyx_v_result_bytes) + 0, __pyx_v_len_result - 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 41, __pyx_L5_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyBytes_Type)), __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 41, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_r = __pyx_t_1;
     __pyx_t_1 = 0;
     goto __pyx_L4_return;
   }
 
-  /* "pydub/sample.pyx":24
+  /* "pydub/sample.pyx":43
  *         return bytes(result_bytes[:len_result])
  *     finally:
  *         free(result_bytes)             # <<<<<<<<<<<<<<
- * 
- * cdef int _process_chunks_parallel(const unsigned char[:] data, unsigned char *result_bytes,
  */
   /*finally:*/ {
     __pyx_L5_error:;
     /*exception exit:*/{
       __Pyx_PyThreadState_declare
       __Pyx_PyThreadState_assign
-      __pyx_t_7 = 0; __pyx_t_8 = 0; __pyx_t_9 = 0; __pyx_t_10 = 0; __pyx_t_11 = 0; __pyx_t_12 = 0;
+      __pyx_t_14 = 0; __pyx_t_15 = 0; __pyx_t_16 = 0; __pyx_t_17 = 0; __pyx_t_18 = 0; __pyx_t_19 = 0;
       __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (PY_MAJOR_VERSION >= 3) __Pyx_ExceptionSwap(&__pyx_t_10, &__pyx_t_11, &__pyx_t_12);
-      if ((PY_MAJOR_VERSION < 3) || unlikely(__Pyx_GetException(&__pyx_t_7, &__pyx_t_8, &__pyx_t_9) < 0)) __Pyx_ErrFetch(&__pyx_t_7, &__pyx_t_8, &__pyx_t_9);
-      __Pyx_XGOTREF(__pyx_t_7);
-      __Pyx_XGOTREF(__pyx_t_8);
-      __Pyx_XGOTREF(__pyx_t_9);
-      __Pyx_XGOTREF(__pyx_t_10);
-      __Pyx_XGOTREF(__pyx_t_11);
-      __Pyx_XGOTREF(__pyx_t_12);
-      __pyx_t_3 = __pyx_lineno; __pyx_t_5 = __pyx_clineno; __pyx_t_6 = __pyx_filename;
+      __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+      if (PY_MAJOR_VERSION >= 3) __Pyx_ExceptionSwap(&__pyx_t_17, &__pyx_t_18, &__pyx_t_19);
+      if ((PY_MAJOR_VERSION < 3) || unlikely(__Pyx_GetException(&__pyx_t_14, &__pyx_t_15, &__pyx_t_16) < 0)) __Pyx_ErrFetch(&__pyx_t_14, &__pyx_t_15, &__pyx_t_16);
+      __Pyx_XGOTREF(__pyx_t_14);
+      __Pyx_XGOTREF(__pyx_t_15);
+      __Pyx_XGOTREF(__pyx_t_16);
+      __Pyx_XGOTREF(__pyx_t_17);
+      __Pyx_XGOTREF(__pyx_t_18);
+      __Pyx_XGOTREF(__pyx_t_19);
+      __pyx_t_3 = __pyx_lineno; __pyx_t_10 = __pyx_clineno; __pyx_t_13 = __pyx_filename;
       {
         free(__pyx_v_result_bytes);
       }
       if (PY_MAJOR_VERSION >= 3) {
-        __Pyx_XGIVEREF(__pyx_t_10);
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_XGIVEREF(__pyx_t_12);
-        __Pyx_ExceptionReset(__pyx_t_10, __pyx_t_11, __pyx_t_12);
+        __Pyx_XGIVEREF(__pyx_t_17);
+        __Pyx_XGIVEREF(__pyx_t_18);
+        __Pyx_XGIVEREF(__pyx_t_19);
+        __Pyx_ExceptionReset(__pyx_t_17, __pyx_t_18, __pyx_t_19);
       }
-      __Pyx_XGIVEREF(__pyx_t_7);
-      __Pyx_XGIVEREF(__pyx_t_8);
-      __Pyx_XGIVEREF(__pyx_t_9);
-      __Pyx_ErrRestore(__pyx_t_7, __pyx_t_8, __pyx_t_9);
-      __pyx_t_7 = 0; __pyx_t_8 = 0; __pyx_t_9 = 0; __pyx_t_10 = 0; __pyx_t_11 = 0; __pyx_t_12 = 0;
-      __pyx_lineno = __pyx_t_3; __pyx_clineno = __pyx_t_5; __pyx_filename = __pyx_t_6;
+      __Pyx_XGIVEREF(__pyx_t_14);
+      __Pyx_XGIVEREF(__pyx_t_15);
+      __Pyx_XGIVEREF(__pyx_t_16);
+      __Pyx_ErrRestore(__pyx_t_14, __pyx_t_15, __pyx_t_16);
+      __pyx_t_14 = 0; __pyx_t_15 = 0; __pyx_t_16 = 0; __pyx_t_17 = 0; __pyx_t_18 = 0; __pyx_t_19 = 0;
+      __pyx_lineno = __pyx_t_3; __pyx_clineno = __pyx_t_10; __pyx_filename = __pyx_t_13;
       goto __pyx_L1_error;
     }
     __pyx_L4_return: {
-      __pyx_t_12 = __pyx_r;
+      __pyx_t_19 = __pyx_r;
       __pyx_r = 0;
       free(__pyx_v_result_bytes);
-      __pyx_r = __pyx_t_12;
-      __pyx_t_12 = 0;
+      __pyx_r = __pyx_t_19;
+      __pyx_t_19 = 0;
       goto __pyx_L0;
     }
   }
 
-  /* "pydub/sample.pyx":5
- * from cython.parallel import prange
+  /* "pydub/sample.pyx":10
+ * 
  * 
  * @cython.boundscheck(False)             # <<<<<<<<<<<<<<
  * @cython.wraparound(False)
@@ -17710,444 +17892,12 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_5);
   __Pyx_AddTraceback("pydub.sample.convert_24bit_to_32bit", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-/* "pydub/sample.pyx":26
- *         free(result_bytes)
- * 
- * cdef int _process_chunks_parallel(const unsigned char[:] data, unsigned char *result_bytes,             # <<<<<<<<<<<<<<
- *                                  int len_data, int chunk_size, int num_chunks) nogil:
- *     cdef:
- */
-
-static int __pyx_f_5pydub_6sample__process_chunks_parallel(__Pyx_memviewslice __pyx_v_data, unsigned char *__pyx_v_result_bytes, int __pyx_v_len_data, int __pyx_v_chunk_size, CYTHON_UNUSED int __pyx_v_num_chunks) {
-  int __pyx_v_chunk_idx;
-  int __pyx_v_chunk_start;
-  int __pyx_v_chunk_end;
-  int __pyx_v_i;
-  int __pyx_v_p;
-  unsigned char __pyx_v_b0;
-  unsigned char __pyx_v_b1;
-  unsigned char __pyx_v_b2;
-  int __pyx_r;
-  __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
-  int __pyx_t_2;
-  int __pyx_t_3;
-  long __pyx_t_4;
-  int __pyx_t_5;
-  long __pyx_t_6;
-  int __pyx_t_7;
-  int __pyx_t_8;
-  int __pyx_t_9;
-  Py_ssize_t __pyx_t_10;
-  int __pyx_t_11;
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
-  #ifdef WITH_THREAD
-  PyGILState_STATE __pyx_gilstate_save;
-  #endif
-  __Pyx_RefNannySetupContext("_process_chunks_parallel", 1);
-
-  /* "pydub/sample.pyx":33
- *         unsigned char b0, b1, b2
- * 
- *     for chunk_idx in prange(num_chunks, schedule='guided'):             # <<<<<<<<<<<<<<
- *         chunk_start = chunk_idx * chunk_size
- *         chunk_end = min(chunk_start + chunk_size, len_data - 2)
- */
-  {
-      #ifdef WITH_THREAD
-      PyThreadState *_save;
-      _save = NULL;
-      if (PyGILState_Check()) {
-        Py_UNBLOCK_THREADS
-      }
-      __Pyx_FastGIL_Remember();
-      #endif
-      /*try:*/ {
-        __pyx_t_1 = __pyx_v_num_chunks;
-        {
-            unsigned char __pyx_parallel_temp0 = ((unsigned char)'?');
-            unsigned char __pyx_parallel_temp1 = ((unsigned char)'?');
-            unsigned char __pyx_parallel_temp2 = ((unsigned char)'?');
-            int __pyx_parallel_temp3 = ((int)0xbad0bad0);
-            int __pyx_parallel_temp4 = ((int)0xbad0bad0);
-            int __pyx_parallel_temp5 = ((int)0xbad0bad0);
-            int __pyx_parallel_temp6 = ((int)0xbad0bad0);
-            int __pyx_parallel_temp7 = ((int)0xbad0bad0);
-            const char *__pyx_parallel_filename = NULL; int __pyx_parallel_lineno = 0, __pyx_parallel_clineno = 0;
-            PyObject *__pyx_parallel_exc_type = NULL, *__pyx_parallel_exc_value = NULL, *__pyx_parallel_exc_tb = NULL;
-            int __pyx_parallel_why;
-            __pyx_parallel_why = 0;
-            #if ((defined(__APPLE__) || defined(__OSX__)) && (defined(__GNUC__) && (__GNUC__ > 2 || (__GNUC__ == 2 && (__GNUC_MINOR__ > 95)))))
-                #undef likely
-                #undef unlikely
-                #define likely(x)   (x)
-                #define unlikely(x) (x)
-            #endif
-            __pyx_t_3 = (__pyx_t_1 - 0 + 1 - 1/abs(1)) / 1;
-            if (__pyx_t_3 > 0)
-            {
-                #ifdef _OPENMP
-                #pragma omp parallel private(__pyx_t_10, __pyx_t_11, __pyx_t_4, __pyx_t_5, __pyx_t_6, __pyx_t_7, __pyx_t_8, __pyx_t_9) private(__pyx_filename, __pyx_lineno, __pyx_clineno) shared(__pyx_parallel_why, __pyx_parallel_exc_type, __pyx_parallel_exc_value, __pyx_parallel_exc_tb)
-                #endif /* _OPENMP */
-                {
-                    #ifdef _OPENMP
-                    #ifdef WITH_THREAD
-                    PyGILState_STATE __pyx_gilstate_save = __Pyx_PyGILState_Ensure();
-                    #endif
-                    Py_BEGIN_ALLOW_THREADS
-                    #endif /* _OPENMP */
-                    #ifdef _OPENMP
-                    #pragma omp for lastprivate(__pyx_v_b0) lastprivate(__pyx_v_b1) lastprivate(__pyx_v_b2) lastprivate(__pyx_v_chunk_end) firstprivate(__pyx_v_chunk_idx) lastprivate(__pyx_v_chunk_idx) lastprivate(__pyx_v_chunk_start) lastprivate(__pyx_v_i) lastprivate(__pyx_v_p) schedule(guided)
-                    #endif /* _OPENMP */
-                    for (__pyx_t_2 = 0; __pyx_t_2 < __pyx_t_3; __pyx_t_2++){
-                        if (__pyx_parallel_why < 2)
-                        {
-                            __pyx_v_chunk_idx = (int)(0 + 1 * __pyx_t_2);
-                            /* Initialize private variables to invalid values */
-                            __pyx_v_b0 = ((unsigned char)'?');
-                            __pyx_v_b1 = ((unsigned char)'?');
-                            __pyx_v_b2 = ((unsigned char)'?');
-                            __pyx_v_chunk_end = ((int)0xbad0bad0);
-                            __pyx_v_chunk_start = ((int)0xbad0bad0);
-                            __pyx_v_i = ((int)0xbad0bad0);
-                            __pyx_v_p = ((int)0xbad0bad0);
-
-                            /* "pydub/sample.pyx":34
- * 
- *     for chunk_idx in prange(num_chunks, schedule='guided'):
- *         chunk_start = chunk_idx * chunk_size             # <<<<<<<<<<<<<<
- *         chunk_end = min(chunk_start + chunk_size, len_data - 2)
- *         p = (chunk_start // 3) * 4
- */
-                            __pyx_v_chunk_start = (__pyx_v_chunk_idx * __pyx_v_chunk_size);
-
-                            /* "pydub/sample.pyx":35
- *     for chunk_idx in prange(num_chunks, schedule='guided'):
- *         chunk_start = chunk_idx * chunk_size
- *         chunk_end = min(chunk_start + chunk_size, len_data - 2)             # <<<<<<<<<<<<<<
- *         p = (chunk_start // 3) * 4
- * 
- */
-                            __pyx_t_4 = (__pyx_v_len_data - 2);
-                            __pyx_t_5 = (__pyx_v_chunk_start + __pyx_v_chunk_size);
-                            __pyx_t_7 = (__pyx_t_4 < __pyx_t_5);
-                            if (__pyx_t_7) {
-                              __pyx_t_6 = __pyx_t_4;
-                            } else {
-                              __pyx_t_6 = __pyx_t_5;
-                            }
-                            __pyx_v_chunk_end = __pyx_t_6;
-
-                            /* "pydub/sample.pyx":36
- *         chunk_start = chunk_idx * chunk_size
- *         chunk_end = min(chunk_start + chunk_size, len_data - 2)
- *         p = (chunk_start // 3) * 4             # <<<<<<<<<<<<<<
- * 
- *         # Process each 3-byte sample in the chunk
- */
-                            __pyx_v_p = (__Pyx_div_long(__pyx_v_chunk_start, 3) * 4);
-
-                            /* "pydub/sample.pyx":39
- * 
- *         # Process each 3-byte sample in the chunk
- *         for i in range(chunk_start, chunk_end, 3):             # <<<<<<<<<<<<<<
- *             # Load 3 bytes at once and process them
- *             b0 = data[i]
- */
-                            __pyx_t_5 = __pyx_v_chunk_end;
-                            __pyx_t_8 = __pyx_t_5;
-                            for (__pyx_t_9 = __pyx_v_chunk_start; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=3) {
-                              __pyx_v_i = __pyx_t_9;
-
-                              /* "pydub/sample.pyx":41
- *         for i in range(chunk_start, chunk_end, 3):
- *             # Load 3 bytes at once and process them
- *             b0 = data[i]             # <<<<<<<<<<<<<<
- *             b1 = data[i + 1]
- *             b2 = data[i + 2]
- */
-                              __pyx_t_10 = __pyx_v_i;
-                              __pyx_t_11 = -1;
-                              if (__pyx_t_10 < 0) {
-                                __pyx_t_10 += __pyx_v_data.shape[0];
-                                if (unlikely(__pyx_t_10 < 0)) __pyx_t_11 = 0;
-                              } else if (unlikely(__pyx_t_10 >= __pyx_v_data.shape[0])) __pyx_t_11 = 0;
-                              if (unlikely(__pyx_t_11 != -1)) {
-                                __Pyx_RaiseBufferIndexErrorNogil(__pyx_t_11);
-                                __PYX_ERR(0, 41, __pyx_L8_error)
-                              }
-                              __pyx_v_b0 = (*((unsigned char const  *) ( /* dim=0 */ (__pyx_v_data.data + __pyx_t_10 * __pyx_v_data.strides[0]) )));
-
-                              /* "pydub/sample.pyx":42
- *             # Load 3 bytes at once and process them
- *             b0 = data[i]
- *             b1 = data[i + 1]             # <<<<<<<<<<<<<<
- *             b2 = data[i + 2]
- * 
- */
-                              __pyx_t_10 = (__pyx_v_i + 1);
-                              __pyx_t_11 = -1;
-                              if (__pyx_t_10 < 0) {
-                                __pyx_t_10 += __pyx_v_data.shape[0];
-                                if (unlikely(__pyx_t_10 < 0)) __pyx_t_11 = 0;
-                              } else if (unlikely(__pyx_t_10 >= __pyx_v_data.shape[0])) __pyx_t_11 = 0;
-                              if (unlikely(__pyx_t_11 != -1)) {
-                                __Pyx_RaiseBufferIndexErrorNogil(__pyx_t_11);
-                                __PYX_ERR(0, 42, __pyx_L8_error)
-                              }
-                              __pyx_v_b1 = (*((unsigned char const  *) ( /* dim=0 */ (__pyx_v_data.data + __pyx_t_10 * __pyx_v_data.strides[0]) )));
-
-                              /* "pydub/sample.pyx":43
- *             b0 = data[i]
- *             b1 = data[i + 1]
- *             b2 = data[i + 2]             # <<<<<<<<<<<<<<
- * 
- *             # Use bitwise operations instead of conditionals
- */
-                              __pyx_t_10 = (__pyx_v_i + 2);
-                              __pyx_t_11 = -1;
-                              if (__pyx_t_10 < 0) {
-                                __pyx_t_10 += __pyx_v_data.shape[0];
-                                if (unlikely(__pyx_t_10 < 0)) __pyx_t_11 = 0;
-                              } else if (unlikely(__pyx_t_10 >= __pyx_v_data.shape[0])) __pyx_t_11 = 0;
-                              if (unlikely(__pyx_t_11 != -1)) {
-                                __Pyx_RaiseBufferIndexErrorNogil(__pyx_t_11);
-                                __PYX_ERR(0, 43, __pyx_L8_error)
-                              }
-                              __pyx_v_b2 = (*((unsigned char const  *) ( /* dim=0 */ (__pyx_v_data.data + __pyx_t_10 * __pyx_v_data.strides[0]) )));
-
-                              /* "pydub/sample.pyx":46
- * 
- *             # Use bitwise operations instead of conditionals
- *             result_bytes[p] = (b2 >> 7) * 0xff  # Sign extension             # <<<<<<<<<<<<<<
- *             result_bytes[p + 1] = b0
- *             result_bytes[p + 2] = b1
- */
-                              (__pyx_v_result_bytes[__pyx_v_p]) = ((__pyx_v_b2 >> 7) * 0xff);
-
-                              /* "pydub/sample.pyx":47
- *             # Use bitwise operations instead of conditionals
- *             result_bytes[p] = (b2 >> 7) * 0xff  # Sign extension
- *             result_bytes[p + 1] = b0             # <<<<<<<<<<<<<<
- *             result_bytes[p + 2] = b1
- *             result_bytes[p + 3] = b2
- */
-                              (__pyx_v_result_bytes[(__pyx_v_p + 1)]) = __pyx_v_b0;
-
-                              /* "pydub/sample.pyx":48
- *             result_bytes[p] = (b2 >> 7) * 0xff  # Sign extension
- *             result_bytes[p + 1] = b0
- *             result_bytes[p + 2] = b1             # <<<<<<<<<<<<<<
- *             result_bytes[p + 3] = b2
- * 
- */
-                              (__pyx_v_result_bytes[(__pyx_v_p + 2)]) = __pyx_v_b1;
-
-                              /* "pydub/sample.pyx":49
- *             result_bytes[p + 1] = b0
- *             result_bytes[p + 2] = b1
- *             result_bytes[p + 3] = b2             # <<<<<<<<<<<<<<
- * 
- *             p = p + 4
- */
-                              (__pyx_v_result_bytes[(__pyx_v_p + 3)]) = __pyx_v_b2;
-
-                              /* "pydub/sample.pyx":51
- *             result_bytes[p + 3] = b2
- * 
- *             p = p + 4             # <<<<<<<<<<<<<<
- * 
- * cdef inline unsigned char sign_extend(unsigned char msb) nogil:
- */
-                              __pyx_v_p = (__pyx_v_p + 4);
-                            }
-                            goto __pyx_L13;
-                            __pyx_L8_error:;
-                            {
-                                #ifdef WITH_THREAD
-                                PyGILState_STATE __pyx_gilstate_save = __Pyx_PyGILState_Ensure();
-                                #endif
-                                #ifdef _OPENMP
-                                #pragma omp flush(__pyx_parallel_exc_type)
-                                #endif /* _OPENMP */
-                                if (!__pyx_parallel_exc_type) {
-                                  __Pyx_ErrFetchWithState(&__pyx_parallel_exc_type, &__pyx_parallel_exc_value, &__pyx_parallel_exc_tb);
-                                  __pyx_parallel_filename = __pyx_filename; __pyx_parallel_lineno = __pyx_lineno; __pyx_parallel_clineno = __pyx_clineno;
-                                  __Pyx_GOTREF(__pyx_parallel_exc_type);
-                                }
-                                #ifdef WITH_THREAD
-                                __Pyx_PyGILState_Release(__pyx_gilstate_save);
-                                #endif
-                            }
-                            __pyx_parallel_why = 4;
-                            goto __pyx_L12;
-                            __pyx_L12:;
-                            #ifdef _OPENMP
-                            #pragma omp critical(__pyx_parallel_lastprivates0)
-                            #endif /* _OPENMP */
-                            {
-                                __pyx_parallel_temp0 = __pyx_v_b0;
-                                __pyx_parallel_temp1 = __pyx_v_b1;
-                                __pyx_parallel_temp2 = __pyx_v_b2;
-                                __pyx_parallel_temp3 = __pyx_v_chunk_end;
-                                __pyx_parallel_temp4 = __pyx_v_chunk_idx;
-                                __pyx_parallel_temp5 = __pyx_v_chunk_start;
-                                __pyx_parallel_temp6 = __pyx_v_i;
-                                __pyx_parallel_temp7 = __pyx_v_p;
-                            }
-                            __pyx_L13:;
-                            #ifdef _OPENMP
-                            #pragma omp flush(__pyx_parallel_why)
-                            #endif /* _OPENMP */
-                        }
-                    }
-                    #ifdef _OPENMP
-                    Py_END_ALLOW_THREADS
-                    #else
-{
-#ifdef WITH_THREAD
-                    PyGILState_STATE __pyx_gilstate_save = __Pyx_PyGILState_Ensure();
-                    #endif
-                    #endif /* _OPENMP */
-                    /* Clean up any temporaries */
-                    #ifdef WITH_THREAD
-                    __Pyx_PyGILState_Release(__pyx_gilstate_save);
-                    #endif
-                    #ifndef _OPENMP
-}
-#endif /* _OPENMP */
-                }
-            }
-            if (__pyx_parallel_exc_type) {
-              /* This may have been overridden by a continue, break or return in another thread. Prefer the error. */
-              __pyx_parallel_why = 4;
-            }
-            if (__pyx_parallel_why) {
-              __pyx_v_b0 = __pyx_parallel_temp0;
-              __pyx_v_b1 = __pyx_parallel_temp1;
-              __pyx_v_b2 = __pyx_parallel_temp2;
-              __pyx_v_chunk_end = __pyx_parallel_temp3;
-              __pyx_v_chunk_idx = __pyx_parallel_temp4;
-              __pyx_v_chunk_start = __pyx_parallel_temp5;
-              __pyx_v_i = __pyx_parallel_temp6;
-              __pyx_v_p = __pyx_parallel_temp7;
-              switch (__pyx_parallel_why) {
-                    case 4:
-                {
-                    #ifdef WITH_THREAD
-                    PyGILState_STATE __pyx_gilstate_save = __Pyx_PyGILState_Ensure();
-                    #endif
-                    __Pyx_GIVEREF(__pyx_parallel_exc_type);
-                    __Pyx_ErrRestoreWithState(__pyx_parallel_exc_type, __pyx_parallel_exc_value, __pyx_parallel_exc_tb);
-                    __pyx_filename = __pyx_parallel_filename; __pyx_lineno = __pyx_parallel_lineno; __pyx_clineno = __pyx_parallel_clineno;
-                    #ifdef WITH_THREAD
-                    __Pyx_PyGILState_Release(__pyx_gilstate_save);
-                    #endif
-                }
-                goto __pyx_L4_error;
-              }
-            }
-        }
-        #if ((defined(__APPLE__) || defined(__OSX__)) && (defined(__GNUC__) && (__GNUC__ > 2 || (__GNUC__ == 2 && (__GNUC_MINOR__ > 95)))))
-            #undef likely
-            #undef unlikely
-            #define likely(x)   __builtin_expect(!!(x), 1)
-            #define unlikely(x) __builtin_expect(!!(x), 0)
-        #endif
-      }
-
-      /* "pydub/sample.pyx":33
- *         unsigned char b0, b1, b2
- * 
- *     for chunk_idx in prange(num_chunks, schedule='guided'):             # <<<<<<<<<<<<<<
- *         chunk_start = chunk_idx * chunk_size
- *         chunk_end = min(chunk_start + chunk_size, len_data - 2)
- */
-      /*finally:*/ {
-        /*normal exit:*/{
-          #ifdef WITH_THREAD
-          __Pyx_FastGIL_Forget();
-          if (_save) {
-            Py_BLOCK_THREADS
-          }
-          #endif
-          goto __pyx_L5;
-        }
-        __pyx_L4_error: {
-          #ifdef WITH_THREAD
-          __Pyx_FastGIL_Forget();
-          if (_save) {
-            Py_BLOCK_THREADS
-          }
-          #endif
-          goto __pyx_L1_error;
-        }
-        __pyx_L5:;
-      }
-  }
-
-  /* "pydub/sample.pyx":26
- *         free(result_bytes)
- * 
- * cdef int _process_chunks_parallel(const unsigned char[:] data, unsigned char *result_bytes,             # <<<<<<<<<<<<<<
- *                                  int len_data, int chunk_size, int num_chunks) nogil:
- *     cdef:
- */
-
-  /* function exit code */
-  __pyx_r = 0;
-  goto __pyx_L0;
-  __pyx_L1_error:;
-  #ifdef WITH_THREAD
-  __pyx_gilstate_save = __Pyx_PyGILState_Ensure();
-  #endif
-  __Pyx_AddTraceback("pydub.sample._process_chunks_parallel", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = -1;
-  #ifdef WITH_THREAD
-  __Pyx_PyGILState_Release(__pyx_gilstate_save);
-  #endif
-  __pyx_L0:;
-  __Pyx_RefNannyFinishContextNogil()
-  return __pyx_r;
-}
-
-/* "pydub/sample.pyx":53
- *             p = p + 4
- * 
- * cdef inline unsigned char sign_extend(unsigned char msb) nogil:             # <<<<<<<<<<<<<<
- *     return (msb >> 7) * 0xff
- */
-
-static CYTHON_INLINE unsigned char __pyx_f_5pydub_6sample_sign_extend(unsigned char __pyx_v_msb) {
-  unsigned char __pyx_r;
-
-  /* "pydub/sample.pyx":54
- * 
- * cdef inline unsigned char sign_extend(unsigned char msb) nogil:
- *     return (msb >> 7) * 0xff             # <<<<<<<<<<<<<<
- */
-  __pyx_r = ((__pyx_v_msb >> 7) * 0xff);
-  goto __pyx_L0;
-
-  /* "pydub/sample.pyx":53
- *             p = p + 4
- * 
- * cdef inline unsigned char sign_extend(unsigned char msb) nogil:             # <<<<<<<<<<<<<<
- *     return (msb >> 7) * 0xff
- */
-
-  /* function exit code */
-  __pyx_L0:;
   return __pyx_r;
 }
 static struct __pyx_vtabstruct_array __pyx_vtable_array;
@@ -19153,11 +18903,17 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_abc, __pyx_k_abc, sizeof(__pyx_k_abc), 0, 0, 1, 1},
     {&__pyx_n_s_allocate_buffer, __pyx_k_allocate_buffer, sizeof(__pyx_k_allocate_buffer), 0, 0, 1, 1},
     {&__pyx_kp_u_and, __pyx_k_and, sizeof(__pyx_k_and), 0, 1, 0, 0},
+    {&__pyx_n_s_array, __pyx_k_array, sizeof(__pyx_k_array), 0, 0, 1, 1},
     {&__pyx_n_s_asyncio_coroutines, __pyx_k_asyncio_coroutines, sizeof(__pyx_k_asyncio_coroutines), 0, 0, 1, 1},
+    {&__pyx_n_s_b0, __pyx_k_b0, sizeof(__pyx_k_b0), 0, 0, 1, 1},
+    {&__pyx_n_s_b1, __pyx_k_b1, sizeof(__pyx_k_b1), 0, 0, 1, 1},
+    {&__pyx_n_s_b2, __pyx_k_b2, sizeof(__pyx_k_b2), 0, 0, 1, 1},
     {&__pyx_n_s_base, __pyx_k_base, sizeof(__pyx_k_base), 0, 0, 1, 1},
     {&__pyx_n_s_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 0, 1, 1},
     {&__pyx_n_u_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 1, 0, 1},
+    {&__pyx_n_s_chunk_end, __pyx_k_chunk_end, sizeof(__pyx_k_chunk_end), 0, 0, 1, 1},
     {&__pyx_n_s_chunk_size, __pyx_k_chunk_size, sizeof(__pyx_k_chunk_size), 0, 0, 1, 1},
+    {&__pyx_n_s_chunk_start, __pyx_k_chunk_start, sizeof(__pyx_k_chunk_start), 0, 0, 1, 1},
     {&__pyx_n_s_class, __pyx_k_class, sizeof(__pyx_k_class), 0, 0, 1, 1},
     {&__pyx_n_s_class_getitem, __pyx_k_class_getitem, sizeof(__pyx_k_class_getitem), 0, 0, 1, 1},
     {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
@@ -19183,6 +18939,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_getstate, __pyx_k_getstate, sizeof(__pyx_k_getstate), 0, 0, 1, 1},
     {&__pyx_kp_u_got, __pyx_k_got, sizeof(__pyx_k_got), 0, 1, 0, 0},
     {&__pyx_kp_u_got_differing_extents_in_dimensi, __pyx_k_got_differing_extents_in_dimensi, sizeof(__pyx_k_got_differing_extents_in_dimensi), 0, 1, 0, 0},
+    {&__pyx_n_s_i, __pyx_k_i, sizeof(__pyx_k_i), 0, 0, 1, 1},
     {&__pyx_n_s_id, __pyx_k_id, sizeof(__pyx_k_id), 0, 0, 1, 1},
     {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
     {&__pyx_n_s_index, __pyx_k_index, sizeof(__pyx_k_index), 0, 0, 1, 1},
@@ -19201,8 +18958,8 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_ndim, __pyx_k_ndim, sizeof(__pyx_k_ndim), 0, 0, 1, 1},
     {&__pyx_n_s_new, __pyx_k_new, sizeof(__pyx_k_new), 0, 0, 1, 1},
     {&__pyx_kp_s_no_default___reduce___due_to_non, __pyx_k_no_default___reduce___due_to_non, sizeof(__pyx_k_no_default___reduce___due_to_non), 0, 0, 1, 0},
-    {&__pyx_n_s_num_chunks, __pyx_k_num_chunks, sizeof(__pyx_k_num_chunks), 0, 0, 1, 1},
     {&__pyx_n_s_obj, __pyx_k_obj, sizeof(__pyx_k_obj), 0, 0, 1, 1},
+    {&__pyx_n_s_p, __pyx_k_p, sizeof(__pyx_k_p), 0, 0, 1, 1},
     {&__pyx_n_s_pack, __pyx_k_pack, sizeof(__pyx_k_pack), 0, 0, 1, 1},
     {&__pyx_n_s_pickle, __pyx_k_pickle, sizeof(__pyx_k_pickle), 0, 0, 1, 1},
     {&__pyx_n_s_pydub_sample, __pyx_k_pydub_sample, sizeof(__pyx_k_pydub_sample), 0, 0, 1, 1},
@@ -19246,8 +19003,8 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
 }
 /* #### Code section: cached_builtins ### */
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(0, 17, __pyx_L1_error)
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 39, __pyx_L1_error)
+  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(0, 23, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 26, __pyx_L1_error)
   __pyx_builtin___import__ = __Pyx_GetBuiltinName(__pyx_n_s_import); if (!__pyx_builtin___import__) __PYX_ERR(1, 100, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(1, 141, __pyx_L1_error)
   __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(1, 159, __pyx_L1_error)
@@ -19302,14 +19059,14 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__8);
   __Pyx_GIVEREF(__pyx_tuple__8);
 
-  /* "pydub/sample.pyx":17
+  /* "pydub/sample.pyx":23
  * 
  *     if result_bytes == NULL:
  *         raise MemoryError("Could not allocate memory for result array")             # <<<<<<<<<<<<<<
  * 
  *     try:
  */
-  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_u_Could_not_allocate_memory_for_re); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 17, __pyx_L1_error)
+  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_u_Could_not_allocate_memory_for_re); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 23, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__9);
   __Pyx_GIVEREF(__pyx_tuple__9);
 
@@ -19414,17 +19171,17 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__19);
   __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_pyx_unpickle_Enum, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(1, 1, __pyx_L1_error)
 
-  /* "pydub/sample.pyx":5
- * from cython.parallel import prange
+  /* "pydub/sample.pyx":10
+ * 
  * 
  * @cython.boundscheck(False)             # <<<<<<<<<<<<<<
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  */
-  __pyx_tuple__21 = PyTuple_Pack(6, __pyx_n_s_data, __pyx_n_s_chunk_size, __pyx_n_s_len_data, __pyx_n_s_len_result, __pyx_n_s_result_bytes, __pyx_n_s_num_chunks); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 5, __pyx_L1_error)
+  __pyx_tuple__21 = PyTuple_Pack(12, __pyx_n_s_data, __pyx_n_s_len_data, __pyx_n_s_len_result, __pyx_n_s_i, __pyx_n_s_p, __pyx_n_s_chunk_start, __pyx_n_s_chunk_end, __pyx_n_s_chunk_size, __pyx_n_s_b0, __pyx_n_s_b1, __pyx_n_s_b2, __pyx_n_s_result_bytes); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__21);
   __Pyx_GIVEREF(__pyx_tuple__21);
-  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_pydub_sample_pyx, __pyx_n_s_convert_24bit_to_32bit, 5, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 5, __pyx_L1_error)
+  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 12, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_pydub_sample_pyx, __pyx_n_s_convert_24bit_to_32bit, 10, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -19451,13 +19208,6 @@ static CYTHON_SMALL_CODE int __Pyx_InitConstants(void) {
 static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
   /* AssertionsEnabled.init */
   if (likely(__Pyx_init_assertions_enabled() == 0)); else
-
-if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 1, __pyx_L1_error)
-
-  /* InitThreads.init */
-  #if defined(WITH_THREAD) && PY_VERSION_HEX < 0x030700F0
-PyEval_InitThreads();
-#endif
 
 if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 1, __pyx_L1_error)
 
@@ -20482,22 +20232,32 @@ if (!__Pyx_RefNanny) {
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_pyx_unpickle_Enum, __pyx_t_7) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "pydub/sample.pyx":5
- * from cython.parallel import prange
+  /* "pydub/sample.pyx":1
+ * import array             # <<<<<<<<<<<<<<
+ * 
+ * cimport cython
+ */
+  __pyx_t_7 = __Pyx_ImportDottedModule(__pyx_n_s_array, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_array, __pyx_t_7) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+
+  /* "pydub/sample.pyx":10
+ * 
  * 
  * @cython.boundscheck(False)             # <<<<<<<<<<<<<<
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  */
-  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5pydub_6sample_1convert_24bit_to_32bit, 0, __pyx_n_s_convert_24bit_to_32bit, NULL, __pyx_n_s_pydub_sample, __pyx_d, ((PyObject *)__pyx_codeobj__22)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 5, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5pydub_6sample_1convert_24bit_to_32bit, 0, __pyx_n_s_convert_24bit_to_32bit, NULL, __pyx_n_s_pydub_sample, __pyx_d, ((PyObject *)__pyx_codeobj__22)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_convert_24bit_to_32bit, __pyx_t_7) < 0) __PYX_ERR(0, 5, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_convert_24bit_to_32bit, __pyx_t_7) < 0) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
   /* "pydub/sample.pyx":1
- * cimport cython             # <<<<<<<<<<<<<<
- * from libc.stdlib cimport free, malloc
- * from cython.parallel import prange
+ * import array             # <<<<<<<<<<<<<<
+ * 
+ * cimport cython
  */
   __pyx_t_7 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
@@ -22989,36 +22749,6 @@ static CYTHON_INLINE int __Pyx_HasAttr(PyObject *o, PyObject *n) {
     }
 }
 #endif
-
-/* ErrOccurredWithGIL */
-static CYTHON_INLINE int __Pyx_ErrOccurredWithGIL(void) {
-  int err;
-  #ifdef WITH_THREAD
-  PyGILState_STATE _save = PyGILState_Ensure();
-  #endif
-  err = !!PyErr_Occurred();
-  #ifdef WITH_THREAD
-  PyGILState_Release(_save);
-  #endif
-  return err;
-}
-
-/* BufferIndexError */
-static void __Pyx_RaiseBufferIndexError(int axis) {
-  PyErr_Format(PyExc_IndexError,
-     "Out of bounds on buffer access (axis %d)", axis);
-}
-
-/* BufferIndexErrorNogil */
-static void __Pyx_RaiseBufferIndexErrorNogil(int axis) {
-    #ifdef WITH_THREAD
-    PyGILState_STATE gilstate = PyGILState_Ensure();
-    #endif
-    __Pyx_RaiseBufferIndexError(axis);
-    #ifdef WITH_THREAD
-    PyGILState_Release(gilstate);
-    #endif
-}
 
 /* PyObject_GenericGetAttrNoDict */
 #if CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP && PY_VERSION_HEX < 0x03070000

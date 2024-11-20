@@ -17486,8 +17486,8 @@ static PyObject *__pyx_pf_5pydub_6sample_extend_24bit_to_32bit(CYTHON_UNUSED PyO
  * def extend_24bit_to_32bit(const unsigned char[:] data):
  *     cdef:
  *         int input_size = data.size             # <<<<<<<<<<<<<<
- *         int output_size = input_size // BYTES_PER_SAMPLE_24BIT * BYTES_PER_SAMPLE_32BIT
- *         int num_samples = input_size // BYTES_PER_SAMPLE_24BIT
+ *         int output_size = input_size // BYTES_PER_24BIT_SAMPLE * BYTES_PER_32BIT_SAMPLE
+ *         int num_samples = input_size // BYTES_PER_24BIT_SAMPLE
  */
   __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_data, 1, (PyObject *(*)(char *)) __pyx_memview_get_unsigned_char__const__, (int (*)(char *, PyObject *)) NULL, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -17501,24 +17501,24 @@ static PyObject *__pyx_pf_5pydub_6sample_extend_24bit_to_32bit(CYTHON_UNUSED PyO
   /* "pydub/sample.pyx":16
  *     cdef:
  *         int input_size = data.size
- *         int output_size = input_size // BYTES_PER_SAMPLE_24BIT * BYTES_PER_SAMPLE_32BIT             # <<<<<<<<<<<<<<
- *         int num_samples = input_size // BYTES_PER_SAMPLE_24BIT
+ *         int output_size = input_size // BYTES_PER_24BIT_SAMPLE * BYTES_PER_32BIT_SAMPLE             # <<<<<<<<<<<<<<
+ *         int num_samples = input_size // BYTES_PER_24BIT_SAMPLE
  *         int sample_idx = 0
  */
   __pyx_v_output_size = ((__pyx_v_input_size / 3) * 4);
 
   /* "pydub/sample.pyx":17
  *         int input_size = data.size
- *         int output_size = input_size // BYTES_PER_SAMPLE_24BIT * BYTES_PER_SAMPLE_32BIT
- *         int num_samples = input_size // BYTES_PER_SAMPLE_24BIT             # <<<<<<<<<<<<<<
+ *         int output_size = input_size // BYTES_PER_24BIT_SAMPLE * BYTES_PER_32BIT_SAMPLE
+ *         int num_samples = input_size // BYTES_PER_24BIT_SAMPLE             # <<<<<<<<<<<<<<
  *         int sample_idx = 0
  *         unsigned char* input_ptr = <unsigned char*>&data[0]
  */
   __pyx_v_num_samples = (__pyx_v_input_size / 3);
 
   /* "pydub/sample.pyx":18
- *         int output_size = input_size // BYTES_PER_SAMPLE_24BIT * BYTES_PER_SAMPLE_32BIT
- *         int num_samples = input_size // BYTES_PER_SAMPLE_24BIT
+ *         int output_size = input_size // BYTES_PER_24BIT_SAMPLE * BYTES_PER_32BIT_SAMPLE
+ *         int num_samples = input_size // BYTES_PER_24BIT_SAMPLE
  *         int sample_idx = 0             # <<<<<<<<<<<<<<
  *         unsigned char* input_ptr = <unsigned char*>&data[0]
  *         unsigned char* output_ptr = <unsigned char*> malloc(output_size * sizeof(unsigned char))
@@ -17526,7 +17526,7 @@ static PyObject *__pyx_pf_5pydub_6sample_extend_24bit_to_32bit(CYTHON_UNUSED PyO
   __pyx_v_sample_idx = 0;
 
   /* "pydub/sample.pyx":19
- *         int num_samples = input_size // BYTES_PER_SAMPLE_24BIT
+ *         int num_samples = input_size // BYTES_PER_24BIT_SAMPLE
  *         int sample_idx = 0
  *         unsigned char* input_ptr = <unsigned char*>&data[0]             # <<<<<<<<<<<<<<
  *         unsigned char* output_ptr = <unsigned char*> malloc(output_size * sizeof(unsigned char))
@@ -17590,7 +17590,7 @@ static PyObject *__pyx_pf_5pydub_6sample_extend_24bit_to_32bit(CYTHON_UNUSED PyO
  *     try:
  *         for sample_idx in range(num_samples):             # <<<<<<<<<<<<<<
  *             # Extend sign bit
- *             output_ptr[sample_idx * BYTES_PER_SAMPLE_32BIT] = (input_ptr[2] >> 7) * 0xff
+ *             output_ptr[sample_idx * BYTES_PER_32BIT_SAMPLE] = (input_ptr[2] >> 7) * 0xff
  */
     __pyx_t_3 = __pyx_v_num_samples;
     __pyx_t_6 = __pyx_t_3;
@@ -17600,25 +17600,25 @@ static PyObject *__pyx_pf_5pydub_6sample_extend_24bit_to_32bit(CYTHON_UNUSED PyO
       /* "pydub/sample.pyx":28
  *         for sample_idx in range(num_samples):
  *             # Extend sign bit
- *             output_ptr[sample_idx * BYTES_PER_SAMPLE_32BIT] = (input_ptr[2] >> 7) * 0xff             # <<<<<<<<<<<<<<
+ *             output_ptr[sample_idx * BYTES_PER_32BIT_SAMPLE] = (input_ptr[2] >> 7) * 0xff             # <<<<<<<<<<<<<<
  *             # Copy last 3 bytes from source
- *             memcpy(output_ptr + (sample_idx * BYTES_PER_SAMPLE_32BIT) + 1, input_ptr, BYTES_PER_SAMPLE_24BIT)
+ *             memcpy(output_ptr + (sample_idx * BYTES_PER_32BIT_SAMPLE) + 1, input_ptr, BYTES_PER_24BIT_SAMPLE)
  */
       (__pyx_v_output_ptr[(__pyx_v_sample_idx * 4)]) = (((__pyx_v_input_ptr[2]) >> 7) * 0xff);
 
       /* "pydub/sample.pyx":30
- *             output_ptr[sample_idx * BYTES_PER_SAMPLE_32BIT] = (input_ptr[2] >> 7) * 0xff
+ *             output_ptr[sample_idx * BYTES_PER_32BIT_SAMPLE] = (input_ptr[2] >> 7) * 0xff
  *             # Copy last 3 bytes from source
- *             memcpy(output_ptr + (sample_idx * BYTES_PER_SAMPLE_32BIT) + 1, input_ptr, BYTES_PER_SAMPLE_24BIT)             # <<<<<<<<<<<<<<
- *             input_ptr += BYTES_PER_SAMPLE_24BIT
+ *             memcpy(output_ptr + (sample_idx * BYTES_PER_32BIT_SAMPLE) + 1, input_ptr, BYTES_PER_24BIT_SAMPLE)             # <<<<<<<<<<<<<<
+ *             input_ptr += BYTES_PER_24BIT_SAMPLE
  * 
  */
       (void)(memcpy(((__pyx_v_output_ptr + (__pyx_v_sample_idx * 4)) + 1), __pyx_v_input_ptr, 3));
 
       /* "pydub/sample.pyx":31
  *             # Copy last 3 bytes from source
- *             memcpy(output_ptr + (sample_idx * BYTES_PER_SAMPLE_32BIT) + 1, input_ptr, BYTES_PER_SAMPLE_24BIT)
- *             input_ptr += BYTES_PER_SAMPLE_24BIT             # <<<<<<<<<<<<<<
+ *             memcpy(output_ptr + (sample_idx * BYTES_PER_32BIT_SAMPLE) + 1, input_ptr, BYTES_PER_24BIT_SAMPLE)
+ *             input_ptr += BYTES_PER_24BIT_SAMPLE             # <<<<<<<<<<<<<<
  * 
  *         return bytes(output_ptr[:output_size])
  */
@@ -17626,7 +17626,7 @@ static PyObject *__pyx_pf_5pydub_6sample_extend_24bit_to_32bit(CYTHON_UNUSED PyO
     }
 
     /* "pydub/sample.pyx":33
- *             input_ptr += BYTES_PER_SAMPLE_24BIT
+ *             input_ptr += BYTES_PER_24BIT_SAMPLE
  * 
  *         return bytes(output_ptr[:output_size])             # <<<<<<<<<<<<<<
  *     finally:

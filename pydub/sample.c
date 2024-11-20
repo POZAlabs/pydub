@@ -2769,15 +2769,10 @@ static PyObject *__pyx_builtin_IndexError;
 static const char __pyx_k_[] = ": ";
 static const char __pyx_k_O[] = "O";
 static const char __pyx_k_c[] = "c";
-static const char __pyx_k_i[] = "i";
-static const char __pyx_k_p[] = "p";
 static const char __pyx_k__2[] = ".";
 static const char __pyx_k__3[] = "*";
 static const char __pyx_k__6[] = "'";
 static const char __pyx_k__7[] = ")";
-static const char __pyx_k_b0[] = "b0";
-static const char __pyx_k_b1[] = "b1";
-static const char __pyx_k_b2[] = "b2";
 static const char __pyx_k_gc[] = "gc";
 static const char __pyx_k_id[] = "id";
 static const char __pyx_k__23[] = "?";
@@ -2789,7 +2784,6 @@ static const char __pyx_k_obj[] = "obj";
 static const char __pyx_k_sys[] = "sys";
 static const char __pyx_k_base[] = "base";
 static const char __pyx_k_data[] = "data";
-static const char __pyx_k_dest[] = "dest";
 static const char __pyx_k_dict[] = "__dict__";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_mode[] = "mode";
@@ -2802,7 +2796,6 @@ static const char __pyx_k_step[] = "step";
 static const char __pyx_k_stop[] = "stop";
 static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_ASCII[] = "ASCII";
-static const char __pyx_k_array[] = "array";
 static const char __pyx_k_class[] = "__class__";
 static const char __pyx_k_count[] = "count";
 static const char __pyx_k_error[] = "error";
@@ -2816,49 +2809,43 @@ static const char __pyx_k_encode[] = "encode";
 static const char __pyx_k_format[] = "format";
 static const char __pyx_k_import[] = "__import__";
 static const char __pyx_k_name_2[] = "__name__";
-static const char __pyx_k_offset[] = "offset";
 static const char __pyx_k_pickle[] = "pickle";
 static const char __pyx_k_reduce[] = "__reduce__";
-static const char __pyx_k_source[] = "source";
 static const char __pyx_k_struct[] = "struct";
 static const char __pyx_k_unpack[] = "unpack";
 static const char __pyx_k_update[] = "update";
 static const char __pyx_k_disable[] = "disable";
 static const char __pyx_k_fortran[] = "fortran";
 static const char __pyx_k_memview[] = "memview";
-static const char __pyx_k_samples[] = "samples";
 static const char __pyx_k_Ellipsis[] = "Ellipsis";
 static const char __pyx_k_Sequence[] = "Sequence";
 static const char __pyx_k_getstate[] = "__getstate__";
 static const char __pyx_k_itemsize[] = "itemsize";
-static const char __pyx_k_len_data[] = "len_data";
 static const char __pyx_k_pyx_type[] = "__pyx_type";
 static const char __pyx_k_register[] = "register";
 static const char __pyx_k_setstate[] = "__setstate__";
-static const char __pyx_k_src_step[] = "src_step";
-static const char __pyx_k_temp_val[] = "temp_val";
 static const char __pyx_k_TypeError[] = "TypeError";
-static const char __pyx_k_chunk_end[] = "chunk_end";
-static const char __pyx_k_dest_step[] = "dest_step";
 static const char __pyx_k_enumerate[] = "enumerate";
+static const char __pyx_k_input_ptr[] = "input_ptr";
 static const char __pyx_k_isenabled[] = "isenabled";
 static const char __pyx_k_pyx_state[] = "__pyx_state";
 static const char __pyx_k_reduce_ex[] = "__reduce_ex__";
 static const char __pyx_k_IndexError[] = "IndexError";
 static const char __pyx_k_ValueError[] = "ValueError";
-static const char __pyx_k_chunk_size[] = "chunk_size";
-static const char __pyx_k_len_result[] = "len_result";
+static const char __pyx_k_input_size[] = "input_size";
+static const char __pyx_k_output_ptr[] = "output_ptr";
 static const char __pyx_k_pyx_result[] = "__pyx_result";
 static const char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
+static const char __pyx_k_sample_idx[] = "sample_idx";
 static const char __pyx_k_MemoryError[] = "MemoryError";
 static const char __pyx_k_PickleError[] = "PickleError";
-static const char __pyx_k_chunk_start[] = "chunk_start";
 static const char __pyx_k_collections[] = "collections";
+static const char __pyx_k_num_samples[] = "num_samples";
+static const char __pyx_k_output_size[] = "output_size";
 static const char __pyx_k_initializing[] = "_initializing";
 static const char __pyx_k_is_coroutine[] = "_is_coroutine";
 static const char __pyx_k_pydub_sample[] = "pydub.sample";
 static const char __pyx_k_pyx_checksum[] = "__pyx_checksum";
-static const char __pyx_k_result_bytes[] = "result_bytes";
 static const char __pyx_k_stringsource[] = "<stringsource>";
 static const char __pyx_k_version_info[] = "version_info";
 static const char __pyx_k_class_getitem[] = "__class_getitem__";
@@ -2878,9 +2865,9 @@ static const char __pyx_k_strided_and_direct[] = "<strided and direct>";
 static const char __pyx_k_strided_and_indirect[] = "<strided and indirect>";
 static const char __pyx_k_Invalid_shape_in_axis[] = "Invalid shape in axis ";
 static const char __pyx_k_contiguous_and_direct[] = "<contiguous and direct>";
+static const char __pyx_k_extend_24bit_to_32bit[] = "extend_24bit_to_32bit";
 static const char __pyx_k_Cannot_index_with_type[] = "Cannot index with type '";
 static const char __pyx_k_MemoryView_of_r_object[] = "<MemoryView of %r object>";
-static const char __pyx_k_convert_24bit_to_32bit[] = "convert_24bit_to_32bit";
 static const char __pyx_k_MemoryView_of_r_at_0x_x[] = "<MemoryView of %r at 0x%x>";
 static const char __pyx_k_contiguous_and_indirect[] = "<contiguous and indirect>";
 static const char __pyx_k_Dimension_d_is_not_direct[] = "Dimension %d is not direct";
@@ -2947,7 +2934,7 @@ static void __pyx_memoryviewslice___pyx_pf_15View_dot_MemoryView_16_memoryviewsl
 static PyObject *__pyx_pf___pyx_memoryviewslice___reduce_cython__(CYTHON_UNUSED struct __pyx_memoryviewslice_obj *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf___pyx_memoryviewslice_2__setstate_cython__(CYTHON_UNUSED struct __pyx_memoryviewslice_obj *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_pf_15View_dot_MemoryView___pyx_unpickle_Enum(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state); /* proto */
-static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_data); /* proto */
+static PyObject *__pyx_pf_5pydub_6sample_extend_24bit_to_32bit(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_data); /* proto */
 static PyObject *__pyx_tp_new_array(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_Enum(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_memoryview(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
@@ -3039,17 +3026,10 @@ typedef struct {
   PyObject *__pyx_n_s_abc;
   PyObject *__pyx_n_s_allocate_buffer;
   PyObject *__pyx_kp_u_and;
-  PyObject *__pyx_n_s_array;
   PyObject *__pyx_n_s_asyncio_coroutines;
-  PyObject *__pyx_n_s_b0;
-  PyObject *__pyx_n_s_b1;
-  PyObject *__pyx_n_s_b2;
   PyObject *__pyx_n_s_base;
   PyObject *__pyx_n_s_c;
   PyObject *__pyx_n_u_c;
-  PyObject *__pyx_n_s_chunk_end;
-  PyObject *__pyx_n_s_chunk_size;
-  PyObject *__pyx_n_s_chunk_start;
   PyObject *__pyx_n_s_class;
   PyObject *__pyx_n_s_class_getitem;
   PyObject *__pyx_n_s_cline_in_traceback;
@@ -3057,11 +3037,8 @@ typedef struct {
   PyObject *__pyx_kp_s_collections_abc;
   PyObject *__pyx_kp_s_contiguous_and_direct;
   PyObject *__pyx_kp_s_contiguous_and_indirect;
-  PyObject *__pyx_n_s_convert_24bit_to_32bit;
   PyObject *__pyx_n_s_count;
   PyObject *__pyx_n_s_data;
-  PyObject *__pyx_n_s_dest;
-  PyObject *__pyx_n_s_dest_step;
   PyObject *__pyx_n_s_dict;
   PyObject *__pyx_kp_u_disable;
   PyObject *__pyx_n_s_dtype_is_object;
@@ -3069,6 +3046,7 @@ typedef struct {
   PyObject *__pyx_n_s_encode;
   PyObject *__pyx_n_s_enumerate;
   PyObject *__pyx_n_s_error;
+  PyObject *__pyx_n_s_extend_24bit_to_32bit;
   PyObject *__pyx_n_s_flags;
   PyObject *__pyx_n_s_format;
   PyObject *__pyx_n_s_fortran;
@@ -3077,17 +3055,16 @@ typedef struct {
   PyObject *__pyx_n_s_getstate;
   PyObject *__pyx_kp_u_got;
   PyObject *__pyx_kp_u_got_differing_extents_in_dimensi;
-  PyObject *__pyx_n_s_i;
   PyObject *__pyx_n_s_id;
   PyObject *__pyx_n_s_import;
   PyObject *__pyx_n_s_index;
   PyObject *__pyx_n_s_initializing;
+  PyObject *__pyx_n_s_input_ptr;
+  PyObject *__pyx_n_s_input_size;
   PyObject *__pyx_n_s_is_coroutine;
   PyObject *__pyx_kp_u_isenabled;
   PyObject *__pyx_n_s_itemsize;
   PyObject *__pyx_kp_s_itemsize_0_for_cython_array;
-  PyObject *__pyx_n_s_len_data;
-  PyObject *__pyx_n_s_len_result;
   PyObject *__pyx_n_s_main;
   PyObject *__pyx_n_s_memview;
   PyObject *__pyx_n_s_mode;
@@ -3096,9 +3073,10 @@ typedef struct {
   PyObject *__pyx_n_s_ndim;
   PyObject *__pyx_n_s_new;
   PyObject *__pyx_kp_s_no_default___reduce___due_to_non;
+  PyObject *__pyx_n_s_num_samples;
   PyObject *__pyx_n_s_obj;
-  PyObject *__pyx_n_s_offset;
-  PyObject *__pyx_n_s_p;
+  PyObject *__pyx_n_s_output_ptr;
+  PyObject *__pyx_n_s_output_size;
   PyObject *__pyx_n_s_pack;
   PyObject *__pyx_n_s_pickle;
   PyObject *__pyx_n_s_pydub_sample;
@@ -3115,15 +3093,12 @@ typedef struct {
   PyObject *__pyx_n_s_reduce_cython;
   PyObject *__pyx_n_s_reduce_ex;
   PyObject *__pyx_n_s_register;
-  PyObject *__pyx_n_s_result_bytes;
-  PyObject *__pyx_n_s_samples;
+  PyObject *__pyx_n_s_sample_idx;
   PyObject *__pyx_n_s_setstate;
   PyObject *__pyx_n_s_setstate_cython;
   PyObject *__pyx_n_s_shape;
   PyObject *__pyx_n_s_size;
-  PyObject *__pyx_n_s_source;
   PyObject *__pyx_n_s_spec;
-  PyObject *__pyx_n_s_src_step;
   PyObject *__pyx_n_s_start;
   PyObject *__pyx_n_s_step;
   PyObject *__pyx_n_s_stop;
@@ -3133,7 +3108,6 @@ typedef struct {
   PyObject *__pyx_kp_s_stringsource;
   PyObject *__pyx_n_s_struct;
   PyObject *__pyx_n_s_sys;
-  PyObject *__pyx_n_s_temp_val;
   PyObject *__pyx_n_s_test;
   PyObject *__pyx_kp_s_unable_to_allocate_array_data;
   PyObject *__pyx_kp_s_unable_to_allocate_shape_and_str;
@@ -3254,17 +3228,10 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_abc);
   Py_CLEAR(clear_module_state->__pyx_n_s_allocate_buffer);
   Py_CLEAR(clear_module_state->__pyx_kp_u_and);
-  Py_CLEAR(clear_module_state->__pyx_n_s_array);
   Py_CLEAR(clear_module_state->__pyx_n_s_asyncio_coroutines);
-  Py_CLEAR(clear_module_state->__pyx_n_s_b0);
-  Py_CLEAR(clear_module_state->__pyx_n_s_b1);
-  Py_CLEAR(clear_module_state->__pyx_n_s_b2);
   Py_CLEAR(clear_module_state->__pyx_n_s_base);
   Py_CLEAR(clear_module_state->__pyx_n_s_c);
   Py_CLEAR(clear_module_state->__pyx_n_u_c);
-  Py_CLEAR(clear_module_state->__pyx_n_s_chunk_end);
-  Py_CLEAR(clear_module_state->__pyx_n_s_chunk_size);
-  Py_CLEAR(clear_module_state->__pyx_n_s_chunk_start);
   Py_CLEAR(clear_module_state->__pyx_n_s_class);
   Py_CLEAR(clear_module_state->__pyx_n_s_class_getitem);
   Py_CLEAR(clear_module_state->__pyx_n_s_cline_in_traceback);
@@ -3272,11 +3239,8 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_kp_s_collections_abc);
   Py_CLEAR(clear_module_state->__pyx_kp_s_contiguous_and_direct);
   Py_CLEAR(clear_module_state->__pyx_kp_s_contiguous_and_indirect);
-  Py_CLEAR(clear_module_state->__pyx_n_s_convert_24bit_to_32bit);
   Py_CLEAR(clear_module_state->__pyx_n_s_count);
   Py_CLEAR(clear_module_state->__pyx_n_s_data);
-  Py_CLEAR(clear_module_state->__pyx_n_s_dest);
-  Py_CLEAR(clear_module_state->__pyx_n_s_dest_step);
   Py_CLEAR(clear_module_state->__pyx_n_s_dict);
   Py_CLEAR(clear_module_state->__pyx_kp_u_disable);
   Py_CLEAR(clear_module_state->__pyx_n_s_dtype_is_object);
@@ -3284,6 +3248,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_encode);
   Py_CLEAR(clear_module_state->__pyx_n_s_enumerate);
   Py_CLEAR(clear_module_state->__pyx_n_s_error);
+  Py_CLEAR(clear_module_state->__pyx_n_s_extend_24bit_to_32bit);
   Py_CLEAR(clear_module_state->__pyx_n_s_flags);
   Py_CLEAR(clear_module_state->__pyx_n_s_format);
   Py_CLEAR(clear_module_state->__pyx_n_s_fortran);
@@ -3292,17 +3257,16 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_getstate);
   Py_CLEAR(clear_module_state->__pyx_kp_u_got);
   Py_CLEAR(clear_module_state->__pyx_kp_u_got_differing_extents_in_dimensi);
-  Py_CLEAR(clear_module_state->__pyx_n_s_i);
   Py_CLEAR(clear_module_state->__pyx_n_s_id);
   Py_CLEAR(clear_module_state->__pyx_n_s_import);
   Py_CLEAR(clear_module_state->__pyx_n_s_index);
   Py_CLEAR(clear_module_state->__pyx_n_s_initializing);
+  Py_CLEAR(clear_module_state->__pyx_n_s_input_ptr);
+  Py_CLEAR(clear_module_state->__pyx_n_s_input_size);
   Py_CLEAR(clear_module_state->__pyx_n_s_is_coroutine);
   Py_CLEAR(clear_module_state->__pyx_kp_u_isenabled);
   Py_CLEAR(clear_module_state->__pyx_n_s_itemsize);
   Py_CLEAR(clear_module_state->__pyx_kp_s_itemsize_0_for_cython_array);
-  Py_CLEAR(clear_module_state->__pyx_n_s_len_data);
-  Py_CLEAR(clear_module_state->__pyx_n_s_len_result);
   Py_CLEAR(clear_module_state->__pyx_n_s_main);
   Py_CLEAR(clear_module_state->__pyx_n_s_memview);
   Py_CLEAR(clear_module_state->__pyx_n_s_mode);
@@ -3311,9 +3275,10 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_ndim);
   Py_CLEAR(clear_module_state->__pyx_n_s_new);
   Py_CLEAR(clear_module_state->__pyx_kp_s_no_default___reduce___due_to_non);
+  Py_CLEAR(clear_module_state->__pyx_n_s_num_samples);
   Py_CLEAR(clear_module_state->__pyx_n_s_obj);
-  Py_CLEAR(clear_module_state->__pyx_n_s_offset);
-  Py_CLEAR(clear_module_state->__pyx_n_s_p);
+  Py_CLEAR(clear_module_state->__pyx_n_s_output_ptr);
+  Py_CLEAR(clear_module_state->__pyx_n_s_output_size);
   Py_CLEAR(clear_module_state->__pyx_n_s_pack);
   Py_CLEAR(clear_module_state->__pyx_n_s_pickle);
   Py_CLEAR(clear_module_state->__pyx_n_s_pydub_sample);
@@ -3330,15 +3295,12 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_reduce_cython);
   Py_CLEAR(clear_module_state->__pyx_n_s_reduce_ex);
   Py_CLEAR(clear_module_state->__pyx_n_s_register);
-  Py_CLEAR(clear_module_state->__pyx_n_s_result_bytes);
-  Py_CLEAR(clear_module_state->__pyx_n_s_samples);
+  Py_CLEAR(clear_module_state->__pyx_n_s_sample_idx);
   Py_CLEAR(clear_module_state->__pyx_n_s_setstate);
   Py_CLEAR(clear_module_state->__pyx_n_s_setstate_cython);
   Py_CLEAR(clear_module_state->__pyx_n_s_shape);
   Py_CLEAR(clear_module_state->__pyx_n_s_size);
-  Py_CLEAR(clear_module_state->__pyx_n_s_source);
   Py_CLEAR(clear_module_state->__pyx_n_s_spec);
-  Py_CLEAR(clear_module_state->__pyx_n_s_src_step);
   Py_CLEAR(clear_module_state->__pyx_n_s_start);
   Py_CLEAR(clear_module_state->__pyx_n_s_step);
   Py_CLEAR(clear_module_state->__pyx_n_s_stop);
@@ -3348,7 +3310,6 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_kp_s_stringsource);
   Py_CLEAR(clear_module_state->__pyx_n_s_struct);
   Py_CLEAR(clear_module_state->__pyx_n_s_sys);
-  Py_CLEAR(clear_module_state->__pyx_n_s_temp_val);
   Py_CLEAR(clear_module_state->__pyx_n_s_test);
   Py_CLEAR(clear_module_state->__pyx_kp_s_unable_to_allocate_array_data);
   Py_CLEAR(clear_module_state->__pyx_kp_s_unable_to_allocate_shape_and_str);
@@ -3447,17 +3408,10 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_abc);
   Py_VISIT(traverse_module_state->__pyx_n_s_allocate_buffer);
   Py_VISIT(traverse_module_state->__pyx_kp_u_and);
-  Py_VISIT(traverse_module_state->__pyx_n_s_array);
   Py_VISIT(traverse_module_state->__pyx_n_s_asyncio_coroutines);
-  Py_VISIT(traverse_module_state->__pyx_n_s_b0);
-  Py_VISIT(traverse_module_state->__pyx_n_s_b1);
-  Py_VISIT(traverse_module_state->__pyx_n_s_b2);
   Py_VISIT(traverse_module_state->__pyx_n_s_base);
   Py_VISIT(traverse_module_state->__pyx_n_s_c);
   Py_VISIT(traverse_module_state->__pyx_n_u_c);
-  Py_VISIT(traverse_module_state->__pyx_n_s_chunk_end);
-  Py_VISIT(traverse_module_state->__pyx_n_s_chunk_size);
-  Py_VISIT(traverse_module_state->__pyx_n_s_chunk_start);
   Py_VISIT(traverse_module_state->__pyx_n_s_class);
   Py_VISIT(traverse_module_state->__pyx_n_s_class_getitem);
   Py_VISIT(traverse_module_state->__pyx_n_s_cline_in_traceback);
@@ -3465,11 +3419,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_kp_s_collections_abc);
   Py_VISIT(traverse_module_state->__pyx_kp_s_contiguous_and_direct);
   Py_VISIT(traverse_module_state->__pyx_kp_s_contiguous_and_indirect);
-  Py_VISIT(traverse_module_state->__pyx_n_s_convert_24bit_to_32bit);
   Py_VISIT(traverse_module_state->__pyx_n_s_count);
   Py_VISIT(traverse_module_state->__pyx_n_s_data);
-  Py_VISIT(traverse_module_state->__pyx_n_s_dest);
-  Py_VISIT(traverse_module_state->__pyx_n_s_dest_step);
   Py_VISIT(traverse_module_state->__pyx_n_s_dict);
   Py_VISIT(traverse_module_state->__pyx_kp_u_disable);
   Py_VISIT(traverse_module_state->__pyx_n_s_dtype_is_object);
@@ -3477,6 +3428,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_encode);
   Py_VISIT(traverse_module_state->__pyx_n_s_enumerate);
   Py_VISIT(traverse_module_state->__pyx_n_s_error);
+  Py_VISIT(traverse_module_state->__pyx_n_s_extend_24bit_to_32bit);
   Py_VISIT(traverse_module_state->__pyx_n_s_flags);
   Py_VISIT(traverse_module_state->__pyx_n_s_format);
   Py_VISIT(traverse_module_state->__pyx_n_s_fortran);
@@ -3485,17 +3437,16 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_getstate);
   Py_VISIT(traverse_module_state->__pyx_kp_u_got);
   Py_VISIT(traverse_module_state->__pyx_kp_u_got_differing_extents_in_dimensi);
-  Py_VISIT(traverse_module_state->__pyx_n_s_i);
   Py_VISIT(traverse_module_state->__pyx_n_s_id);
   Py_VISIT(traverse_module_state->__pyx_n_s_import);
   Py_VISIT(traverse_module_state->__pyx_n_s_index);
   Py_VISIT(traverse_module_state->__pyx_n_s_initializing);
+  Py_VISIT(traverse_module_state->__pyx_n_s_input_ptr);
+  Py_VISIT(traverse_module_state->__pyx_n_s_input_size);
   Py_VISIT(traverse_module_state->__pyx_n_s_is_coroutine);
   Py_VISIT(traverse_module_state->__pyx_kp_u_isenabled);
   Py_VISIT(traverse_module_state->__pyx_n_s_itemsize);
   Py_VISIT(traverse_module_state->__pyx_kp_s_itemsize_0_for_cython_array);
-  Py_VISIT(traverse_module_state->__pyx_n_s_len_data);
-  Py_VISIT(traverse_module_state->__pyx_n_s_len_result);
   Py_VISIT(traverse_module_state->__pyx_n_s_main);
   Py_VISIT(traverse_module_state->__pyx_n_s_memview);
   Py_VISIT(traverse_module_state->__pyx_n_s_mode);
@@ -3504,9 +3455,10 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_ndim);
   Py_VISIT(traverse_module_state->__pyx_n_s_new);
   Py_VISIT(traverse_module_state->__pyx_kp_s_no_default___reduce___due_to_non);
+  Py_VISIT(traverse_module_state->__pyx_n_s_num_samples);
   Py_VISIT(traverse_module_state->__pyx_n_s_obj);
-  Py_VISIT(traverse_module_state->__pyx_n_s_offset);
-  Py_VISIT(traverse_module_state->__pyx_n_s_p);
+  Py_VISIT(traverse_module_state->__pyx_n_s_output_ptr);
+  Py_VISIT(traverse_module_state->__pyx_n_s_output_size);
   Py_VISIT(traverse_module_state->__pyx_n_s_pack);
   Py_VISIT(traverse_module_state->__pyx_n_s_pickle);
   Py_VISIT(traverse_module_state->__pyx_n_s_pydub_sample);
@@ -3523,15 +3475,12 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_reduce_cython);
   Py_VISIT(traverse_module_state->__pyx_n_s_reduce_ex);
   Py_VISIT(traverse_module_state->__pyx_n_s_register);
-  Py_VISIT(traverse_module_state->__pyx_n_s_result_bytes);
-  Py_VISIT(traverse_module_state->__pyx_n_s_samples);
+  Py_VISIT(traverse_module_state->__pyx_n_s_sample_idx);
   Py_VISIT(traverse_module_state->__pyx_n_s_setstate);
   Py_VISIT(traverse_module_state->__pyx_n_s_setstate_cython);
   Py_VISIT(traverse_module_state->__pyx_n_s_shape);
   Py_VISIT(traverse_module_state->__pyx_n_s_size);
-  Py_VISIT(traverse_module_state->__pyx_n_s_source);
   Py_VISIT(traverse_module_state->__pyx_n_s_spec);
-  Py_VISIT(traverse_module_state->__pyx_n_s_src_step);
   Py_VISIT(traverse_module_state->__pyx_n_s_start);
   Py_VISIT(traverse_module_state->__pyx_n_s_step);
   Py_VISIT(traverse_module_state->__pyx_n_s_stop);
@@ -3541,7 +3490,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_kp_s_stringsource);
   Py_VISIT(traverse_module_state->__pyx_n_s_struct);
   Py_VISIT(traverse_module_state->__pyx_n_s_sys);
-  Py_VISIT(traverse_module_state->__pyx_n_s_temp_val);
   Py_VISIT(traverse_module_state->__pyx_n_s_test);
   Py_VISIT(traverse_module_state->__pyx_kp_s_unable_to_allocate_array_data);
   Py_VISIT(traverse_module_state->__pyx_kp_s_unable_to_allocate_shape_and_str);
@@ -3660,17 +3608,10 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_abc __pyx_mstate_global->__pyx_n_s_abc
 #define __pyx_n_s_allocate_buffer __pyx_mstate_global->__pyx_n_s_allocate_buffer
 #define __pyx_kp_u_and __pyx_mstate_global->__pyx_kp_u_and
-#define __pyx_n_s_array __pyx_mstate_global->__pyx_n_s_array
 #define __pyx_n_s_asyncio_coroutines __pyx_mstate_global->__pyx_n_s_asyncio_coroutines
-#define __pyx_n_s_b0 __pyx_mstate_global->__pyx_n_s_b0
-#define __pyx_n_s_b1 __pyx_mstate_global->__pyx_n_s_b1
-#define __pyx_n_s_b2 __pyx_mstate_global->__pyx_n_s_b2
 #define __pyx_n_s_base __pyx_mstate_global->__pyx_n_s_base
 #define __pyx_n_s_c __pyx_mstate_global->__pyx_n_s_c
 #define __pyx_n_u_c __pyx_mstate_global->__pyx_n_u_c
-#define __pyx_n_s_chunk_end __pyx_mstate_global->__pyx_n_s_chunk_end
-#define __pyx_n_s_chunk_size __pyx_mstate_global->__pyx_n_s_chunk_size
-#define __pyx_n_s_chunk_start __pyx_mstate_global->__pyx_n_s_chunk_start
 #define __pyx_n_s_class __pyx_mstate_global->__pyx_n_s_class
 #define __pyx_n_s_class_getitem __pyx_mstate_global->__pyx_n_s_class_getitem
 #define __pyx_n_s_cline_in_traceback __pyx_mstate_global->__pyx_n_s_cline_in_traceback
@@ -3678,11 +3619,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_kp_s_collections_abc __pyx_mstate_global->__pyx_kp_s_collections_abc
 #define __pyx_kp_s_contiguous_and_direct __pyx_mstate_global->__pyx_kp_s_contiguous_and_direct
 #define __pyx_kp_s_contiguous_and_indirect __pyx_mstate_global->__pyx_kp_s_contiguous_and_indirect
-#define __pyx_n_s_convert_24bit_to_32bit __pyx_mstate_global->__pyx_n_s_convert_24bit_to_32bit
 #define __pyx_n_s_count __pyx_mstate_global->__pyx_n_s_count
 #define __pyx_n_s_data __pyx_mstate_global->__pyx_n_s_data
-#define __pyx_n_s_dest __pyx_mstate_global->__pyx_n_s_dest
-#define __pyx_n_s_dest_step __pyx_mstate_global->__pyx_n_s_dest_step
 #define __pyx_n_s_dict __pyx_mstate_global->__pyx_n_s_dict
 #define __pyx_kp_u_disable __pyx_mstate_global->__pyx_kp_u_disable
 #define __pyx_n_s_dtype_is_object __pyx_mstate_global->__pyx_n_s_dtype_is_object
@@ -3690,6 +3628,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_encode __pyx_mstate_global->__pyx_n_s_encode
 #define __pyx_n_s_enumerate __pyx_mstate_global->__pyx_n_s_enumerate
 #define __pyx_n_s_error __pyx_mstate_global->__pyx_n_s_error
+#define __pyx_n_s_extend_24bit_to_32bit __pyx_mstate_global->__pyx_n_s_extend_24bit_to_32bit
 #define __pyx_n_s_flags __pyx_mstate_global->__pyx_n_s_flags
 #define __pyx_n_s_format __pyx_mstate_global->__pyx_n_s_format
 #define __pyx_n_s_fortran __pyx_mstate_global->__pyx_n_s_fortran
@@ -3698,17 +3637,16 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_getstate __pyx_mstate_global->__pyx_n_s_getstate
 #define __pyx_kp_u_got __pyx_mstate_global->__pyx_kp_u_got
 #define __pyx_kp_u_got_differing_extents_in_dimensi __pyx_mstate_global->__pyx_kp_u_got_differing_extents_in_dimensi
-#define __pyx_n_s_i __pyx_mstate_global->__pyx_n_s_i
 #define __pyx_n_s_id __pyx_mstate_global->__pyx_n_s_id
 #define __pyx_n_s_import __pyx_mstate_global->__pyx_n_s_import
 #define __pyx_n_s_index __pyx_mstate_global->__pyx_n_s_index
 #define __pyx_n_s_initializing __pyx_mstate_global->__pyx_n_s_initializing
+#define __pyx_n_s_input_ptr __pyx_mstate_global->__pyx_n_s_input_ptr
+#define __pyx_n_s_input_size __pyx_mstate_global->__pyx_n_s_input_size
 #define __pyx_n_s_is_coroutine __pyx_mstate_global->__pyx_n_s_is_coroutine
 #define __pyx_kp_u_isenabled __pyx_mstate_global->__pyx_kp_u_isenabled
 #define __pyx_n_s_itemsize __pyx_mstate_global->__pyx_n_s_itemsize
 #define __pyx_kp_s_itemsize_0_for_cython_array __pyx_mstate_global->__pyx_kp_s_itemsize_0_for_cython_array
-#define __pyx_n_s_len_data __pyx_mstate_global->__pyx_n_s_len_data
-#define __pyx_n_s_len_result __pyx_mstate_global->__pyx_n_s_len_result
 #define __pyx_n_s_main __pyx_mstate_global->__pyx_n_s_main
 #define __pyx_n_s_memview __pyx_mstate_global->__pyx_n_s_memview
 #define __pyx_n_s_mode __pyx_mstate_global->__pyx_n_s_mode
@@ -3717,9 +3655,10 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_ndim __pyx_mstate_global->__pyx_n_s_ndim
 #define __pyx_n_s_new __pyx_mstate_global->__pyx_n_s_new
 #define __pyx_kp_s_no_default___reduce___due_to_non __pyx_mstate_global->__pyx_kp_s_no_default___reduce___due_to_non
+#define __pyx_n_s_num_samples __pyx_mstate_global->__pyx_n_s_num_samples
 #define __pyx_n_s_obj __pyx_mstate_global->__pyx_n_s_obj
-#define __pyx_n_s_offset __pyx_mstate_global->__pyx_n_s_offset
-#define __pyx_n_s_p __pyx_mstate_global->__pyx_n_s_p
+#define __pyx_n_s_output_ptr __pyx_mstate_global->__pyx_n_s_output_ptr
+#define __pyx_n_s_output_size __pyx_mstate_global->__pyx_n_s_output_size
 #define __pyx_n_s_pack __pyx_mstate_global->__pyx_n_s_pack
 #define __pyx_n_s_pickle __pyx_mstate_global->__pyx_n_s_pickle
 #define __pyx_n_s_pydub_sample __pyx_mstate_global->__pyx_n_s_pydub_sample
@@ -3736,15 +3675,12 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_reduce_cython __pyx_mstate_global->__pyx_n_s_reduce_cython
 #define __pyx_n_s_reduce_ex __pyx_mstate_global->__pyx_n_s_reduce_ex
 #define __pyx_n_s_register __pyx_mstate_global->__pyx_n_s_register
-#define __pyx_n_s_result_bytes __pyx_mstate_global->__pyx_n_s_result_bytes
-#define __pyx_n_s_samples __pyx_mstate_global->__pyx_n_s_samples
+#define __pyx_n_s_sample_idx __pyx_mstate_global->__pyx_n_s_sample_idx
 #define __pyx_n_s_setstate __pyx_mstate_global->__pyx_n_s_setstate
 #define __pyx_n_s_setstate_cython __pyx_mstate_global->__pyx_n_s_setstate_cython
 #define __pyx_n_s_shape __pyx_mstate_global->__pyx_n_s_shape
 #define __pyx_n_s_size __pyx_mstate_global->__pyx_n_s_size
-#define __pyx_n_s_source __pyx_mstate_global->__pyx_n_s_source
 #define __pyx_n_s_spec __pyx_mstate_global->__pyx_n_s_spec
-#define __pyx_n_s_src_step __pyx_mstate_global->__pyx_n_s_src_step
 #define __pyx_n_s_start __pyx_mstate_global->__pyx_n_s_start
 #define __pyx_n_s_step __pyx_mstate_global->__pyx_n_s_step
 #define __pyx_n_s_stop __pyx_mstate_global->__pyx_n_s_stop
@@ -3754,7 +3690,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_kp_s_stringsource __pyx_mstate_global->__pyx_kp_s_stringsource
 #define __pyx_n_s_struct __pyx_mstate_global->__pyx_n_s_struct
 #define __pyx_n_s_sys __pyx_mstate_global->__pyx_n_s_sys
-#define __pyx_n_s_temp_val __pyx_mstate_global->__pyx_n_s_temp_val
 #define __pyx_n_s_test __pyx_mstate_global->__pyx_n_s_test
 #define __pyx_kp_s_unable_to_allocate_array_data __pyx_mstate_global->__pyx_kp_s_unable_to_allocate_array_data
 #define __pyx_kp_s_unable_to_allocate_shape_and_str __pyx_mstate_global->__pyx_kp_s_unable_to_allocate_shape_and_str
@@ -17413,24 +17348,24 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
   return __pyx_r;
 }
 
-/* "pydub/sample.pyx":12
+/* "pydub/sample.pyx":10
  * 
  * 
  * @cython.boundscheck(False)             # <<<<<<<<<<<<<<
  * @cython.wraparound(False)
- * # @cython.cdivision(True)
+ * @cython.cdivision(True)
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_5pydub_6sample_1convert_24bit_to_32bit(PyObject *__pyx_self, 
+static PyObject *__pyx_pw_5pydub_6sample_1extend_24bit_to_32bit(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_5pydub_6sample_1convert_24bit_to_32bit = {"convert_24bit_to_32bit", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5pydub_6sample_1convert_24bit_to_32bit, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_5pydub_6sample_1convert_24bit_to_32bit(PyObject *__pyx_self, 
+static PyMethodDef __pyx_mdef_5pydub_6sample_1extend_24bit_to_32bit = {"extend_24bit_to_32bit", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_5pydub_6sample_1extend_24bit_to_32bit, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_5pydub_6sample_1extend_24bit_to_32bit(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -17448,7 +17383,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   int __pyx_clineno = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("convert_24bit_to_32bit (wrapper)", 0);
+  __Pyx_RefNannySetupContext("extend_24bit_to_32bit (wrapper)", 0);
   #if !CYTHON_METH_FASTCALL
   #if CYTHON_ASSUME_SAFE_MACROS
   __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
@@ -17474,23 +17409,23 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 12, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 10, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "convert_24bit_to_32bit") < 0)) __PYX_ERR(0, 12, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "extend_24bit_to_32bit") < 0)) __PYX_ERR(0, 10, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_Arg_FASTCALL(__pyx_args, 0);
     }
-    __pyx_v_data = __Pyx_PyObject_to_MemoryviewSlice_ds_unsigned_char__const__(values[0], 0); if (unlikely(!__pyx_v_data.memview)) __PYX_ERR(0, 15, __pyx_L3_error)
+    __pyx_v_data = __Pyx_PyObject_to_MemoryviewSlice_ds_unsigned_char__const__(values[0], 0); if (unlikely(!__pyx_v_data.memview)) __PYX_ERR(0, 13, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("convert_24bit_to_32bit", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 12, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("extend_24bit_to_32bit", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 10, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -17501,11 +17436,11 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
     }
   }
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_data, 1);
-  __Pyx_AddTraceback("pydub.sample.convert_24bit_to_32bit", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("pydub.sample.extend_24bit_to_32bit", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_5pydub_6sample_convert_24bit_to_32bit(__pyx_self, __pyx_v_data);
+  __pyx_r = __pyx_pf_5pydub_6sample_extend_24bit_to_32bit(__pyx_self, __pyx_v_data);
 
   /* function exit code */
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_data, 1);
@@ -17519,18 +17454,13 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_data) {
-  int __pyx_v_len_data;
-  int __pyx_v_len_result;
-  int __pyx_v_i;
-  CYTHON_UNUSED int __pyx_v_p;
-  CYTHON_UNUSED int __pyx_v_chunk_size;
-  unsigned char *__pyx_v_result_bytes;
-  unsigned char *__pyx_v_source;
-  int __pyx_v_src_step;
-  CYTHON_UNUSED int __pyx_v_dest_step;
-  int __pyx_v_samples;
-  CYTHON_UNUSED int __pyx_v_offset;
+static PyObject *__pyx_pf_5pydub_6sample_extend_24bit_to_32bit(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_data) {
+  int __pyx_v_input_size;
+  int __pyx_v_output_size;
+  int __pyx_v_num_samples;
+  int __pyx_v_sample_idx;
+  unsigned char *__pyx_v_input_ptr;
+  unsigned char *__pyx_v_output_ptr;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -17550,198 +17480,162 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("convert_24bit_to_32bit", 1);
+  __Pyx_RefNannySetupContext("extend_24bit_to_32bit", 1);
 
-  /* "pydub/sample.pyx":16
- * # @cython.cdivision(True)
- * def convert_24bit_to_32bit(const unsigned char[:] data):
- *     cdef int len_data = data.size             # <<<<<<<<<<<<<<
- *     cdef int len_result = len_data // 3 * 4
- *     cdef int i, p = 0
+  /* "pydub/sample.pyx":15
+ * def extend_24bit_to_32bit(const unsigned char[:] data):
+ *     cdef:
+ *         int input_size = data.size             # <<<<<<<<<<<<<<
+ *         int output_size = input_size // BYTES_PER_SAMPLE_24BIT * BYTES_PER_SAMPLE_32BIT
+ *         int num_samples = input_size // BYTES_PER_SAMPLE_24BIT
  */
-  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_data, 1, (PyObject *(*)(char *)) __pyx_memview_get_unsigned_char__const__, (int (*)(char *, PyObject *)) NULL, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 16, __pyx_L1_error)
+  __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_data, 1, (PyObject *(*)(char *)) __pyx_memview_get_unsigned_char__const__, (int (*)(char *, PyObject *)) NULL, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 15, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 16, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 15, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 16, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 15, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_v_len_data = __pyx_t_3;
+  __pyx_v_input_size = __pyx_t_3;
+
+  /* "pydub/sample.pyx":16
+ *     cdef:
+ *         int input_size = data.size
+ *         int output_size = input_size // BYTES_PER_SAMPLE_24BIT * BYTES_PER_SAMPLE_32BIT             # <<<<<<<<<<<<<<
+ *         int num_samples = input_size // BYTES_PER_SAMPLE_24BIT
+ *         int sample_idx = 0
+ */
+  __pyx_v_output_size = ((__pyx_v_input_size / 3) * 4);
 
   /* "pydub/sample.pyx":17
- * def convert_24bit_to_32bit(const unsigned char[:] data):
- *     cdef int len_data = data.size
- *     cdef int len_result = len_data // 3 * 4             # <<<<<<<<<<<<<<
- *     cdef int i, p = 0
- *     cdef int chunk_start, chunk_end
+ *         int input_size = data.size
+ *         int output_size = input_size // BYTES_PER_SAMPLE_24BIT * BYTES_PER_SAMPLE_32BIT
+ *         int num_samples = input_size // BYTES_PER_SAMPLE_24BIT             # <<<<<<<<<<<<<<
+ *         int sample_idx = 0
+ *         unsigned char* input_ptr = <unsigned char*>&data[0]
  */
-  __pyx_v_len_result = (__Pyx_div_long(__pyx_v_len_data, 3) * 4);
+  __pyx_v_num_samples = (__pyx_v_input_size / 3);
 
   /* "pydub/sample.pyx":18
- *     cdef int len_data = data.size
- *     cdef int len_result = len_data // 3 * 4
- *     cdef int i, p = 0             # <<<<<<<<<<<<<<
- *     cdef int chunk_start, chunk_end
- *     cdef int chunk_size = BUFFER_SIZE
+ *         int output_size = input_size // BYTES_PER_SAMPLE_24BIT * BYTES_PER_SAMPLE_32BIT
+ *         int num_samples = input_size // BYTES_PER_SAMPLE_24BIT
+ *         int sample_idx = 0             # <<<<<<<<<<<<<<
+ *         unsigned char* input_ptr = <unsigned char*>&data[0]
+ *         unsigned char* output_ptr = <unsigned char*> malloc(output_size * sizeof(unsigned char))
  */
-  __pyx_v_p = 0;
+  __pyx_v_sample_idx = 0;
 
-  /* "pydub/sample.pyx":20
- *     cdef int i, p = 0
- *     cdef int chunk_start, chunk_end
- *     cdef int chunk_size = BUFFER_SIZE             # <<<<<<<<<<<<<<
- *     cdef unsigned char b0, b1, b2
- *     cdef unsigned char* result_bytes = <unsigned char*> malloc(len_result * sizeof(unsigned char))
- */
-  __pyx_v_chunk_size = 0x10000;
-
-  /* "pydub/sample.pyx":22
- *     cdef int chunk_size = BUFFER_SIZE
- *     cdef unsigned char b0, b1, b2
- *     cdef unsigned char* result_bytes = <unsigned char*> malloc(len_result * sizeof(unsigned char))             # <<<<<<<<<<<<<<
- *     cdef unsigned int temp_val
- *     cdef:
- */
-  __pyx_v_result_bytes = ((unsigned char *)malloc((__pyx_v_len_result * (sizeof(unsigned char)))));
-
-  /* "pydub/sample.pyx":25
- *     cdef unsigned int temp_val
- *     cdef:
- *         unsigned char* source = <unsigned char*>&data[0]             # <<<<<<<<<<<<<<
- *         unsigned char* dest
- *         int src_step = 3
+  /* "pydub/sample.pyx":19
+ *         int num_samples = input_size // BYTES_PER_SAMPLE_24BIT
+ *         int sample_idx = 0
+ *         unsigned char* input_ptr = <unsigned char*>&data[0]             # <<<<<<<<<<<<<<
+ *         unsigned char* output_ptr = <unsigned char*> malloc(output_size * sizeof(unsigned char))
+ * 
  */
   __pyx_t_4 = 0;
-  __pyx_v_source = ((unsigned char *)(&(*((unsigned char const  *) ( /* dim=0 */ (__pyx_v_data.data + __pyx_t_4 * __pyx_v_data.strides[0]) )))));
+  __pyx_v_input_ptr = ((unsigned char *)(&(*((unsigned char const  *) ( /* dim=0 */ (__pyx_v_data.data + __pyx_t_4 * __pyx_v_data.strides[0]) )))));
 
-  /* "pydub/sample.pyx":27
- *         unsigned char* source = <unsigned char*>&data[0]
- *         unsigned char* dest
- *         int src_step = 3             # <<<<<<<<<<<<<<
- *         int dest_step = 4
- *         int samples = len_data // 3
- */
-  __pyx_v_src_step = 3;
-
-  /* "pydub/sample.pyx":28
- *         unsigned char* dest
- *         int src_step = 3
- *         int dest_step = 4             # <<<<<<<<<<<<<<
- *         int samples = len_data // 3
- *         int offset = 0
- */
-  __pyx_v_dest_step = 4;
-
-  /* "pydub/sample.pyx":29
- *         int src_step = 3
- *         int dest_step = 4
- *         int samples = len_data // 3             # <<<<<<<<<<<<<<
- *         int offset = 0
+  /* "pydub/sample.pyx":20
+ *         int sample_idx = 0
+ *         unsigned char* input_ptr = <unsigned char*>&data[0]
+ *         unsigned char* output_ptr = <unsigned char*> malloc(output_size * sizeof(unsigned char))             # <<<<<<<<<<<<<<
  * 
+ *     if output_ptr == NULL:
  */
-  __pyx_v_samples = __Pyx_div_long(__pyx_v_len_data, 3);
+  __pyx_v_output_ptr = ((unsigned char *)malloc((__pyx_v_output_size * (sizeof(unsigned char)))));
 
-  /* "pydub/sample.pyx":30
- *         int dest_step = 4
- *         int samples = len_data // 3
- *         int offset = 0             # <<<<<<<<<<<<<<
+  /* "pydub/sample.pyx":22
+ *         unsigned char* output_ptr = <unsigned char*> malloc(output_size * sizeof(unsigned char))
  * 
- *     if result_bytes == NULL:
- */
-  __pyx_v_offset = 0;
-
-  /* "pydub/sample.pyx":32
- *         int offset = 0
- * 
- *     if result_bytes == NULL:             # <<<<<<<<<<<<<<
+ *     if output_ptr == NULL:             # <<<<<<<<<<<<<<
  *         raise MemoryError("Could not allocate memory for result array")
  * 
  */
-  __pyx_t_5 = (__pyx_v_result_bytes == NULL);
+  __pyx_t_5 = (__pyx_v_output_ptr == NULL);
   if (unlikely(__pyx_t_5)) {
 
-    /* "pydub/sample.pyx":33
+    /* "pydub/sample.pyx":23
  * 
- *     if result_bytes == NULL:
+ *     if output_ptr == NULL:
  *         raise MemoryError("Could not allocate memory for result array")             # <<<<<<<<<<<<<<
  * 
  *     try:
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 33, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 23, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 33, __pyx_L1_error)
+    __PYX_ERR(0, 23, __pyx_L1_error)
 
-    /* "pydub/sample.pyx":32
- *         int offset = 0
+    /* "pydub/sample.pyx":22
+ *         unsigned char* output_ptr = <unsigned char*> malloc(output_size * sizeof(unsigned char))
  * 
- *     if result_bytes == NULL:             # <<<<<<<<<<<<<<
+ *     if output_ptr == NULL:             # <<<<<<<<<<<<<<
  *         raise MemoryError("Could not allocate memory for result array")
  * 
  */
   }
 
-  /* "pydub/sample.pyx":35
+  /* "pydub/sample.pyx":25
  *         raise MemoryError("Could not allocate memory for result array")
  * 
  *     try:             # <<<<<<<<<<<<<<
- *         # dest = result_bytes
- * 
+ *         for sample_idx in range(num_samples):
+ *             # Extend sign bit
  */
   /*try:*/ {
 
-    /* "pydub/sample.pyx":38
- *         # dest = result_bytes
+    /* "pydub/sample.pyx":26
  * 
- *         for i in range(samples):             # <<<<<<<<<<<<<<
- *             # dest[0] = (source[2] >> 7) * 0xff
- *             # memcpy(dest + 1, source, 3)
+ *     try:
+ *         for sample_idx in range(num_samples):             # <<<<<<<<<<<<<<
+ *             # Extend sign bit
+ *             output_ptr[sample_idx * BYTES_PER_SAMPLE_32BIT] = (input_ptr[2] >> 7) * 0xff
  */
-    __pyx_t_3 = __pyx_v_samples;
+    __pyx_t_3 = __pyx_v_num_samples;
     __pyx_t_6 = __pyx_t_3;
     for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
-      __pyx_v_i = __pyx_t_7;
+      __pyx_v_sample_idx = __pyx_t_7;
 
-      /* "pydub/sample.pyx":41
- *             # dest[0] = (source[2] >> 7) * 0xff
- *             # memcpy(dest + 1, source, 3)
- *             result_bytes[i * 4] = (source[2] >> 7) * 0xff             # <<<<<<<<<<<<<<
- *             memcpy(result_bytes + (i * 4) + 1, source, 3)
- *             source += src_step
+      /* "pydub/sample.pyx":28
+ *         for sample_idx in range(num_samples):
+ *             # Extend sign bit
+ *             output_ptr[sample_idx * BYTES_PER_SAMPLE_32BIT] = (input_ptr[2] >> 7) * 0xff             # <<<<<<<<<<<<<<
+ *             # Copy last 3 bytes from source
+ *             memcpy(output_ptr + (sample_idx * BYTES_PER_SAMPLE_32BIT) + 1, input_ptr, BYTES_PER_SAMPLE_24BIT)
  */
-      (__pyx_v_result_bytes[(__pyx_v_i * 4)]) = (((__pyx_v_source[2]) >> 7) * 0xff);
+      (__pyx_v_output_ptr[(__pyx_v_sample_idx * 4)]) = (((__pyx_v_input_ptr[2]) >> 7) * 0xff);
 
-      /* "pydub/sample.pyx":42
- *             # memcpy(dest + 1, source, 3)
- *             result_bytes[i * 4] = (source[2] >> 7) * 0xff
- *             memcpy(result_bytes + (i * 4) + 1, source, 3)             # <<<<<<<<<<<<<<
- *             source += src_step
- *             # dest += dest_step
- */
-      (void)(memcpy(((__pyx_v_result_bytes + (__pyx_v_i * 4)) + 1), __pyx_v_source, 3));
-
-      /* "pydub/sample.pyx":43
- *             result_bytes[i * 4] = (source[2] >> 7) * 0xff
- *             memcpy(result_bytes + (i * 4) + 1, source, 3)
- *             source += src_step             # <<<<<<<<<<<<<<
- *             # dest += dest_step
+      /* "pydub/sample.pyx":30
+ *             output_ptr[sample_idx * BYTES_PER_SAMPLE_32BIT] = (input_ptr[2] >> 7) * 0xff
+ *             # Copy last 3 bytes from source
+ *             memcpy(output_ptr + (sample_idx * BYTES_PER_SAMPLE_32BIT) + 1, input_ptr, BYTES_PER_SAMPLE_24BIT)             # <<<<<<<<<<<<<<
+ *             input_ptr += BYTES_PER_SAMPLE_24BIT
  * 
  */
-      __pyx_v_source = (__pyx_v_source + __pyx_v_src_step);
+      (void)(memcpy(((__pyx_v_output_ptr + (__pyx_v_sample_idx * 4)) + 1), __pyx_v_input_ptr, 3));
+
+      /* "pydub/sample.pyx":31
+ *             # Copy last 3 bytes from source
+ *             memcpy(output_ptr + (sample_idx * BYTES_PER_SAMPLE_32BIT) + 1, input_ptr, BYTES_PER_SAMPLE_24BIT)
+ *             input_ptr += BYTES_PER_SAMPLE_24BIT             # <<<<<<<<<<<<<<
+ * 
+ *         return bytes(output_ptr[:output_size])
+ */
+      __pyx_v_input_ptr = (__pyx_v_input_ptr + 3);
     }
 
-    /* "pydub/sample.pyx":46
- *             # dest += dest_step
+    /* "pydub/sample.pyx":33
+ *             input_ptr += BYTES_PER_SAMPLE_24BIT
  * 
- *         return bytes(result_bytes[:len_result])             # <<<<<<<<<<<<<<
+ *         return bytes(output_ptr[:output_size])             # <<<<<<<<<<<<<<
  *     finally:
- *         free(result_bytes)
+ *         free(output_ptr)
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_2 = __Pyx_PyBytes_FromStringAndSize(((const char*)__pyx_v_result_bytes) + 0, __pyx_v_len_result - 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 46, __pyx_L5_error)
+    __pyx_t_2 = __Pyx_PyBytes_FromStringAndSize(((const char*)__pyx_v_output_ptr) + 0, __pyx_v_output_size - 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 33, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyBytes_Type)), __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 46, __pyx_L5_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyBytes_Type)), __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 33, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_r = __pyx_t_1;
@@ -17749,10 +17643,10 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
     goto __pyx_L4_return;
   }
 
-  /* "pydub/sample.pyx":48
- *         return bytes(result_bytes[:len_result])
+  /* "pydub/sample.pyx":35
+ *         return bytes(output_ptr[:output_size])
  *     finally:
- *         free(result_bytes)             # <<<<<<<<<<<<<<
+ *         free(output_ptr)             # <<<<<<<<<<<<<<
  */
   /*finally:*/ {
     __pyx_L5_error:;
@@ -17772,7 +17666,7 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
       __Pyx_XGOTREF(__pyx_t_14);
       __pyx_t_3 = __pyx_lineno; __pyx_t_6 = __pyx_clineno; __pyx_t_8 = __pyx_filename;
       {
-        free(__pyx_v_result_bytes);
+        free(__pyx_v_output_ptr);
       }
       if (PY_MAJOR_VERSION >= 3) {
         __Pyx_XGIVEREF(__pyx_t_12);
@@ -17791,26 +17685,26 @@ static PyObject *__pyx_pf_5pydub_6sample_convert_24bit_to_32bit(CYTHON_UNUSED Py
     __pyx_L4_return: {
       __pyx_t_14 = __pyx_r;
       __pyx_r = 0;
-      free(__pyx_v_result_bytes);
+      free(__pyx_v_output_ptr);
       __pyx_r = __pyx_t_14;
       __pyx_t_14 = 0;
       goto __pyx_L0;
     }
   }
 
-  /* "pydub/sample.pyx":12
+  /* "pydub/sample.pyx":10
  * 
  * 
  * @cython.boundscheck(False)             # <<<<<<<<<<<<<<
  * @cython.wraparound(False)
- * # @cython.cdivision(True)
+ * @cython.cdivision(True)
  */
 
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_AddTraceback("pydub.sample.convert_24bit_to_32bit", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("pydub.sample.extend_24bit_to_32bit", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -18820,17 +18714,10 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_abc, __pyx_k_abc, sizeof(__pyx_k_abc), 0, 0, 1, 1},
     {&__pyx_n_s_allocate_buffer, __pyx_k_allocate_buffer, sizeof(__pyx_k_allocate_buffer), 0, 0, 1, 1},
     {&__pyx_kp_u_and, __pyx_k_and, sizeof(__pyx_k_and), 0, 1, 0, 0},
-    {&__pyx_n_s_array, __pyx_k_array, sizeof(__pyx_k_array), 0, 0, 1, 1},
     {&__pyx_n_s_asyncio_coroutines, __pyx_k_asyncio_coroutines, sizeof(__pyx_k_asyncio_coroutines), 0, 0, 1, 1},
-    {&__pyx_n_s_b0, __pyx_k_b0, sizeof(__pyx_k_b0), 0, 0, 1, 1},
-    {&__pyx_n_s_b1, __pyx_k_b1, sizeof(__pyx_k_b1), 0, 0, 1, 1},
-    {&__pyx_n_s_b2, __pyx_k_b2, sizeof(__pyx_k_b2), 0, 0, 1, 1},
     {&__pyx_n_s_base, __pyx_k_base, sizeof(__pyx_k_base), 0, 0, 1, 1},
     {&__pyx_n_s_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 0, 1, 1},
     {&__pyx_n_u_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 1, 0, 1},
-    {&__pyx_n_s_chunk_end, __pyx_k_chunk_end, sizeof(__pyx_k_chunk_end), 0, 0, 1, 1},
-    {&__pyx_n_s_chunk_size, __pyx_k_chunk_size, sizeof(__pyx_k_chunk_size), 0, 0, 1, 1},
-    {&__pyx_n_s_chunk_start, __pyx_k_chunk_start, sizeof(__pyx_k_chunk_start), 0, 0, 1, 1},
     {&__pyx_n_s_class, __pyx_k_class, sizeof(__pyx_k_class), 0, 0, 1, 1},
     {&__pyx_n_s_class_getitem, __pyx_k_class_getitem, sizeof(__pyx_k_class_getitem), 0, 0, 1, 1},
     {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
@@ -18838,11 +18725,8 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_kp_s_collections_abc, __pyx_k_collections_abc, sizeof(__pyx_k_collections_abc), 0, 0, 1, 0},
     {&__pyx_kp_s_contiguous_and_direct, __pyx_k_contiguous_and_direct, sizeof(__pyx_k_contiguous_and_direct), 0, 0, 1, 0},
     {&__pyx_kp_s_contiguous_and_indirect, __pyx_k_contiguous_and_indirect, sizeof(__pyx_k_contiguous_and_indirect), 0, 0, 1, 0},
-    {&__pyx_n_s_convert_24bit_to_32bit, __pyx_k_convert_24bit_to_32bit, sizeof(__pyx_k_convert_24bit_to_32bit), 0, 0, 1, 1},
     {&__pyx_n_s_count, __pyx_k_count, sizeof(__pyx_k_count), 0, 0, 1, 1},
     {&__pyx_n_s_data, __pyx_k_data, sizeof(__pyx_k_data), 0, 0, 1, 1},
-    {&__pyx_n_s_dest, __pyx_k_dest, sizeof(__pyx_k_dest), 0, 0, 1, 1},
-    {&__pyx_n_s_dest_step, __pyx_k_dest_step, sizeof(__pyx_k_dest_step), 0, 0, 1, 1},
     {&__pyx_n_s_dict, __pyx_k_dict, sizeof(__pyx_k_dict), 0, 0, 1, 1},
     {&__pyx_kp_u_disable, __pyx_k_disable, sizeof(__pyx_k_disable), 0, 1, 0, 0},
     {&__pyx_n_s_dtype_is_object, __pyx_k_dtype_is_object, sizeof(__pyx_k_dtype_is_object), 0, 0, 1, 1},
@@ -18850,6 +18734,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_encode, __pyx_k_encode, sizeof(__pyx_k_encode), 0, 0, 1, 1},
     {&__pyx_n_s_enumerate, __pyx_k_enumerate, sizeof(__pyx_k_enumerate), 0, 0, 1, 1},
     {&__pyx_n_s_error, __pyx_k_error, sizeof(__pyx_k_error), 0, 0, 1, 1},
+    {&__pyx_n_s_extend_24bit_to_32bit, __pyx_k_extend_24bit_to_32bit, sizeof(__pyx_k_extend_24bit_to_32bit), 0, 0, 1, 1},
     {&__pyx_n_s_flags, __pyx_k_flags, sizeof(__pyx_k_flags), 0, 0, 1, 1},
     {&__pyx_n_s_format, __pyx_k_format, sizeof(__pyx_k_format), 0, 0, 1, 1},
     {&__pyx_n_s_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 0, 1, 1},
@@ -18858,17 +18743,16 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_getstate, __pyx_k_getstate, sizeof(__pyx_k_getstate), 0, 0, 1, 1},
     {&__pyx_kp_u_got, __pyx_k_got, sizeof(__pyx_k_got), 0, 1, 0, 0},
     {&__pyx_kp_u_got_differing_extents_in_dimensi, __pyx_k_got_differing_extents_in_dimensi, sizeof(__pyx_k_got_differing_extents_in_dimensi), 0, 1, 0, 0},
-    {&__pyx_n_s_i, __pyx_k_i, sizeof(__pyx_k_i), 0, 0, 1, 1},
     {&__pyx_n_s_id, __pyx_k_id, sizeof(__pyx_k_id), 0, 0, 1, 1},
     {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
     {&__pyx_n_s_index, __pyx_k_index, sizeof(__pyx_k_index), 0, 0, 1, 1},
     {&__pyx_n_s_initializing, __pyx_k_initializing, sizeof(__pyx_k_initializing), 0, 0, 1, 1},
+    {&__pyx_n_s_input_ptr, __pyx_k_input_ptr, sizeof(__pyx_k_input_ptr), 0, 0, 1, 1},
+    {&__pyx_n_s_input_size, __pyx_k_input_size, sizeof(__pyx_k_input_size), 0, 0, 1, 1},
     {&__pyx_n_s_is_coroutine, __pyx_k_is_coroutine, sizeof(__pyx_k_is_coroutine), 0, 0, 1, 1},
     {&__pyx_kp_u_isenabled, __pyx_k_isenabled, sizeof(__pyx_k_isenabled), 0, 1, 0, 0},
     {&__pyx_n_s_itemsize, __pyx_k_itemsize, sizeof(__pyx_k_itemsize), 0, 0, 1, 1},
     {&__pyx_kp_s_itemsize_0_for_cython_array, __pyx_k_itemsize_0_for_cython_array, sizeof(__pyx_k_itemsize_0_for_cython_array), 0, 0, 1, 0},
-    {&__pyx_n_s_len_data, __pyx_k_len_data, sizeof(__pyx_k_len_data), 0, 0, 1, 1},
-    {&__pyx_n_s_len_result, __pyx_k_len_result, sizeof(__pyx_k_len_result), 0, 0, 1, 1},
     {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
     {&__pyx_n_s_memview, __pyx_k_memview, sizeof(__pyx_k_memview), 0, 0, 1, 1},
     {&__pyx_n_s_mode, __pyx_k_mode, sizeof(__pyx_k_mode), 0, 0, 1, 1},
@@ -18877,9 +18761,10 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_ndim, __pyx_k_ndim, sizeof(__pyx_k_ndim), 0, 0, 1, 1},
     {&__pyx_n_s_new, __pyx_k_new, sizeof(__pyx_k_new), 0, 0, 1, 1},
     {&__pyx_kp_s_no_default___reduce___due_to_non, __pyx_k_no_default___reduce___due_to_non, sizeof(__pyx_k_no_default___reduce___due_to_non), 0, 0, 1, 0},
+    {&__pyx_n_s_num_samples, __pyx_k_num_samples, sizeof(__pyx_k_num_samples), 0, 0, 1, 1},
     {&__pyx_n_s_obj, __pyx_k_obj, sizeof(__pyx_k_obj), 0, 0, 1, 1},
-    {&__pyx_n_s_offset, __pyx_k_offset, sizeof(__pyx_k_offset), 0, 0, 1, 1},
-    {&__pyx_n_s_p, __pyx_k_p, sizeof(__pyx_k_p), 0, 0, 1, 1},
+    {&__pyx_n_s_output_ptr, __pyx_k_output_ptr, sizeof(__pyx_k_output_ptr), 0, 0, 1, 1},
+    {&__pyx_n_s_output_size, __pyx_k_output_size, sizeof(__pyx_k_output_size), 0, 0, 1, 1},
     {&__pyx_n_s_pack, __pyx_k_pack, sizeof(__pyx_k_pack), 0, 0, 1, 1},
     {&__pyx_n_s_pickle, __pyx_k_pickle, sizeof(__pyx_k_pickle), 0, 0, 1, 1},
     {&__pyx_n_s_pydub_sample, __pyx_k_pydub_sample, sizeof(__pyx_k_pydub_sample), 0, 0, 1, 1},
@@ -18896,15 +18781,12 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_reduce_cython, __pyx_k_reduce_cython, sizeof(__pyx_k_reduce_cython), 0, 0, 1, 1},
     {&__pyx_n_s_reduce_ex, __pyx_k_reduce_ex, sizeof(__pyx_k_reduce_ex), 0, 0, 1, 1},
     {&__pyx_n_s_register, __pyx_k_register, sizeof(__pyx_k_register), 0, 0, 1, 1},
-    {&__pyx_n_s_result_bytes, __pyx_k_result_bytes, sizeof(__pyx_k_result_bytes), 0, 0, 1, 1},
-    {&__pyx_n_s_samples, __pyx_k_samples, sizeof(__pyx_k_samples), 0, 0, 1, 1},
+    {&__pyx_n_s_sample_idx, __pyx_k_sample_idx, sizeof(__pyx_k_sample_idx), 0, 0, 1, 1},
     {&__pyx_n_s_setstate, __pyx_k_setstate, sizeof(__pyx_k_setstate), 0, 0, 1, 1},
     {&__pyx_n_s_setstate_cython, __pyx_k_setstate_cython, sizeof(__pyx_k_setstate_cython), 0, 0, 1, 1},
     {&__pyx_n_s_shape, __pyx_k_shape, sizeof(__pyx_k_shape), 0, 0, 1, 1},
     {&__pyx_n_s_size, __pyx_k_size, sizeof(__pyx_k_size), 0, 0, 1, 1},
-    {&__pyx_n_s_source, __pyx_k_source, sizeof(__pyx_k_source), 0, 0, 1, 1},
     {&__pyx_n_s_spec, __pyx_k_spec, sizeof(__pyx_k_spec), 0, 0, 1, 1},
-    {&__pyx_n_s_src_step, __pyx_k_src_step, sizeof(__pyx_k_src_step), 0, 0, 1, 1},
     {&__pyx_n_s_start, __pyx_k_start, sizeof(__pyx_k_start), 0, 0, 1, 1},
     {&__pyx_n_s_step, __pyx_k_step, sizeof(__pyx_k_step), 0, 0, 1, 1},
     {&__pyx_n_s_stop, __pyx_k_stop, sizeof(__pyx_k_stop), 0, 0, 1, 1},
@@ -18914,7 +18796,6 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_kp_s_stringsource, __pyx_k_stringsource, sizeof(__pyx_k_stringsource), 0, 0, 1, 0},
     {&__pyx_n_s_struct, __pyx_k_struct, sizeof(__pyx_k_struct), 0, 0, 1, 1},
     {&__pyx_n_s_sys, __pyx_k_sys, sizeof(__pyx_k_sys), 0, 0, 1, 1},
-    {&__pyx_n_s_temp_val, __pyx_k_temp_val, sizeof(__pyx_k_temp_val), 0, 0, 1, 1},
     {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
     {&__pyx_kp_s_unable_to_allocate_array_data, __pyx_k_unable_to_allocate_array_data, sizeof(__pyx_k_unable_to_allocate_array_data), 0, 0, 1, 0},
     {&__pyx_kp_s_unable_to_allocate_shape_and_str, __pyx_k_unable_to_allocate_shape_and_str, sizeof(__pyx_k_unable_to_allocate_shape_and_str), 0, 0, 1, 0},
@@ -18927,8 +18808,8 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
 }
 /* #### Code section: cached_builtins ### */
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(0, 33, __pyx_L1_error)
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 38, __pyx_L1_error)
+  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(0, 23, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 26, __pyx_L1_error)
   __pyx_builtin___import__ = __Pyx_GetBuiltinName(__pyx_n_s_import); if (!__pyx_builtin___import__) __PYX_ERR(1, 100, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(1, 141, __pyx_L1_error)
   __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(1, 159, __pyx_L1_error)
@@ -18983,14 +18864,14 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__8);
   __Pyx_GIVEREF(__pyx_tuple__8);
 
-  /* "pydub/sample.pyx":33
+  /* "pydub/sample.pyx":23
  * 
- *     if result_bytes == NULL:
+ *     if output_ptr == NULL:
  *         raise MemoryError("Could not allocate memory for result array")             # <<<<<<<<<<<<<<
  * 
  *     try:
  */
-  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_u_Could_not_allocate_memory_for_re); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 33, __pyx_L1_error)
+  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_u_Could_not_allocate_memory_for_re); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 23, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__9);
   __Pyx_GIVEREF(__pyx_tuple__9);
 
@@ -19095,17 +18976,17 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__19);
   __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_pyx_unpickle_Enum, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(1, 1, __pyx_L1_error)
 
-  /* "pydub/sample.pyx":12
+  /* "pydub/sample.pyx":10
  * 
  * 
  * @cython.boundscheck(False)             # <<<<<<<<<<<<<<
  * @cython.wraparound(False)
- * # @cython.cdivision(True)
+ * @cython.cdivision(True)
  */
-  __pyx_tuple__21 = PyTuple_Pack(19, __pyx_n_s_data, __pyx_n_s_len_data, __pyx_n_s_len_result, __pyx_n_s_i, __pyx_n_s_p, __pyx_n_s_chunk_start, __pyx_n_s_chunk_end, __pyx_n_s_chunk_size, __pyx_n_s_b0, __pyx_n_s_b1, __pyx_n_s_b2, __pyx_n_s_result_bytes, __pyx_n_s_temp_val, __pyx_n_s_source, __pyx_n_s_dest, __pyx_n_s_src_step, __pyx_n_s_dest_step, __pyx_n_s_samples, __pyx_n_s_offset); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_tuple__21 = PyTuple_Pack(7, __pyx_n_s_data, __pyx_n_s_input_size, __pyx_n_s_output_size, __pyx_n_s_num_samples, __pyx_n_s_sample_idx, __pyx_n_s_input_ptr, __pyx_n_s_output_ptr); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__21);
   __Pyx_GIVEREF(__pyx_tuple__21);
-  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 19, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_pydub_sample_pyx, __pyx_n_s_convert_24bit_to_32bit, 12, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_pydub_sample_pyx, __pyx_n_s_extend_24bit_to_32bit, 10, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -20156,32 +20037,22 @@ if (!__Pyx_RefNanny) {
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_pyx_unpickle_Enum, __pyx_t_7) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "pydub/sample.pyx":1
- * import array             # <<<<<<<<<<<<<<
- * 
- * cimport cython
- */
-  __pyx_t_7 = __Pyx_ImportDottedModule(__pyx_n_s_array, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_array, __pyx_t_7) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-
-  /* "pydub/sample.pyx":12
+  /* "pydub/sample.pyx":10
  * 
  * 
  * @cython.boundscheck(False)             # <<<<<<<<<<<<<<
  * @cython.wraparound(False)
- * # @cython.cdivision(True)
+ * @cython.cdivision(True)
  */
-  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5pydub_6sample_1convert_24bit_to_32bit, 0, __pyx_n_s_convert_24bit_to_32bit, NULL, __pyx_n_s_pydub_sample, __pyx_d, ((PyObject *)__pyx_codeobj__22)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_5pydub_6sample_1extend_24bit_to_32bit, 0, __pyx_n_s_extend_24bit_to_32bit, NULL, __pyx_n_s_pydub_sample, __pyx_d, ((PyObject *)__pyx_codeobj__22)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_convert_24bit_to_32bit, __pyx_t_7) < 0) __PYX_ERR(0, 12, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_extend_24bit_to_32bit, __pyx_t_7) < 0) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
   /* "pydub/sample.pyx":1
- * import array             # <<<<<<<<<<<<<<
- * 
- * cimport cython
+ * cimport cython             # <<<<<<<<<<<<<<
+ * from libc.stdlib cimport free, malloc
+ * from libc.string cimport memcpy, memset
  */
   __pyx_t_7 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);

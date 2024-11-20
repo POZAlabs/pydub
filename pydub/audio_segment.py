@@ -24,7 +24,7 @@ from .exceptions import (
     TooManyMissingFrames,
 )
 from .logging_utils import log_conversion, log_subprocess_output
-from .sample import convert_24bit_to_32bit
+from .sample import extend_24bit_to_32bit
 from .utils import (
     _fd_or_path_or_tempfile,
     audioop,
@@ -219,7 +219,7 @@ class AudioSegment:
                 self._data = audioop.bias(self._data, 1, -128)
 
         if self.sample_width == 3:
-            self._data = convert_24bit_to_32bit(self._data)
+            self._data = extend_24bit_to_32bit(self._data)
             self.sample_width = 4
             self.frame_width = self.channels * self.sample_width
 

@@ -1471,6 +1471,18 @@ class AudioSegment:
         }
         return {name: meter_to_measurer[name](self) for name in names}
 
+    def get_normalized_amplitudes(self, num_segments: int) -> list[float]:
+        if not self.rms:
+            raise ValueError("Audio contains no audio data")
+
+        segment_duration = len(self) / num_segments
+        amplitudes = [
+            self[(i * segment_duration) : ((i + 1) * segment_duration)].rms
+            for i in range(num_segments)
+        ]
+        max_amplitude = max(amplitudes)
+        return [(amplitude / max_amplitude) for amplitude in amplitudes]
+
 
 def is_gzip(file: IO[bytes]) -> bool:
     file.seek(0)

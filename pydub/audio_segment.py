@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import array
 import base64
-import gzip
 import io
 import os
 import struct
@@ -647,9 +646,12 @@ class AudioSegment:
 
             return False
 
-        if is_gzip(file):
+        is_compressed, compressor = _compression.is_compressed(file)
+        if is_compressed:
             return cls.from_file(
-                file=io.BytesIO(gzip.decompress(file.read())),
+                file=io.BytesIO(
+                    _compression.decompress(compressor=compressor, content=file.read())
+                ),
                 format=format,
                 codec=codec,
                 parameters=parameters,
@@ -1480,13 +1482,6 @@ class AudioSegment:
         ]
         max_amplitude = max(amplitudes)
         return [(amplitude / max_amplitude) for amplitude in amplitudes]
-
-
-def is_gzip(file: IO[bytes]) -> bool:
-    file.seek(0)
-    result = file.read(2) == b"\x1f\x8b"
-    file.seek(0)
-    return result
 
 
 from . import effects  # noqa: E402, F401, F403

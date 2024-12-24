@@ -12,7 +12,6 @@ def decompress(content: bytes) -> bytes:
 
 def is_compressed(f: IO[bytes]) -> bool:
     f.seek(0)
-    f.seek(0)
     result = f.read(2) == b"\x1f\x8b"
     f.seek(0)
     return result

@@ -421,10 +421,10 @@ def ms_to_stereo(audio_segment):
 
 
 P = ParamSpec("P")
-T = TypeVar("R")
+T = TypeVar("T")
 
 
-def create_extra_required(module: Any | None, message: str) -> Callable[Callable[P, T], T]:
+def create_extra_required(module: Any | None, message: str) -> Callable[[Callable[P, T]], T]:
     def decorator(func: Callable[P, T]) -> T:
         @functools.wraps(func)
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:

@@ -12,9 +12,11 @@ zstd_required = create_extra_required(
 )
 
 
+@zstd_required
 def compress(content: bytes, **kwargs) -> bytes:
     return zstandard.compress(content, **kwargs)
 
 
+@zstd_required
 def decompress(content: bytes) -> bytes:
     return zstandard.decompress(content)

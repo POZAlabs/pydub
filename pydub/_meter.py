@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import functools
 import tempfile
-from collections.abc import Callable
-from typing import TYPE_CHECKING, ParamSpec, TypedDict, TypeVar
+from typing import TYPE_CHECKING, TypedDict
+
+from .utils import create_extra_required
 
 if TYPE_CHECKING:
     from .audio_segment import AudioSegment
@@ -15,18 +15,10 @@ except ImportError:
     pass
 
 
-P = ParamSpec("P")
-R = TypeVar("R")
-
-
-def audiometer_required(func: Callable[P, R]) -> Callable[P, R]:
-    @functools.wraps(func)
-    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
-        if audiometer is None:
-            raise ImportError("`audiometer` is required to measure meter levels")
-        return func(*args, **kwargs)
-
-    return wrapper
+audiometer_required = create_extra_required(
+    module="audiometer",
+    message="`audiometer` is required to measure meter levels",
+)
 
 
 class Loudness(TypedDict):

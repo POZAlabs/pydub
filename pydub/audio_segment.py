@@ -13,7 +13,7 @@ from collections import namedtuple
 from tempfile import NamedTemporaryFile
 from typing import IO, Any, Literal, Self, Unpack
 
-from . import _meter
+from . import _compression, _meter
 from .exceptions import (
     CouldntDecodeError,
     CouldntEncodeError,
@@ -851,10 +851,8 @@ class AudioSegment:
         tags: dict[str, str] | None = None,
         id3v2_version: str = "4",
         cover: str | None = None,
-        compressor: Literal["gzip"] | None = None,
+        compressor: _compression.Compressor | None = None,
     ) -> IO[bytes]:
-        compressors = {"gzip": gzip.compress}
-
         result = self._export(
             out_f=out_f,
             format=format,
@@ -866,7 +864,7 @@ class AudioSegment:
             cover=cover,
         )
         if compressor is not None:
-            result = io.BytesIO(compressors[compressor](result.read()))
+            result = io.BytesIO(_compression.compress(compressor=compressor, content=result.read()))
         return result
 
     def _export(

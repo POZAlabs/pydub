@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import array
 import base64
-import gzip
 import io
 import os
 import struct
@@ -13,7 +12,7 @@ from collections import namedtuple
 from tempfile import NamedTemporaryFile
 from typing import IO, Any, Literal, Self, Unpack
 
-from . import _meter
+from . import _compression, _meter
 from .exceptions import (
     CouldntDecodeError,
     CouldntEncodeError,
@@ -647,9 +646,12 @@ class AudioSegment:
 
             return False
 
-        if is_gzip(file):
+        is_compressed, compressor = _compression.is_compressed(file)
+        if is_compressed:
             return cls.from_file(
-                file=io.BytesIO(gzip.decompress(file.read())),
+                file=io.BytesIO(
+                    _compression.decompress(compressor=compressor, content=file.read())
+                ),
                 format=format,
                 codec=codec,
                 parameters=parameters,
@@ -851,10 +853,8 @@ class AudioSegment:
         tags: dict[str, str] | None = None,
         id3v2_version: str = "4",
         cover: str | None = None,
-        compressor: Literal["gzip"] | None = None,
+        compressor: _compression.Compressor | None = None,
     ) -> IO[bytes]:
-        compressors = {"gzip": gzip.compress}
-
         result = self._export(
             out_f=out_f,
             format=format,
@@ -866,7 +866,7 @@ class AudioSegment:
             cover=cover,
         )
         if compressor is not None:
-            result = io.BytesIO(compressors[compressor](result.read()))
+            result = io.BytesIO(_compression.compress(compressor=compressor, content=result.read()))
         return result
 
     def _export(
@@ -1482,13 +1482,6 @@ class AudioSegment:
         ]
         max_amplitude = max(amplitudes)
         return [(amplitude / max_amplitude) for amplitude in amplitudes]
-
-
-def is_gzip(file: IO[bytes]) -> bool:
-    file.seek(0)
-    result = file.read(2) == b"\x1f\x8b"
-    file.seek(0)
-    return result
 
 
 from . import effects  # noqa: E402, F401, F403

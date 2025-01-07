@@ -2,33 +2,33 @@
 
 [[package]]
 name = "audiometer"
-version = "0.15.0"
+version = "0.16.0"
 description = ""
 optional = true
 python-versions = ">=3.10"
 files = [
-    {file = "audiometer-0.15.0-cp310-cp310-macosx_10_12_x86_64.whl", hash = "sha256:e2991e4975dee9d1144e00b1419515d1007c80c1d1bbf17ecabb26bf7219cd17"},
-    {file = "audiometer-0.15.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:3a2cd3b065d95fcbf188b2eef18160696204b75457340006c77246ddeb840890"},
-    {file = "audiometer-0.15.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0975ad7ce7943b12ccc11150faf8942d2d5e45abe432ce44d50efb2f753c0e1d"},
-    {file = "audiometer-0.15.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:337c285e8422e18ec3e75c2c4f83543d1a7fe064046aecea4112800eb5a792de"},
-    {file = "audiometer-0.15.0-cp310-cp310-win_amd64.whl", hash = "sha256:739d780c710e4d414c4927ff3b5e8ca5bfbcd2ba3fcded0c1898bedce9fea8a1"},
-    {file = "audiometer-0.15.0-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:a89d34d72d43a96abd90ef52f8674ccf8dc67729ba4e7e7a60dcddf9fede89c8"},
-    {file = "audiometer-0.15.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:6f0892ca4a96520e872f7e50b29534f8bcbb2ac8a01585cb40fbf4ed07b31101"},
-    {file = "audiometer-0.15.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:45120d6375adef56471d990a601e4a8118ded460e6d7edcc41419a7193e3c7ba"},
-    {file = "audiometer-0.15.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ded82b1dd7e1a093a669debbe87270b69ce9ce5cef3921993c8e4587c9740ebb"},
-    {file = "audiometer-0.15.0-cp311-cp311-win_amd64.whl", hash = "sha256:042bddf20fabe469869ecc06cf52883b9784296a646937ab0af10516579a7c99"},
-    {file = "audiometer-0.15.0-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:2bd6a0f697339d9d436070427272fec55098f308b2ee81662cc63fbf1b1b6a02"},
-    {file = "audiometer-0.15.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:be02c87448ba8d4a5598c72bfb31582294f321e466b483ed69a8e9a1f1c77e37"},
-    {file = "audiometer-0.15.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:648860d6840ee187cf2dc41b75f2dd7035d4eb6fb777101fc34d971ad41da8d5"},
-    {file = "audiometer-0.15.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d2d067e453c4ad9ee00d6ed4dfbe2c3bdb8a86ab5cdc6b65616ccef1b7c958e7"},
-    {file = "audiometer-0.15.0-cp312-cp312-win_amd64.whl", hash = "sha256:cf27294cb38cd9b1287aaf5594682c21546490bd622d7c8053565da635f42a80"},
-    {file = "audiometer-0.15.0-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:3a79b508a117e88f208b9f99984dccaad8c0dd0570164a71483c9fe03ce78fe1"},
-    {file = "audiometer-0.15.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:3586748595499efc4e2492f71beffa6c76aff470d7506b7a7434203acf59a24d"},
-    {file = "audiometer-0.15.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:46286bd179af92989578c3019b930011e2d6549059d077112b4a4197570f933d"},
-    {file = "audiometer-0.15.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a2d70059eb86a86d780ad89b2730d0e3aad071963b5f5a2ea30dbff68f817949"},
-    {file = "audiometer-0.15.0-pp310-pypy310_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:da5b78e5ca5c79df1738f09a688ddaa68491298bef40104fc7433282bccb8fac"},
-    {file = "audiometer-0.15.0-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:23e5867e9254552d210f8f996d3fae4ce2be79444fdcc28ff45494dfd35e7818"},
-    {file = "audiometer-0.15.0.tar.gz", hash = "sha256:b2e25f9ab3695b99bc6c7339cfa77647f06f8bf14483d8c6b641be2d0b679536"},
+    {file = "audiometer-0.16.0-cp310-cp310-macosx_10_12_x86_64.whl", hash = "sha256:0315134d46eec6c70ad3c0012220f974eced48f46915cf0ab6b99fb1138a2a2d"},
+    {file = "audiometer-0.16.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:97501403bddd1d20f3e716cbd5098fd955dce7fc33623fb4f1e5afdf12c8e634"},
+    {file = "audiometer-0.16.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3971f05a247786f4fa6a89e88a54b74add3a637f3ac49f1a30803f320a3cd01b"},
+    {file = "audiometer-0.16.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e1e8f8133a4d300be8ee8a1314a6614a5c8fa54c93343202496501bb6dc2f2fa"},
+    {file = "audiometer-0.16.0-cp310-cp310-win_amd64.whl", hash = "sha256:8359a8619483c80a5ae10b75e68896700929d879758773977917f968656820db"},
+    {file = "audiometer-0.16.0-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:1dd717428064ac708e5c2604c4a7d9805f118bda3a26415e374955a2375fe711"},
+    {file = "audiometer-0.16.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:e89b2c72f34dc917a33f49bf1c94d9a67dd4ba6f95fa487eaf015c3c826c4794"},
+    {file = "audiometer-0.16.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:708cdf1e131ad7c5137e97a0913c98c2341c72fc648e5b578b60d6b0b816ef2a"},
+    {file = "audiometer-0.16.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6cfa1527f85464bab9c11390d455ae634e63d070066218cecdc108f26f47062e"},
+    {file = "audiometer-0.16.0-cp311-cp311-win_amd64.whl", hash = "sha256:b363324016020964408387b0e4333a4ead123d1dd37e68f78e705ee8855a47a2"},
+    {file = "audiometer-0.16.0-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:a66fb245b4e1fdc9352c562593216a6f91d3d9585548512270df9628b98781bd"},
+    {file = "audiometer-0.16.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:a183f358c3b49044156e6dc6ef197aebf1653974af9a54c24099f0fdac6fdfe9"},
+    {file = "audiometer-0.16.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2b987b1057682d06a93485f2e256160cc5ca538cd4e2c24455d2ca9623f00326"},
+    {file = "audiometer-0.16.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f46111f7e78af5e39add9c2b61cc5e290d4fa3144ca3001c3c983aed4e292de4"},
+    {file = "audiometer-0.16.0-cp312-cp312-win_amd64.whl", hash = "sha256:65df9ceb59814de3bd7003537645a9deecc655e5855c057640fb0ae9eb949224"},
+    {file = "audiometer-0.16.0-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:e17e27c2a6566ee34dc39ff389aace4f82cc92e7d2766003dd6ce5525f846b96"},
+    {file = "audiometer-0.16.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:c562d821bb544b8e9159c3933a9005e4f3bb7d0cb8476b2a37a9a913452124a6"},
+    {file = "audiometer-0.16.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:42179a433f350e7ef5ff199277da3c75e2c8ba6cbf849c72230cffd506d4bf49"},
+    {file = "audiometer-0.16.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6f887a17ce79f23abe2ebec0633379cbec01699b621d24f97b0050b6a7fc5df6"},
+    {file = "audiometer-0.16.0-pp310-pypy310_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:daefa79cea483c426dd7da1f1481fd6b05c4752ae2245bf797939a7051ed7615"},
+    {file = "audiometer-0.16.0-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3a06f940e89d4ffb8bb699ae7964300eec0d159c76e06750c085fbf917291020"},
+    {file = "audiometer-0.16.0.tar.gz", hash = "sha256:a80221d00a3f4e1843ac1998263056dc59c5fcb2439e56828cecb777abec387a"},
 ]
 
 [package.extras]
@@ -726,4 +726,4 @@ zstd = ["zstandard"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<4.0"
-content-hash = "35a1389ca104b8201581926882b5569cb5edf7a4ff25a0b1966df72983984267"
+content-hash = "b69c9a8c91b9f56ab1fac94cf0016eea28e070fc5911ac163db531f544750c21"

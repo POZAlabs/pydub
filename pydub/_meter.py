@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import tempfile
 from typing import TYPE_CHECKING, TypedDict
 
 from .utils import create_extra_required
@@ -59,12 +58,11 @@ def measure_peak(audio_segment: AudioSegment) -> float:
 
 @audiometer_required
 def measure_loudness(audio_segment: AudioSegment) -> Loudness:
-    with tempfile.NamedTemporaryFile(suffix=".wav") as f:
-        audio_segment.export(
-            f.name,
-            format="wav",
-            codec="pcm_s24le",
+    return Loudness(
+        **audiometer.measure_loudness(
+            samples=audio_segment.get_array_of_samples(),
+            channels=audio_segment.channels,
+            max_amplitude=audio_segment.max_possible_amplitude,
+            sample_rate=audio_segment.frame_rate,
         )
-        loudness = audiometer.measure_loudness(f.name)
-
-    return Loudness(**loudness)
+    )

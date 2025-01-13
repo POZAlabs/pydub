@@ -34,6 +34,7 @@ zstd = ["zstandard"]
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.0"
 memray = "^1.13.4"
+memory-profiler = "^0.61.0"
 
 [tool.poetry.build]
 generate-setup-file = false

@@ -17711,13 +17711,13 @@ static PyObject *__pyx_pf_5pydub_6sample_extend_24bit_to_32bit(CYTHON_UNUSED PyO
  *         memcpy(output_buffer + (sample_idx * BYTES_PER_32BIT_SAMPLE) + 1, input_ptr, BYTES_PER_24BIT_SAMPLE)
  *         input_ptr += BYTES_PER_24BIT_SAMPLE             # <<<<<<<<<<<<<<
  * 
- *     # for sample_idx in range(num_samples):
+ *     return output_bytes
  */
     __pyx_v_input_ptr = (__pyx_v_input_ptr + 3);
   }
 
-  /* "pydub/sample.pyx":53
- *     #     output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE + 3] = input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE + 2]
+  /* "pydub/sample.pyx":45
+ *         input_ptr += BYTES_PER_24BIT_SAMPLE
  * 
  *     return output_bytes             # <<<<<<<<<<<<<<
  */

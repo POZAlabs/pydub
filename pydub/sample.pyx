@@ -1,5 +1,6 @@
 cimport cython
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
+from libc.string cimport memcpy
 
 
 DEF BYTES_PER_24BIT_SAMPLE = 3
@@ -35,11 +36,10 @@ def extend_24bit_to_32bit(const unsigned char[::1] data):
     output_buffer = <unsigned char*>PyBytes_AS_STRING(output_bytes)
 
     for sample_idx in range(num_samples):
-        sign_bit = (input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE + 2] >> 7) * 0xff
-
-        output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE] = sign_bit
-        output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE + 1] = input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE]
-        output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE + 2] = input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE + 1]
-        output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE + 3] = input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE + 2]
+        # Extend sign bit
+        output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE] = (input_ptr[2] >> 7) * 0xff
+        # Copy last 3 bytes from source
+        memcpy(output_buffer + (sample_idx * BYTES_PER_32BIT_SAMPLE) + 1, input_ptr, BYTES_PER_24BIT_SAMPLE)
+        input_ptr += BYTES_PER_24BIT_SAMPLE
 
     return output_bytes

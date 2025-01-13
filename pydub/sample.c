@@ -17530,7 +17530,6 @@ static PyObject *__pyx_pf_5pydub_6sample_extend_24bit_to_32bit(CYTHON_UNUSED PyO
   unsigned char const *__pyx_v_input_ptr;
   unsigned char *__pyx_v_output_buffer;
   PyObject *__pyx_v_output_bytes = 0;
-  unsigned char __pyx_v_sign_bit;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
@@ -17546,9 +17545,9 @@ static PyObject *__pyx_pf_5pydub_6sample_extend_24bit_to_32bit(CYTHON_UNUSED PyO
   __Pyx_RefNannySetupContext("extend_24bit_to_32bit", 1);
 
   /* "pydub/sample.pyx":15
- * def extend_24bit_to_32bit(const unsigned char[::1] data):  # Use contiguous memory view
+ * def extend_24bit_to_32bit(const unsigned char[::1] data):
  *     cdef:
- *         int input_size = data.shape[0]  # More efficient than data.size             # <<<<<<<<<<<<<<
+ *         int input_size = data.shape[0]             # <<<<<<<<<<<<<<
  *         int output_size
  *         int num_samples
  */
@@ -17563,9 +17562,9 @@ static PyObject *__pyx_pf_5pydub_6sample_extend_24bit_to_32bit(CYTHON_UNUSED PyO
  */
   __pyx_v_sample_idx = 0;
 
-  /* "pydub/sample.pyx":25
+  /* "pydub/sample.pyx":24
+ *         unsigned char sign_bit
  * 
- *     # Validate input size
  *     if input_size % BYTES_PER_24BIT_SAMPLE:             # <<<<<<<<<<<<<<
  *         raise ValueError("Input size must be a multiple of 3 bytes")
  * 
@@ -17573,94 +17572,94 @@ static PyObject *__pyx_pf_5pydub_6sample_extend_24bit_to_32bit(CYTHON_UNUSED PyO
   __pyx_t_1 = ((__pyx_v_input_size % 3) != 0);
   if (unlikely(__pyx_t_1)) {
 
-    /* "pydub/sample.pyx":26
- *     # Validate input size
+    /* "pydub/sample.pyx":25
+ * 
  *     if input_size % BYTES_PER_24BIT_SAMPLE:
  *         raise ValueError("Input size must be a multiple of 3 bytes")             # <<<<<<<<<<<<<<
  * 
- *     # Pre-calculate sizes once
+ *     num_samples = input_size // BYTES_PER_24BIT_SAMPLE
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 26, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 25, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 26, __pyx_L1_error)
+    __PYX_ERR(0, 25, __pyx_L1_error)
 
-    /* "pydub/sample.pyx":25
+    /* "pydub/sample.pyx":24
+ *         unsigned char sign_bit
  * 
- *     # Validate input size
  *     if input_size % BYTES_PER_24BIT_SAMPLE:             # <<<<<<<<<<<<<<
  *         raise ValueError("Input size must be a multiple of 3 bytes")
  * 
  */
   }
 
-  /* "pydub/sample.pyx":29
+  /* "pydub/sample.pyx":27
+ *         raise ValueError("Input size must be a multiple of 3 bytes")
  * 
- *     # Pre-calculate sizes once
  *     num_samples = input_size // BYTES_PER_24BIT_SAMPLE             # <<<<<<<<<<<<<<
  *     output_size = num_samples * BYTES_PER_32BIT_SAMPLE
  * 
  */
   __pyx_v_num_samples = (__pyx_v_input_size / 3);
 
-  /* "pydub/sample.pyx":30
- *     # Pre-calculate sizes once
+  /* "pydub/sample.pyx":28
+ * 
  *     num_samples = input_size // BYTES_PER_24BIT_SAMPLE
  *     output_size = num_samples * BYTES_PER_32BIT_SAMPLE             # <<<<<<<<<<<<<<
  * 
- *     # Get input pointer directly from contiguous memory view
+ *     input_ptr = &data[0]
  */
   __pyx_v_output_size = (__pyx_v_num_samples * 4);
 
-  /* "pydub/sample.pyx":33
+  /* "pydub/sample.pyx":30
+ *     output_size = num_samples * BYTES_PER_32BIT_SAMPLE
  * 
- *     # Get input pointer directly from contiguous memory view
  *     input_ptr = &data[0]             # <<<<<<<<<<<<<<
  * 
- *     # Create output bytes with exact size needed
+ *     output_bytes = PyBytes_FromStringAndSize(NULL, output_size)
  */
   __pyx_t_3 = 0;
   __pyx_v_input_ptr = (&(*((unsigned char const  *) ( /* dim=0 */ ((char *) (((unsigned char const  *) __pyx_v_data.data) + __pyx_t_3)) ))));
 
-  /* "pydub/sample.pyx":36
+  /* "pydub/sample.pyx":32
+ *     input_ptr = &data[0]
  * 
- *     # Create output bytes with exact size needed
  *     output_bytes = PyBytes_FromStringAndSize(NULL, output_size)             # <<<<<<<<<<<<<<
  *     if not output_bytes:
  *         raise MemoryError("Could not allocate memory for output")
  */
-  __pyx_t_2 = PyBytes_FromStringAndSize(NULL, __pyx_v_output_size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __pyx_t_2 = PyBytes_FromStringAndSize(NULL, __pyx_v_output_size); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 32, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_output_bytes = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "pydub/sample.pyx":37
- *     # Create output bytes with exact size needed
+  /* "pydub/sample.pyx":33
+ * 
  *     output_bytes = PyBytes_FromStringAndSize(NULL, output_size)
  *     if not output_bytes:             # <<<<<<<<<<<<<<
  *         raise MemoryError("Could not allocate memory for output")
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_output_bytes); if (unlikely((__pyx_t_1 < 0))) __PYX_ERR(0, 37, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_output_bytes); if (unlikely((__pyx_t_1 < 0))) __PYX_ERR(0, 33, __pyx_L1_error)
   __pyx_t_4 = (!__pyx_t_1);
   if (unlikely(__pyx_t_4)) {
 
-    /* "pydub/sample.pyx":38
+    /* "pydub/sample.pyx":34
  *     output_bytes = PyBytes_FromStringAndSize(NULL, output_size)
  *     if not output_bytes:
  *         raise MemoryError("Could not allocate memory for output")             # <<<<<<<<<<<<<<
  * 
- *     # Get direct pointer to output buffer
+ *     output_buffer = <unsigned char*>PyBytes_AS_STRING(output_bytes)
  */
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 38, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_MemoryError, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 34, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 38, __pyx_L1_error)
+    __PYX_ERR(0, 34, __pyx_L1_error)
 
-    /* "pydub/sample.pyx":37
- *     # Create output bytes with exact size needed
+    /* "pydub/sample.pyx":33
+ * 
  *     output_bytes = PyBytes_FromStringAndSize(NULL, output_size)
  *     if not output_bytes:             # <<<<<<<<<<<<<<
  *         raise MemoryError("Could not allocate memory for output")
@@ -17668,79 +17667,59 @@ static PyObject *__pyx_pf_5pydub_6sample_extend_24bit_to_32bit(CYTHON_UNUSED PyO
  */
   }
 
-  /* "pydub/sample.pyx":41
+  /* "pydub/sample.pyx":36
+ *         raise MemoryError("Could not allocate memory for output")
  * 
- *     # Get direct pointer to output buffer
  *     output_buffer = <unsigned char*>PyBytes_AS_STRING(output_bytes)             # <<<<<<<<<<<<<<
  * 
  *     for sample_idx in range(num_samples):
  */
   __pyx_v_output_buffer = ((unsigned char *)PyBytes_AS_STRING(__pyx_v_output_bytes));
 
-  /* "pydub/sample.pyx":43
+  /* "pydub/sample.pyx":38
  *     output_buffer = <unsigned char*>PyBytes_AS_STRING(output_bytes)
  * 
  *     for sample_idx in range(num_samples):             # <<<<<<<<<<<<<<
- *         sign_bit = (input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE + 2] >> 7) * 0xff
- * 
+ *         # Extend sign bit
+ *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE] = (input_ptr[2] >> 7) * 0xff
  */
   __pyx_t_5 = __pyx_v_num_samples;
   __pyx_t_6 = __pyx_t_5;
   for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
     __pyx_v_sample_idx = __pyx_t_7;
 
-    /* "pydub/sample.pyx":44
- * 
+    /* "pydub/sample.pyx":40
  *     for sample_idx in range(num_samples):
- *         sign_bit = (input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE + 2] >> 7) * 0xff             # <<<<<<<<<<<<<<
- * 
- *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE] = sign_bit
+ *         # Extend sign bit
+ *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE] = (input_ptr[2] >> 7) * 0xff             # <<<<<<<<<<<<<<
+ *         # Copy last 3 bytes from source
+ *         memcpy(output_buffer + (sample_idx * BYTES_PER_32BIT_SAMPLE) + 1, input_ptr, BYTES_PER_24BIT_SAMPLE)
  */
-    __pyx_v_sign_bit = (((__pyx_v_input_ptr[((__pyx_v_sample_idx * 3) + 2)]) >> 7) * 0xff);
+    (__pyx_v_output_buffer[(__pyx_v_sample_idx * 4)]) = (((__pyx_v_input_ptr[2]) >> 7) * 0xff);
 
-    /* "pydub/sample.pyx":46
- *         sign_bit = (input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE + 2] >> 7) * 0xff
+    /* "pydub/sample.pyx":42
+ *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE] = (input_ptr[2] >> 7) * 0xff
+ *         # Copy last 3 bytes from source
+ *         memcpy(output_buffer + (sample_idx * BYTES_PER_32BIT_SAMPLE) + 1, input_ptr, BYTES_PER_24BIT_SAMPLE)             # <<<<<<<<<<<<<<
+ *         input_ptr += BYTES_PER_24BIT_SAMPLE
  * 
- *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE] = sign_bit             # <<<<<<<<<<<<<<
- *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE + 1] = input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE]
- *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE + 2] = input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE + 1]
  */
-    (__pyx_v_output_buffer[(__pyx_v_sample_idx * 4)]) = __pyx_v_sign_bit;
+    (void)(memcpy(((__pyx_v_output_buffer + (__pyx_v_sample_idx * 4)) + 1), __pyx_v_input_ptr, 3));
 
-    /* "pydub/sample.pyx":47
+    /* "pydub/sample.pyx":43
+ *         # Copy last 3 bytes from source
+ *         memcpy(output_buffer + (sample_idx * BYTES_PER_32BIT_SAMPLE) + 1, input_ptr, BYTES_PER_24BIT_SAMPLE)
+ *         input_ptr += BYTES_PER_24BIT_SAMPLE             # <<<<<<<<<<<<<<
  * 
- *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE] = sign_bit
- *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE + 1] = input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE]             # <<<<<<<<<<<<<<
- *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE + 2] = input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE + 1]
- *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE + 3] = input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE + 2]
+ *     # for sample_idx in range(num_samples):
  */
-    (__pyx_v_output_buffer[((__pyx_v_sample_idx * 4) + 1)]) = (__pyx_v_input_ptr[(__pyx_v_sample_idx * 3)]);
-
-    /* "pydub/sample.pyx":48
- *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE] = sign_bit
- *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE + 1] = input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE]
- *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE + 2] = input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE + 1]             # <<<<<<<<<<<<<<
- *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE + 3] = input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE + 2]
- * 
- */
-    (__pyx_v_output_buffer[((__pyx_v_sample_idx * 4) + 2)]) = (__pyx_v_input_ptr[((__pyx_v_sample_idx * 3) + 1)]);
-
-    /* "pydub/sample.pyx":49
- *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE + 1] = input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE]
- *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE + 2] = input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE + 1]
- *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE + 3] = input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE + 2]             # <<<<<<<<<<<<<<
- * 
- *     return output_bytes
- */
-    (__pyx_v_output_buffer[((__pyx_v_sample_idx * 4) + 3)]) = (__pyx_v_input_ptr[((__pyx_v_sample_idx * 3) + 2)]);
+    __pyx_v_input_ptr = (__pyx_v_input_ptr + 3);
   }
 
-  /* "pydub/sample.pyx":51
- *         output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE + 3] = input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE + 2]
+  /* "pydub/sample.pyx":53
+ *     #     output_buffer[sample_idx * BYTES_PER_32BIT_SAMPLE + 3] = input_ptr[sample_idx * BYTES_PER_24BIT_SAMPLE + 2]
  * 
  *     return output_bytes             # <<<<<<<<<<<<<<
- * 
- *     # # Process in chunks for better cache utilization
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v_output_bytes);
@@ -18866,9 +18845,9 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
 }
 /* #### Code section: cached_builtins ### */
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(0, 26, __pyx_L1_error)
-  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(0, 38, __pyx_L1_error)
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 43, __pyx_L1_error)
+  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(0, 25, __pyx_L1_error)
+  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(0, 34, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 38, __pyx_L1_error)
   __pyx_builtin___import__ = __Pyx_GetBuiltinName(__pyx_n_s_import); if (!__pyx_builtin___import__) __PYX_ERR(1, 100, __pyx_L1_error)
   __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(1, 159, __pyx_L1_error)
   __pyx_builtin_TypeError = __Pyx_GetBuiltinName(__pyx_n_s_TypeError); if (!__pyx_builtin_TypeError) __PYX_ERR(1, 2, __pyx_L1_error)
@@ -18922,25 +18901,25 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__8);
   __Pyx_GIVEREF(__pyx_tuple__8);
 
-  /* "pydub/sample.pyx":26
- *     # Validate input size
+  /* "pydub/sample.pyx":25
+ * 
  *     if input_size % BYTES_PER_24BIT_SAMPLE:
  *         raise ValueError("Input size must be a multiple of 3 bytes")             # <<<<<<<<<<<<<<
  * 
- *     # Pre-calculate sizes once
+ *     num_samples = input_size // BYTES_PER_24BIT_SAMPLE
  */
-  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_u_Input_size_must_be_a_multiple_of); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 26, __pyx_L1_error)
+  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_u_Input_size_must_be_a_multiple_of); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 25, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__9);
   __Pyx_GIVEREF(__pyx_tuple__9);
 
-  /* "pydub/sample.pyx":38
+  /* "pydub/sample.pyx":34
  *     output_bytes = PyBytes_FromStringAndSize(NULL, output_size)
  *     if not output_bytes:
  *         raise MemoryError("Could not allocate memory for output")             # <<<<<<<<<<<<<<
  * 
- *     # Get direct pointer to output buffer
+ *     output_buffer = <unsigned char*>PyBytes_AS_STRING(output_bytes)
  */
-  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_u_Could_not_allocate_memory_for_ou); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 38, __pyx_L1_error)
+  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_u_Could_not_allocate_memory_for_ou); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 34, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__10);
   __Pyx_GIVEREF(__pyx_tuple__10);
 
@@ -20141,7 +20120,7 @@ if (!__Pyx_RefNanny) {
   /* "pydub/sample.pyx":1
  * cimport cython             # <<<<<<<<<<<<<<
  * from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
- * from libc.string cimport memcpy, memset
+ * from libc.string cimport memcpy
  */
   __pyx_t_7 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);

@@ -1,6 +1,5 @@
 cimport cython
-from libc.stdlib cimport free, malloc
-from libc.string cimport memcpy, memset
+from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
 
 
 DEF BYTES_PER_24BIT_SAMPLE = 3
@@ -10,26 +9,56 @@ DEF BYTES_PER_32BIT_SAMPLE = 4
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-def extend_24bit_to_32bit(const unsigned char[:] data):
+def extend_24bit_to_32bit(const unsigned char[::1] data):  # Use contiguous memory view
     cdef:
-        int input_size = data.size
-        int output_size = input_size // BYTES_PER_24BIT_SAMPLE * BYTES_PER_32BIT_SAMPLE
-        int num_samples = input_size // BYTES_PER_24BIT_SAMPLE
-        int sample_idx = 0
-        unsigned char* input_ptr = <unsigned char*>&data[0]
-        unsigned char* output_ptr = <unsigned char*> malloc(output_size * sizeof(unsigned char))
+        int input_size = data.shape[0]  # More efficient than data.size
+        int output_size
+        int num_samples
+        int i = 0
+        const unsigned char* input_ptr
+        unsigned char* output_buffer
+        object output_bytes
+        unsigned char sign_bit
 
-    if output_ptr == NULL:
-        raise MemoryError("Could not allocate memory for result array")
+    # Validate input size
+    if input_size % BYTES_PER_24BIT_SAMPLE:
+        raise ValueError("Input size must be a multiple of 3 bytes")
 
-    try:
-        for sample_idx in range(num_samples):
-            # Extend sign bit
-            output_ptr[sample_idx * BYTES_PER_32BIT_SAMPLE] = (input_ptr[2] >> 7) * 0xff
-            # Copy last 3 bytes from source
-            memcpy(output_ptr + (sample_idx * BYTES_PER_32BIT_SAMPLE) + 1, input_ptr, BYTES_PER_24BIT_SAMPLE)
-            input_ptr += BYTES_PER_24BIT_SAMPLE
+    # Pre-calculate sizes once
+    num_samples = input_size // BYTES_PER_24BIT_SAMPLE
+    output_size = num_samples * BYTES_PER_32BIT_SAMPLE
 
-        return bytes(output_ptr[:output_size])
-    finally:
-        free(output_ptr)
+    # Get input pointer directly from contiguous memory view
+    input_ptr = &data[0]
+
+    # Create output bytes with exact size needed
+    output_bytes = PyBytes_FromStringAndSize(NULL, output_size)
+    if not output_bytes:
+        raise MemoryError("Could not allocate memory for output")
+
+    # Get direct pointer to output buffer
+    output_buffer = <unsigned char*>PyBytes_AS_STRING(output_bytes)
+
+    # Process in chunks for better cache utilization
+    cdef int chunk_size = 1024  # Adjust based on cache size
+    cdef int remaining = num_samples
+    cdef int current_chunk
+    cdef int j
+
+    while remaining > 0:
+        current_chunk = min(chunk_size, remaining)
+
+        # Process current chunk
+        for j in range(current_chunk):
+            sign_bit = (input_ptr[(i + j) * BYTES_PER_24BIT_SAMPLE + 2] >> 7) * 0xff
+
+            # Unrolled byte copying for better performance
+            output_buffer[(i + j) * BYTES_PER_32BIT_SAMPLE] = sign_bit
+            output_buffer[(i + j) * BYTES_PER_32BIT_SAMPLE + 1] = input_ptr[(i + j) * BYTES_PER_24BIT_SAMPLE]
+            output_buffer[(i + j) * BYTES_PER_32BIT_SAMPLE + 2] = input_ptr[(i + j) * BYTES_PER_24BIT_SAMPLE + 1]
+            output_buffer[(i + j) * BYTES_PER_32BIT_SAMPLE + 3] = input_ptr[(i + j) * BYTES_PER_24BIT_SAMPLE + 2]
+
+        i += current_chunk
+        remaining -= current_chunk
+
+    return output_bytes

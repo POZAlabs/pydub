@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import array
+import audioop
 import base64
 import io
 import os
@@ -26,7 +27,6 @@ from .logging_utils import log_conversion, log_subprocess_output
 from .sample import extend_24bit_to_32bit
 from .utils import (
     _fd_or_path_or_tempfile,
-    audioop,
     db_to_float,
     get_array_type,
     get_encoder_name,

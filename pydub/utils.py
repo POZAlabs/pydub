@@ -12,12 +12,6 @@ import warnings
 from collections.abc import Callable
 from typing import Any, ParamSpec, TypeVar
 
-try:
-    import audioop
-except ImportError:
-    import pyaudioop as audioop  # noqa: F401
-
-
 FRAME_WIDTHS = {
     8: 1,
     16: 2,

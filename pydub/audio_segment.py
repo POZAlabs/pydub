@@ -1482,5 +1482,22 @@ class AudioSegment:
         max_amplitude = max(amplitudes)
         return [(amplitude / max_amplitude) for amplitude in amplitudes]
 
+    @classmethod
+    def silent_from(cls, segment: Self, duration: int | None = None) -> Self:
+        data_size = int(
+            segment.frame_rate * ((duration or len(segment)) / 1000.0) * segment.frame_width
+        )
+        # 8비트 오디오에서는 128이 무음
+        data = bytes([128] * data_size) if segment.sample_width == 1 else b"\0" * data_size
+        return cls(
+            data,
+            metadata={
+                "channels": segment.channels,
+                "sample_width": segment.sample_width,
+                "frame_rate": segment.frame_rate,
+                "frame_width": segment.frame_width,
+            },
+        )
+
 
 from . import effects  # noqa: E402, F401, F403

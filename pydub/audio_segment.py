@@ -395,7 +395,17 @@ class AudioSegment:
         return self.__class__(data=data, metadata=metadata)
 
     @classmethod
-    def _sync(cls, *segs):
+    def _sync(cls, *segs) -> tuple[AudioSegment, ...]:
+        def _has_equal_attr(*attrs) -> bool:
+            return len(set(attrs)) == 1
+
+        if (
+            _has_equal_attr(seg.channels for seg in segs)
+            and _has_equal_attr(seg.frame_rate for seg in segs)
+            and _has_equal_attr(seg.sample_width for seg in segs)
+        ):
+            return tuple(segs)
+
         channels = max(seg.channels for seg in segs)
         frame_rate = max(seg.frame_rate for seg in segs)
         sample_width = max(seg.sample_width for seg in segs)

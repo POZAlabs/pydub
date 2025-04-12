@@ -1286,13 +1286,11 @@ class AudioSegment:
             # it's a no-op, make a copy since we never mutate
             return self._spawn(self._data)
 
-        output = io.BytesIO()
-
         seg1, seg2 = AudioSegment._sync(self, seg)
         sample_width = seg1.sample_width
         spawn = seg1._spawn
 
-        output.write(seg1[:position]._data)
+        output = [seg1[:position]._data]
 
         # drop down to the raw data
         seg1 = seg1[position:]._data
@@ -1314,17 +1312,18 @@ class AudioSegment:
                 seg1_adjusted_gain = audioop.mul(
                     seg1_overlaid, self.sample_width, db_to_float(float(gain_during_overlay))
                 )
-                output.write(audioop.add(seg1_adjusted_gain, seg2, sample_width))
+                output.append(audioop.add(seg1_adjusted_gain, seg2, sample_width))
             else:
-                output.write(audioop.add(seg1[pos : pos + seg2_len], seg2, sample_width))
+                output.append(audioop.add(seg1[pos : pos + seg2_len], seg2, sample_width))
             pos += seg2_len
 
             # dec times to break our while loop (eventually)
             times -= 1
 
-        output.write(seg1[pos:])
+        output.append(seg1[pos:])
 
-        return spawn(data=output)
+        # return spawn(data=output)
+        return spawn(data=b"".join(output))
 
     def append(self, seg, crossfade=100):
         seg1, seg2 = AudioSegment._sync(self, seg)

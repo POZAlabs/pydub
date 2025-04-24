@@ -24,6 +24,7 @@ from .exceptions import (
     TooManyMissingFrames,
 )
 from .logging_utils import log_conversion, log_subprocess_output
+from .overlay import overlay_segments
 from .sample import extend_24bit_to_32bit
 from .utils import (
     _fd_or_path_or_tempfile,
@@ -1240,81 +1241,33 @@ class AudioSegment:
             data=audioop.mul(self._data, self.sample_width, db_to_float(float(volume_change)))
         )
 
-    def overlay(self, seg, position=0, loop=False, times=None, gain_during_overlay=None):
-        """
-        Overlay the provided segment on to this segment starting at the
-        specificed position and using the specfied looping beahvior.
-
-        seg (AudioSegment):
-            The audio segment to overlay on to this one.
-
-        position (optional int):
-            The position to start overlaying the provided segment in to this
-            one.
-
-        loop (optional bool):
-            Loop seg as many times as necessary to match this segment's length.
-            Overrides loops param.
-
-        times (optional int):
-            Loop seg the specified number of times or until it matches this
-            segment's length. 1 means once, 2 means twice, ... 0 would make the
-            call a no-op
-        gain_during_overlay (optional int):
-            Changes this segment's volume by the specified amount during the
-            duration of time that seg is overlaid on top of it. When negative,
-            this has the effect of 'ducking' the audio under the overlay.
-        """
-
+    def overlay(
+        self,
+        seg: Self,
+        position: int = 0,
+        loop: bool = False,
+        times: int | None = None,
+        gain_during_overlay: int | None = None,
+    ) -> Self:
         if loop:
-            # match loop=True's behavior with new times (count) mechinism.
             times = -1
         elif times is None:
-            # no times specified, just once through
             times = 1
         elif times == 0:
-            # it's a no-op, make a copy since we never mutate
             return self._spawn(self._data)
 
-        output = io.BytesIO()
-
         seg1, seg2 = AudioSegment._sync(self, seg)
-        sample_width = seg1.sample_width
-        spawn = seg1._spawn
+        position_in_bytes = self._parse_position(position) * seg1.frame_width
+        result = overlay_segments(
+            seg1_data=seg1.raw_data,
+            seg2_data=seg2.raw_data,
+            sample_width=seg1.sample_width,
+            position=position_in_bytes,
+            times=times,
+            gain_during_overlay=gain_during_overlay or 0,
+        )
 
-        output.write(seg1[:position]._data)
-
-        # drop down to the raw data
-        seg1 = seg1[position:]._data
-        seg2 = seg2._data
-        pos = 0
-        seg1_len = len(seg1)
-        seg2_len = len(seg2)
-        while times:
-            remaining = max(0, seg1_len - pos)
-            if seg2_len >= remaining:
-                seg2 = seg2[:remaining]
-                seg2_len = remaining
-                # we've hit the end, we're done looping (if we were) and this
-                # is our last go-around
-                times = 1
-
-            if gain_during_overlay:
-                seg1_overlaid = seg1[pos : pos + seg2_len]
-                seg1_adjusted_gain = audioop.mul(
-                    seg1_overlaid, self.sample_width, db_to_float(float(gain_during_overlay))
-                )
-                output.write(audioop.add(seg1_adjusted_gain, seg2, sample_width))
-            else:
-                output.write(audioop.add(seg1[pos : pos + seg2_len], seg2, sample_width))
-            pos += seg2_len
-
-            # dec times to break our while loop (eventually)
-            times -= 1
-
-        output.write(seg1[pos:])
-
-        return spawn(data=output)
+        return seg1._spawn(data=result)
 
     def append(self, seg, crossfade=100):
         seg1, seg2 = AudioSegment._sync(self, seg)

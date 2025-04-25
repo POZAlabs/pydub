@@ -1353,8 +1353,12 @@ class AudioSegment:
 
         output = []
 
+        start_bytes = self._parse_position(start) * self.frame_width
+        end_bytes = self._parse_position(end) * self.frame_width
+        data = memoryview(self._data)
+
         # original data - up until the crossfade portion, as is
-        before_fade = self[:start]._data
+        before_fade = data[:start_bytes]
         if from_gain != 0:
             before_fade = audioop.mul(before_fade, self.sample_width, from_power)
         output.append(before_fade)
@@ -1387,7 +1391,7 @@ class AudioSegment:
                 output.append(sample)
 
         # original data after the crossfade portion, at the new volume
-        after_fade = self[end:]._data
+        after_fade = data[end_bytes:]
         if to_gain != 0:
             after_fade = audioop.mul(after_fade, self.sample_width, db_to_float(to_gain))
         output.append(after_fade)

@@ -1349,19 +1349,18 @@ class AudioSegment:
         else:
             duration = end - start
 
-        from_power = db_to_float(from_gain)
-
-        output = []
-
         start_bytes = self._parse_position(start) * self.frame_width
         end_bytes = self._parse_position(end) * self.frame_width
         data = memoryview(self._data)
 
         # original data - up until the crossfade portion, as is
         before_fade = data[:start_bytes]
+
+        from_power = db_to_float(from_gain)
         if from_gain != 0:
             before_fade = audioop.mul(before_fade, self.sample_width, from_power)
-        output.append(before_fade)
+
+        output = [before_fade]
 
         gain_delta = db_to_float(to_gain) - from_power
 

@@ -1404,10 +1404,10 @@ class AudioSegment:
 
         return self._spawn(data=output)
 
-    def fade_out(self, duration):
-        return self.fade(to_gain=-120, duration=duration, end=float("inf"))
+    def fade_out(self, duration: int) -> Self:
+        return self.fade(to_gain=-120, duration=duration, end=len(self))
 
-    def fade_in(self, duration):
+    def fade_in(self, duration: int) -> Self:
         return self.fade(from_gain=-120, duration=duration, start=0)
 
     def reverse(self):

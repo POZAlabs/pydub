@@ -1301,7 +1301,14 @@ class AudioSegment:
         output.close()
         return obj
 
-    def fade(self, to_gain=0, from_gain=0, start=None, end=None, duration=None):
+    def fade(
+        self,
+        to_gain: float = 0,
+        from_gain: float = 0,
+        start: int | None = None,
+        end: int | None = None,
+        duration: int = None,
+    ) -> Self:
         """
         Fade the volume of this audio segment.
 

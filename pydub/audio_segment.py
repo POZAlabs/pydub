@@ -814,11 +814,10 @@ class AudioSegment:
         if p.returncode or not p_out:
             if close_file:
                 file.close()
+            error = p_err.decode(errors="ignore")
             raise CouldntDecodeError(
                 "Decoding failed. "
-                "ffmpeg returned error code: {0}\n\nOutput from ffmpeg/avlib:\n\n{1}".format(
-                    p.returncode, p_err.decode(errors="ignore")
-                )
+                f"ffmpeg returned error code: {p.returncode}\n\nOutput from ffmpeg/avlib:\n\n{error}"
             )
 
         p_out = bytearray(p_out)

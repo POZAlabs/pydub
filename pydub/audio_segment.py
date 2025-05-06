@@ -811,7 +811,7 @@ class AudioSegment:
         )
         p_out, p_err = p.communicate(input=stdin_data)
 
-        if p.returncode != 0 or len(p_out) == 0:
+        if p.returncode or not p_out:
             if close_file:
                 file.close()
             raise CouldntDecodeError(

@@ -826,14 +826,7 @@ class AudioSegment:
         if close_file:
             file.close()
 
-        if start_second is None and duration is None:
-            return obj
-        elif start_second is not None and duration is None:
-            return obj[0:]
-        elif start_second is None and duration is not None:
-            return obj[: duration * 1000]
-        else:
-            return obj[0 : duration * 1000]
+        return obj[: duration * 1000] if duration is not None else obj
 
     @classmethod
     def from_mp3(cls, file, parameters=None):

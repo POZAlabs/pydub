@@ -826,6 +826,7 @@ class AudioSegment:
         if close_file:
             file.close()
 
+        # start_second is applied by ffmpeg
         return obj[: duration * 1000] if duration is not None else obj
 
     @classmethod

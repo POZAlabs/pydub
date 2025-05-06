@@ -827,7 +827,7 @@ class AudioSegment:
             file.close()
 
         # start_second is applied by ffmpeg
-        return obj[: duration * 1000] if duration is not None else obj
+        return obj._segmented(start_second=None, duration=duration)
 
     @classmethod
     def from_mp3(cls, file, parameters=None):

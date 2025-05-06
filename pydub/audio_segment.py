@@ -721,38 +721,18 @@ class AudioSegment:
 
         if is_format("wav"):
             try:
-                if start_second is None and duration is None:
-                    return cls._from_safe_wav(file)
-                elif start_second is not None and duration is None:
-                    return cls._from_safe_wav(file)[start_second * 1000 :]
-                elif start_second is None and duration is not None:
-                    return cls._from_safe_wav(file)[: duration * 1000]
-                else:
-                    return cls._from_safe_wav(file)[
-                        start_second * 1000 : (start_second + duration) * 1000
-                    ]
+                return cls._from_wav(file=file, start_second=start_second, duration=duration)
             except:  # noqa: E722
                 file.seek(0)
         elif is_format("raw") or is_format("pcm"):
-            sample_width = kwargs["sample_width"]
-            frame_rate = kwargs["frame_rate"]
-            channels = kwargs["channels"]
-            metadata = {
-                "sample_width": sample_width,
-                "frame_rate": frame_rate,
-                "channels": channels,
-                "frame_width": channels * sample_width,
-            }
-            if start_second is None and duration is None:
-                return cls(data=file.read(), metadata=metadata)
-            elif start_second is not None and duration is None:
-                return cls(data=file.read(), metadata=metadata)[start_second * 1000 :]
-            elif start_second is None and duration is not None:
-                return cls(data=file.read(), metadata=metadata)[: duration * 1000]
-            else:
-                return cls(data=file.read(), metadata=metadata)[
-                    start_second * 1000 : (start_second + duration) * 1000
-                ]
+            return cls._from_pcm_or_raw(
+                data=file.read(),
+                sample_width=kwargs["sample_width"],
+                frame_rate=kwargs["frame_rate"],
+                channels=kwargs["channels"],
+                start_second=start_second,
+                duration=duration,
+            )
 
         conversion_command = [
             cls.converter,
@@ -894,7 +874,59 @@ class AudioSegment:
         )
 
     @classmethod
-    def _from_safe_wav(cls, file):
+    def _from_pcm_or_raw(
+        cls,
+        data: bytes,
+        sample_width: int,
+        frame_rate: int,
+        channels: int,
+        start_second: int | None = None,
+        duration: int | None = None,
+    ) -> Self:
+        metadata: _AudioSegmentMetadata = {
+            "sample_width": sample_width,
+            "frame_rate": frame_rate,
+            "channels": channels,
+            "frame_width": channels * sample_width,
+        }
+
+        match start_second, duration:
+            case None, None:
+                return cls(data=data, metadata=metadata)
+            case _, None:
+                return cls(data=data, metadata=metadata)[start_second * 1000 :]
+            case None, _:
+                return cls(data=data, metadata=metadata)[: duration * 1000]
+            case _, _:
+                return cls(data=data, metadata=metadata)[
+                    start_second * 1000 : (start_second + duration) * 1000
+                ]
+
+        raise ValueError("Invalid arguments for start_second and duration")
+
+    @classmethod
+    def _from_wav(
+        cls,
+        file: IO[bytes],
+        start_second: int | None = None,
+        duration: int | None = None,
+    ) -> Self:
+        match start_second, duration:
+            case None, None:
+                return cls._from_safe_wav(file)
+            case _, None:
+                return cls._from_safe_wav(file)[start_second * 1000 :]
+            case None, _:
+                return cls._from_safe_wav(file)[: duration * 1000]
+            case _, _:
+                return cls._from_safe_wav(file)[
+                    start_second * 1000 : (start_second + duration) * 1000
+                ]
+
+        raise ValueError("Invalid arguments for start_second and duration")
+
+    @classmethod
+    def _from_safe_wav(cls, file) -> Self:
         file, close_file = _fd_or_path_or_tempfile(file, "rb", tempfile=False)
         file.seek(0)
         obj = cls(data=file)

@@ -1,4 +1,19 @@
+import subprocess
 from typing import Self
+
+
+class _PopenParams:
+    def __init__(self, stdin: int | None = None, data: bytes | None = None):
+        self.stdin = stdin
+        self.data = data
+
+    @classmethod
+    def empty(cls) -> Self:
+        return cls()
+
+    @classmethod
+    def pipe(cls, stdin_bytes: bytes) -> Self:
+        return cls(stdin=subprocess.PIPE, data=stdin_bytes)
 
 
 class _ConversionCommand(list[str]):

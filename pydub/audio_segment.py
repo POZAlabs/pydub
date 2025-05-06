@@ -16,7 +16,7 @@ from tempfile import NamedTemporaryFile
 from typing import IO, Any, Literal, Self, TypedDict, Unpack
 
 from . import _compression, _meter
-from ._conversion_command import _ConversionCommand
+from ._subprocess import _ConversionCommand, _PopenParams
 from .exceptions import (
     CouldntDecodeError,
     CouldntEncodeError,
@@ -775,12 +775,10 @@ class AudioSegment:
         read_ahead_limit = kwargs.get("read_ahead_limit", -1)
         if filename is not None:
             conversion_command = conversion_command.with_filename(filename)
-            stdin_parameter = None
-            stdin_data = None
+            popen_params = _PopenParams.empty()
         else:
             conversion_command = conversion_command.without_filename(read_ahead_limit)
-            stdin_parameter = subprocess.PIPE
-            stdin_data = file.read()
+            popen_params = _PopenParams.pipe(file.read())
 
         info = mediainfo_json(orig_file, read_ahead_limit=read_ahead_limit) if codec is None else {}
 
@@ -805,11 +803,11 @@ class AudioSegment:
 
         p = subprocess.Popen(
             conversion_command,
-            stdin=stdin_parameter,
+            stdin=popen_params.stdin,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        p_out, p_err = p.communicate(input=stdin_data)
+        p_out, p_err = p.communicate(input=popen_params.data)
 
         if p.returncode or not p_out:
             if close_file:

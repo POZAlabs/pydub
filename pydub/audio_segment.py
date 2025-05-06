@@ -3,6 +3,7 @@ from __future__ import annotations
 import array
 import audioop
 import base64
+import dataclasses
 import io
 import os
 import struct
@@ -137,6 +138,36 @@ def fix_wav_headers(data):
     data[pos + 4 : pos + 8] = struct.pack("<I", len(data) - pos - 8)
 
 
+@dataclasses.dataclass
+class _AudioParams:
+    sample_width: int | None = None
+    frame_rate: int | None = None
+    channels: int | None = None
+
+    def __post_init__(self):
+        data = self.__dict__.values()
+
+        if all(v is None for v in data) or all(v is not None for v in data):
+            return
+
+        # prevent partial specification of arguments
+        raise MissingAudioParameter("Either all audio parameters or no parameter must be specified")
+
+    @property
+    def has_params(self):
+        return all(v is not None for v in self.__dict__.values())
+
+    @property
+    def frame_width(self) -> int:
+        if self.has_params:
+            return self.sample_width * self.channels
+
+        raise ValueError("`frame_width` is not available until all audio parameters are specified")
+
+    def is_data_frame_width_valid(self, data: bytes) -> bool:
+        return len(data) % self.frame_width == 0
+
+
 class AudioSegment:
     """
     AudioSegments are *immutable* objects representing segments of audio
@@ -164,64 +195,73 @@ class AudioSegment:
     DEFAULT_CODECS = {"ogg": "libvorbis"}
 
     def __init__(self, data: bytes | array.array | io.BytesIO, *args, **kwargs):
+        if isinstance(data, array.array):
+            data = data.tobytes()
+
         self.sample_width = kwargs.pop("sample_width", None)
         self.frame_rate = kwargs.pop("frame_rate", None)
         self.channels = kwargs.pop("channels", None)
 
-        audio_params = (self.sample_width, self.frame_rate, self.channels)
+        audio_params = _AudioParams(
+            sample_width=self.sample_width,
+            frame_rate=self.frame_rate,
+            channels=self.channels,
+        )
 
-        if isinstance(data, array.array):
-            data = data.tobytes()
-
-        # prevent partial specification of arguments
-        if any(audio_params) and None in audio_params:
-            raise MissingAudioParameter(
-                "Either all audio parameters or no parameter must be specified"
-            )
-
-        # all arguments are given
-        elif self.sample_width is not None:
-            if len(data) % (self.sample_width * self.channels) != 0:
-                raise ValueError("data length must be a multiple of '(sample_width * channels)'")
-
-            self.frame_width = self.channels * self.sample_width
-            self._data = data
+        if audio_params.has_params:
+            self._init_with_audio_params(data=data, audio_params=audio_params)
 
         # keep support for 'metadata' until audio params are used everywhere
-        elif kwargs.get("metadata", False):
-            # internal use only
-            self._data = data
-            for attr, val in kwargs.pop("metadata").items():
-                setattr(self, attr, val)
+        elif metadata := kwargs.get("metadata", {}):
+            self._init_with_metadata(data=data, metadata=metadata)
         else:
             # normal construction
-            try:
-                data = data if isinstance(data, (str, bytes)) else data.read()
-            except OSError:
-                d = b""
-                reader = data.read(2**31 - 1)
-                while reader:
-                    d += reader
-                    reader = data.read(2**31 - 1)
-                data = d
-
-            wav_data = read_wav_audio(data)
-            if not wav_data:
-                raise CouldntDecodeError("Couldn't read wav audio from data")
-
-            self.channels = wav_data.channels
-            self.sample_width = wav_data.bits_per_sample // 8
-            self.frame_rate = wav_data.sample_rate
-            self.frame_width = self.channels * self.sample_width
-            self._data = wav_data.raw_data
-            if self.sample_width == 1:
-                # convert from unsigned integers in wav
-                self._data = audioop.bias(self._data, 1, -128)
+            self._init_with_data(data)
 
         if self.sample_width == 3:
-            self._data = extend_24bit_to_32bit(self._data)
-            self.sample_width = 4
-            self.frame_width = self.channels * self.sample_width
+            self._extend_24bit_to_32bit()
+
+    def _init_with_audio_params(self, data: bytes, audio_params: _AudioParams) -> None:
+        if not audio_params.is_data_frame_width_valid(data):
+            raise ValueError("data length must be a multiple of '(sample_width * channels)'")
+
+        self.frame_width = audio_params.frame_width
+        self._data = data
+
+    def _init_with_metadata(self, data: bytes, metadata: dict[str, Any]) -> None:
+        self._data = data
+        for key, value in metadata.items():
+            setattr(self, key, value)
+
+    def _init_with_data(self, data: str | bytes | IO) -> None:
+        try:
+            data = data if isinstance(data, (str, bytes)) else data.read()
+        except OSError:
+            d = b""
+            while reader := data.read(2**31 - 1):
+                d += reader
+            data = d
+
+        wav_data = read_wav_audio(data)
+        if not wav_data:
+            raise CouldntDecodeError("Couldn't read wav audio from data")
+
+        self.channels = wav_data.channels
+        self.sample_width = wav_data.bits_per_sample // 8
+        self.frame_rate = wav_data.sample_rate
+        self.frame_width = self.channels * self.sample_width
+        self._data = wav_data.raw_data
+        if self.sample_width == 1:
+            # convert from unsigned integers in wav
+            self._data = audioop.bias(self._data, 1, -128)
+
+    def _extend_24bit_to_32bit(self) -> None:
+        if self.sample_width != 3:
+            return
+
+        self._data = extend_24bit_to_32bit(self._data)
+        self.sample_width = 4
+        self.frame_width = self.channels * self.sample_width
 
     @property
     def raw_data(self):

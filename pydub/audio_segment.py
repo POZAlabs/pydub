@@ -4,6 +4,7 @@ import array
 import audioop
 import base64
 import dataclasses
+import functools
 import io
 import os
 import struct
@@ -685,25 +686,40 @@ class AudioSegment:
         duration: int | None = None,
         **kwargs: Any,
     ) -> Self:
+        def _is_format(
+            _format: str,
+            _current_format: str,
+            _filename: str | None = None,
+        ) -> bool:
+            _format = _format.lower()
+
+            if _current_format == _format:
+                return True
+
+            if _filename is not None:
+                return filename.lower().endswith(f".{_format}")
+
+            return False
+
+        def _infer_codec(_file: Any, _info: dict[str, Any]) -> str:
+            audio_streams = [x for x in info["streams"] if x["codec_type"] == "audio"]
+            # This is a workaround for some ffprobe versions that always say
+            # that mp3/mp4/aac/webm/ogg files contain fltp samples
+            audio_codec = audio_streams[0].get("codec_name")
+            is_fltp = audio_streams[0].get("sample_fmt") == "fltp"
+            is_only_16bit_codec = audio_codec in {"mp3", "mp4", "aac", "webm", "ogg"}
+
+            bits_per_sample = (
+                16 if is_fltp and is_only_16bit_codec else audio_streams[0]["bits_per_sample"]
+            )
+            return "pcm_u8" if bits_per_sample == 8 else f"pcm_s{bits_per_sample}le"
+
         orig_file = file
         try:
             filename = os.fsdecode(file)
         except TypeError:
             filename = None
         file, close_file = _fd_or_path_or_tempfile(file, "rb", tempfile=False)
-
-        audio_format = format and format.lower()
-        audio_format = audio_format and AUDIO_FILE_EXT_ALIASES.get(audio_format, audio_format)
-
-        def is_format(f: str) -> bool:
-            f = f.lower()
-            if audio_format == f:
-                return True
-
-            if filename is not None:
-                return filename.lower().endswith(".{0}".format(f))
-
-            return False
 
         is_compressed, compressor = _compression.is_compressed(file)
         if is_compressed:
@@ -718,6 +734,15 @@ class AudioSegment:
                 duration=duration,
                 **kwargs,
             )
+
+        audio_format = format and format.lower()
+        audio_format = audio_format and AUDIO_FILE_EXT_ALIASES.get(audio_format, audio_format)
+
+        is_format = functools.partial(
+            _is_format,
+            _current_format=audio_format,
+            _filename=filename,
+        )
 
         if is_format("wav"):
             try:
@@ -760,25 +785,7 @@ class AudioSegment:
         info = mediainfo_json(orig_file, read_ahead_limit=read_ahead_limit) if codec is None else {}
 
         if info:
-            audio_streams = [x for x in info["streams"] if x["codec_type"] == "audio"]
-            # This is a workaround for some ffprobe versions that always say
-            # that mp3/mp4/aac/webm/ogg files contain fltp samples
-            audio_codec = audio_streams[0].get("codec_name")
-            if audio_streams[0].get("sample_fmt") == "fltp" and audio_codec in {
-                "mp3",
-                "mp4",
-                "aac",
-                "webm",
-                "ogg",
-            }:
-                bits_per_sample = 16
-            else:
-                bits_per_sample = audio_streams[0]["bits_per_sample"]
-            if bits_per_sample == 8:
-                acodec = "pcm_u8"
-            else:
-                acodec = f"pcm_s{bits_per_sample}le"
-
+            acodec = _infer_codec(_file=orig_file, _info=info)
             conversion_command = conversion_command.with_codec(acodec)
 
         conversion_command = conversion_command.remove_video().with_format("wav")

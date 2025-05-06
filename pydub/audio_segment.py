@@ -777,7 +777,7 @@ class AudioSegment:
             if bits_per_sample == 8:
                 acodec = "pcm_u8"
             else:
-                acodec = "pcm_s%dle" % bits_per_sample
+                acodec = f"pcm_s{bits_per_sample}le"
 
             conversion_command = conversion_command.with_codec(acodec)
 

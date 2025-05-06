@@ -12,7 +12,7 @@ import sys
 import wave
 from collections import namedtuple
 from tempfile import NamedTemporaryFile
-from typing import IO, Any, Literal, Self, Unpack
+from typing import IO, Any, Literal, Self, TypedDict, Unpack
 
 from . import _compression, _meter
 from .exceptions import (
@@ -168,6 +168,20 @@ class _AudioParams:
         return len(data) % self.frame_width == 0
 
 
+class _AudioSegmentMetadata(TypedDict):
+    sample_width: int
+    frame_rate: int
+    frame_width: int
+    channels: int
+
+
+class _AudioSegmentInitDef(TypedDict, total=False):
+    sample_width: int
+    frame_rate: int
+    channels: int
+    metadata: _AudioSegmentMetadata
+
+
 class AudioSegment:
     """
     AudioSegments are *immutable* objects representing segments of audio
@@ -194,7 +208,11 @@ class AudioSegment:
 
     DEFAULT_CODECS = {"ogg": "libvorbis"}
 
-    def __init__(self, data: bytes | array.array | io.BytesIO, *args, **kwargs):
+    def __init__(
+        self,
+        data: bytes | array.array | IO,
+        **kwargs: Unpack[_AudioSegmentInitDef],
+    ):
         if isinstance(data, array.array):
             data = data.tobytes()
 

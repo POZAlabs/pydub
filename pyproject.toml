@@ -3,7 +3,7 @@ name = "pozalabs-pydub"
 version = "0.37.0"
 description = "Manipulate audio with an simple and easy high level interface (Pozalabs fork)"
 license = "MIT"
-authors = [{ name = "pozalabs", email = "contact@pozalabs.com" }]
+authors = [{ name = "sunwoong", email = "sunwoong@pozalabs.com" }]
 requires-python = ">=3.11,<4.0"
 readme = "README.md"
 classifiers = [

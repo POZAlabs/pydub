@@ -1,0 +1,27 @@
+name: Publish package
+on:
+  push:
+    tags:
+      - 'v*'
+    workflow_dispatch:
+
+jobs:
+  publish-package:
+    runs-on: ubuntu-latest
+    environment:
+      name: release
+      url: https://pypi.org/project/pozalabs-pydub/
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v7
+
+      - name: Build project
+        run: uv build --sdist
+
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@release/v1

@@ -8,18 +8,13 @@ jobs:
   publish-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
-      - name: Run image
-        uses: abatilo/actions-poetry@v2
-        with:
-          poetry-version: 1.8.0
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v7
+
       - name: Publish package
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
         run: |
-          poetry config pypi-token.pypi $PYPI_TOKEN
-          poetry build -f sdist
-          poetry publish
+          uv build --sdist
+          uv publish --token $PYPI_TOKEN

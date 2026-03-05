@@ -34,8 +34,9 @@ This is a [Pozalabs](https://github.com/Pozalabs) fork of [jiaaro/pydub](https:/
 
 ### Build System
 
-- Migrated from `setup.py` to `pyproject.toml` with Poetry
-- Custom `build.py` for Cython compilation with `-march=native -O3` flags
+- `pyproject.toml` with setuptools backend, managed by uv
+- `setup.py` for Cython extension compilation with `-O3` flag
+- Wheel distribution via GitHub Actions
 
 ### Optional Dependencies
 

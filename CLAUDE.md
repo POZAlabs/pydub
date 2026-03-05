@@ -9,3 +9,5 @@
 ```shell
 uv run pytest ...
 ```
+
+- 신규 테스트는 pytest 함수형으로 작성 (`test/test.py`는 업스트림 레거시 unittest이므로 예외)

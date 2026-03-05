@@ -1191,6 +1191,7 @@ static CYTHON_INLINE float __PYX_NAN() {
 /* Early includes */
 #include <string.h>
 #include <stdio.h>
+#include <limits.h>
 #ifdef _OPENMP
 #include <omp.h>
 #endif /* _OPENMP */
@@ -1682,6 +1683,79 @@ static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject *const *kwvalues
         __Pyx__ArgTypeTest(obj, type, name, exact))
 static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *name, int exact);
 
+/* GCCDiagnostics.proto */
+#if !defined(__INTEL_COMPILER) && defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#define __Pyx_HAS_GCC_DIAGNOSTIC
+#endif
+
+/* BuildPyUnicode.proto */
+static PyObject* __Pyx_PyUnicode_BuildFromAscii(Py_ssize_t ulength, char* chars, int clength,
+                                                int prepend_sign, char padding_char);
+
+/* CIntToPyUnicode.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyUnicode_From_int(int value, Py_ssize_t width, char padding_char, char format_char);
+
+/* JoinPyUnicode.proto */
+static PyObject* __Pyx_PyUnicode_Join(PyObject* value_tuple, Py_ssize_t value_count, Py_ssize_t result_ulength,
+                                      Py_UCS4 max_char);
+
+/* PyFunctionFastCall.proto */
+#if CYTHON_FAST_PYCALL
+#if !CYTHON_VECTORCALL
+#define __Pyx_PyFunction_FastCall(func, args, nargs)\
+    __Pyx_PyFunction_FastCallDict((func), (args), (nargs), NULL)
+static PyObject *__Pyx_PyFunction_FastCallDict(PyObject *func, PyObject **args, Py_ssize_t nargs, PyObject *kwargs);
+#endif
+#define __Pyx_BUILD_ASSERT_EXPR(cond)\
+    (sizeof(char [1 - 2*!(cond)]) - 1)
+#ifndef Py_MEMBER_SIZE
+#define Py_MEMBER_SIZE(type, member) sizeof(((type *)0)->member)
+#endif
+#if !CYTHON_VECTORCALL
+#if PY_VERSION_HEX >= 0x03080000
+  #include "frameobject.h"
+#if PY_VERSION_HEX >= 0x030b00a6 && !CYTHON_COMPILING_IN_LIMITED_API
+  #ifndef Py_BUILD_CORE
+    #define Py_BUILD_CORE 1
+  #endif
+  #include "internal/pycore_frame.h"
+#endif
+  #define __Pxy_PyFrame_Initialize_Offsets()
+  #define __Pyx_PyFrame_GetLocalsplus(frame)  ((frame)->f_localsplus)
+#else
+  static size_t __pyx_pyframe_localsplus_offset = 0;
+  #include "frameobject.h"
+  #define __Pxy_PyFrame_Initialize_Offsets()\
+    ((void)__Pyx_BUILD_ASSERT_EXPR(sizeof(PyFrameObject) == offsetof(PyFrameObject, f_localsplus) + Py_MEMBER_SIZE(PyFrameObject, f_localsplus)),\
+     (void)(__pyx_pyframe_localsplus_offset = ((size_t)PyFrame_Type.tp_basicsize) - Py_MEMBER_SIZE(PyFrameObject, f_localsplus)))
+  #define __Pyx_PyFrame_GetLocalsplus(frame)\
+    (assert(__pyx_pyframe_localsplus_offset), (PyObject **)(((char *)(frame)) + __pyx_pyframe_localsplus_offset))
+#endif
+#endif
+#endif
+
+/* PyObjectCall.proto */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw);
+#else
+#define __Pyx_PyObject_Call(func, arg, kw) PyObject_Call(func, arg, kw)
+#endif
+
+/* PyObjectCallMethO.proto */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg);
+#endif
+
+/* PyObjectFastCall.proto */
+#define __Pyx_PyObject_FastCall(func, args, nargs)  __Pyx_PyObject_FastCallDict(func, args, (size_t)(nargs), NULL)
+static CYTHON_INLINE PyObject* __Pyx_PyObject_FastCallDict(PyObject *func, PyObject **args, size_t nargs, PyObject *kwargs);
+
+/* PyObjectCallOneArg.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg);
+
+/* RaiseException.proto */
+static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause);
+
 /* SliceObject.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyObject_GetSlice(
         PyObject* obj, Py_ssize_t cstart, Py_ssize_t cstop,
@@ -1734,57 +1808,6 @@ static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_ve
 #define __Pyx_GetModuleGlobalNameUncached(var, name)  (var) = __Pyx__GetModuleGlobalName(name)
 static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name);
 #endif
-
-/* PyFunctionFastCall.proto */
-#if CYTHON_FAST_PYCALL
-#if !CYTHON_VECTORCALL
-#define __Pyx_PyFunction_FastCall(func, args, nargs)\
-    __Pyx_PyFunction_FastCallDict((func), (args), (nargs), NULL)
-static PyObject *__Pyx_PyFunction_FastCallDict(PyObject *func, PyObject **args, Py_ssize_t nargs, PyObject *kwargs);
-#endif
-#define __Pyx_BUILD_ASSERT_EXPR(cond)\
-    (sizeof(char [1 - 2*!(cond)]) - 1)
-#ifndef Py_MEMBER_SIZE
-#define Py_MEMBER_SIZE(type, member) sizeof(((type *)0)->member)
-#endif
-#if !CYTHON_VECTORCALL
-#if PY_VERSION_HEX >= 0x03080000
-  #include "frameobject.h"
-#if PY_VERSION_HEX >= 0x030b00a6 && !CYTHON_COMPILING_IN_LIMITED_API
-  #ifndef Py_BUILD_CORE
-    #define Py_BUILD_CORE 1
-  #endif
-  #include "internal/pycore_frame.h"
-#endif
-  #define __Pxy_PyFrame_Initialize_Offsets()
-  #define __Pyx_PyFrame_GetLocalsplus(frame)  ((frame)->f_localsplus)
-#else
-  static size_t __pyx_pyframe_localsplus_offset = 0;
-  #include "frameobject.h"
-  #define __Pxy_PyFrame_Initialize_Offsets()\
-    ((void)__Pyx_BUILD_ASSERT_EXPR(sizeof(PyFrameObject) == offsetof(PyFrameObject, f_localsplus) + Py_MEMBER_SIZE(PyFrameObject, f_localsplus)),\
-     (void)(__pyx_pyframe_localsplus_offset = ((size_t)PyFrame_Type.tp_basicsize) - Py_MEMBER_SIZE(PyFrameObject, f_localsplus)))
-  #define __Pyx_PyFrame_GetLocalsplus(frame)\
-    (assert(__pyx_pyframe_localsplus_offset), (PyObject **)(((char *)(frame)) + __pyx_pyframe_localsplus_offset))
-#endif
-#endif
-#endif
-
-/* PyObjectCall.proto */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw);
-#else
-#define __Pyx_PyObject_Call(func, arg, kw) PyObject_Call(func, arg, kw)
-#endif
-
-/* PyObjectCallMethO.proto */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg);
-#endif
-
-/* PyObjectFastCall.proto */
-#define __Pyx_PyObject_FastCall(func, args, nargs)  __Pyx_PyObject_FastCallDict(func, args, (size_t)(nargs), NULL)
-static CYTHON_INLINE PyObject* __Pyx_PyObject_FastCallDict(PyObject *func, PyObject **args, size_t nargs, PyObject *kwargs);
 
 /* TypeImport.proto */
 #ifndef __PYX_HAVE_RT_ImportType_proto_3_0_9
@@ -1990,11 +2013,6 @@ static void __pyx_insert_code_object(int code_line, PyCodeObject* code_object);
 static void __Pyx_AddTraceback(const char *funcname, int c_line,
                                int py_line, const char *filename);
 
-/* GCCDiagnostics.proto */
-#if !defined(__INTEL_COMPILER) && defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#define __Pyx_HAS_GCC_DIAGNOSTIC
-#endif
-
 /* CIntFromPy.proto */
 static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
 
@@ -2062,6 +2080,8 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
 /* Module declarations from "cpython.bytes" */
 
+/* Module declarations from "libc.limits" */
+
 /* Module declarations from "pydub.overlay" */
 /* #### Code section: typeinfo ### */
 /* #### Code section: before_global_var ### */
@@ -2071,11 +2091,13 @@ int __pyx_module_is_main_pydub__overlay = 0;
 
 /* Implementation of "pydub.overlay" */
 /* #### Code section: global_var ### */
+static PyObject *__pyx_builtin_ValueError;
 static PyObject *__pyx_builtin_range;
 /* #### Code section: string_decls ### */
-static const char __pyx_k_[] = "*";
+static const char __pyx_k_[] = ")";
 static const char __pyx_k_i[] = "i";
-static const char __pyx_k__4[] = "?";
+static const char __pyx_k__2[] = "*";
+static const char __pyx_k__5[] = "?";
 static const char __pyx_k_add[] = "add";
 static const char __pyx_k_mul[] = "mul";
 static const char __pyx_k_main[] = "__main__";
@@ -2104,7 +2126,9 @@ static const char __pyx_k_db_factor[] = "db_factor";
 static const char __pyx_k_remaining[] = "remaining";
 static const char __pyx_k_seg1_data[] = "seg1_data";
 static const char __pyx_k_seg2_data[] = "seg2_data";
+static const char __pyx_k_ValueError[] = "ValueError";
 static const char __pyx_k_apply_gain[] = "apply_gain";
+static const char __pyx_k_position_2[] = "position (";
 static const char __pyx_k_seg1_slice[] = "seg1_slice";
 static const char __pyx_k_seg2_slice[] = "seg2_slice";
 static const char __pyx_k_num_samples[] = "num_samples";
@@ -2121,6 +2145,7 @@ static const char __pyx_k_asyncio_coroutines[] = "asyncio.coroutines";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_seg1_len_after_pos[] = "seg1_len_after_pos";
 static const char __pyx_k_gain_during_overlay[] = "gain_during_overlay";
+static const char __pyx_k_must_be_aligned_to_sample_width[] = ") must be aligned to sample_width (";
 /* #### Code section: decls ### */
 static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_seg1_data, PyObject *__pyx_v_seg2_data, int __pyx_v_sample_width, int __pyx_v_position, int __pyx_v_times, int __pyx_v_gain_during_overlay); /* proto */
 /* #### Code section: late_includes ### */
@@ -2169,8 +2194,12 @@ typedef struct {
   #endif
   #if CYTHON_USE_MODULE_STATE
   #endif
-  PyObject *__pyx_n_s_;
-  PyObject *__pyx_n_s__4;
+  #if CYTHON_USE_MODULE_STATE
+  #endif
+  PyObject *__pyx_kp_u_;
+  PyObject *__pyx_n_s_ValueError;
+  PyObject *__pyx_n_s__2;
+  PyObject *__pyx_n_s__5;
   PyObject *__pyx_n_s_add;
   PyObject *__pyx_n_s_apply_gain;
   PyObject *__pyx_n_s_asyncio_coroutines;
@@ -2186,6 +2215,7 @@ typedef struct {
   PyObject *__pyx_n_s_is_coroutine;
   PyObject *__pyx_n_s_main;
   PyObject *__pyx_n_s_mul;
+  PyObject *__pyx_kp_u_must_be_aligned_to_sample_width;
   PyObject *__pyx_n_s_name;
   PyObject *__pyx_n_s_num_samples;
   PyObject *__pyx_n_s_out_16;
@@ -2195,6 +2225,7 @@ typedef struct {
   PyObject *__pyx_n_s_overlaid;
   PyObject *__pyx_n_s_overlay_segments;
   PyObject *__pyx_n_s_position;
+  PyObject *__pyx_kp_u_position_2;
   PyObject *__pyx_n_s_pydub_overlay;
   PyObject *__pyx_kp_s_pydub_overlay_pyx;
   PyObject *__pyx_n_s_range;
@@ -2217,8 +2248,8 @@ typedef struct {
   PyObject *__pyx_n_s_times;
   PyObject *__pyx_n_s_val_32;
   PyObject *__pyx_n_s_val_64;
-  PyObject *__pyx_tuple__2;
-  PyObject *__pyx_codeobj__3;
+  PyObject *__pyx_tuple__3;
+  PyObject *__pyx_codeobj__4;
 } __pyx_mstate;
 
 #if CYTHON_USE_MODULE_STATE
@@ -2262,8 +2293,10 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_FusedFunctionType);
   #endif
   Py_CLEAR(clear_module_state->__pyx_ptype_7cpython_4type_type);
-  Py_CLEAR(clear_module_state->__pyx_n_s_);
-  Py_CLEAR(clear_module_state->__pyx_n_s__4);
+  Py_CLEAR(clear_module_state->__pyx_kp_u_);
+  Py_CLEAR(clear_module_state->__pyx_n_s_ValueError);
+  Py_CLEAR(clear_module_state->__pyx_n_s__2);
+  Py_CLEAR(clear_module_state->__pyx_n_s__5);
   Py_CLEAR(clear_module_state->__pyx_n_s_add);
   Py_CLEAR(clear_module_state->__pyx_n_s_apply_gain);
   Py_CLEAR(clear_module_state->__pyx_n_s_asyncio_coroutines);
@@ -2279,6 +2312,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_is_coroutine);
   Py_CLEAR(clear_module_state->__pyx_n_s_main);
   Py_CLEAR(clear_module_state->__pyx_n_s_mul);
+  Py_CLEAR(clear_module_state->__pyx_kp_u_must_be_aligned_to_sample_width);
   Py_CLEAR(clear_module_state->__pyx_n_s_name);
   Py_CLEAR(clear_module_state->__pyx_n_s_num_samples);
   Py_CLEAR(clear_module_state->__pyx_n_s_out_16);
@@ -2288,6 +2322,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_overlaid);
   Py_CLEAR(clear_module_state->__pyx_n_s_overlay_segments);
   Py_CLEAR(clear_module_state->__pyx_n_s_position);
+  Py_CLEAR(clear_module_state->__pyx_kp_u_position_2);
   Py_CLEAR(clear_module_state->__pyx_n_s_pydub_overlay);
   Py_CLEAR(clear_module_state->__pyx_kp_s_pydub_overlay_pyx);
   Py_CLEAR(clear_module_state->__pyx_n_s_range);
@@ -2310,8 +2345,8 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_times);
   Py_CLEAR(clear_module_state->__pyx_n_s_val_32);
   Py_CLEAR(clear_module_state->__pyx_n_s_val_64);
-  Py_CLEAR(clear_module_state->__pyx_tuple__2);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__3);
+  Py_CLEAR(clear_module_state->__pyx_tuple__3);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__4);
   return 0;
 }
 #endif
@@ -2333,8 +2368,10 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_FusedFunctionType);
   #endif
   Py_VISIT(traverse_module_state->__pyx_ptype_7cpython_4type_type);
-  Py_VISIT(traverse_module_state->__pyx_n_s_);
-  Py_VISIT(traverse_module_state->__pyx_n_s__4);
+  Py_VISIT(traverse_module_state->__pyx_kp_u_);
+  Py_VISIT(traverse_module_state->__pyx_n_s_ValueError);
+  Py_VISIT(traverse_module_state->__pyx_n_s__2);
+  Py_VISIT(traverse_module_state->__pyx_n_s__5);
   Py_VISIT(traverse_module_state->__pyx_n_s_add);
   Py_VISIT(traverse_module_state->__pyx_n_s_apply_gain);
   Py_VISIT(traverse_module_state->__pyx_n_s_asyncio_coroutines);
@@ -2350,6 +2387,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_is_coroutine);
   Py_VISIT(traverse_module_state->__pyx_n_s_main);
   Py_VISIT(traverse_module_state->__pyx_n_s_mul);
+  Py_VISIT(traverse_module_state->__pyx_kp_u_must_be_aligned_to_sample_width);
   Py_VISIT(traverse_module_state->__pyx_n_s_name);
   Py_VISIT(traverse_module_state->__pyx_n_s_num_samples);
   Py_VISIT(traverse_module_state->__pyx_n_s_out_16);
@@ -2359,6 +2397,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_overlaid);
   Py_VISIT(traverse_module_state->__pyx_n_s_overlay_segments);
   Py_VISIT(traverse_module_state->__pyx_n_s_position);
+  Py_VISIT(traverse_module_state->__pyx_kp_u_position_2);
   Py_VISIT(traverse_module_state->__pyx_n_s_pydub_overlay);
   Py_VISIT(traverse_module_state->__pyx_kp_s_pydub_overlay_pyx);
   Py_VISIT(traverse_module_state->__pyx_n_s_range);
@@ -2381,8 +2420,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_times);
   Py_VISIT(traverse_module_state->__pyx_n_s_val_32);
   Py_VISIT(traverse_module_state->__pyx_n_s_val_64);
-  Py_VISIT(traverse_module_state->__pyx_tuple__2);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__3);
+  Py_VISIT(traverse_module_state->__pyx_tuple__3);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__4);
   return 0;
 }
 #endif
@@ -2430,8 +2469,12 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #endif
 #if CYTHON_USE_MODULE_STATE
 #endif
-#define __pyx_n_s_ __pyx_mstate_global->__pyx_n_s_
-#define __pyx_n_s__4 __pyx_mstate_global->__pyx_n_s__4
+#if CYTHON_USE_MODULE_STATE
+#endif
+#define __pyx_kp_u_ __pyx_mstate_global->__pyx_kp_u_
+#define __pyx_n_s_ValueError __pyx_mstate_global->__pyx_n_s_ValueError
+#define __pyx_n_s__2 __pyx_mstate_global->__pyx_n_s__2
+#define __pyx_n_s__5 __pyx_mstate_global->__pyx_n_s__5
 #define __pyx_n_s_add __pyx_mstate_global->__pyx_n_s_add
 #define __pyx_n_s_apply_gain __pyx_mstate_global->__pyx_n_s_apply_gain
 #define __pyx_n_s_asyncio_coroutines __pyx_mstate_global->__pyx_n_s_asyncio_coroutines
@@ -2447,6 +2490,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_is_coroutine __pyx_mstate_global->__pyx_n_s_is_coroutine
 #define __pyx_n_s_main __pyx_mstate_global->__pyx_n_s_main
 #define __pyx_n_s_mul __pyx_mstate_global->__pyx_n_s_mul
+#define __pyx_kp_u_must_be_aligned_to_sample_width __pyx_mstate_global->__pyx_kp_u_must_be_aligned_to_sample_width
 #define __pyx_n_s_name __pyx_mstate_global->__pyx_n_s_name
 #define __pyx_n_s_num_samples __pyx_mstate_global->__pyx_n_s_num_samples
 #define __pyx_n_s_out_16 __pyx_mstate_global->__pyx_n_s_out_16
@@ -2456,6 +2500,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_overlaid __pyx_mstate_global->__pyx_n_s_overlaid
 #define __pyx_n_s_overlay_segments __pyx_mstate_global->__pyx_n_s_overlay_segments
 #define __pyx_n_s_position __pyx_mstate_global->__pyx_n_s_position
+#define __pyx_kp_u_position_2 __pyx_mstate_global->__pyx_kp_u_position_2
 #define __pyx_n_s_pydub_overlay __pyx_mstate_global->__pyx_n_s_pydub_overlay
 #define __pyx_kp_s_pydub_overlay_pyx __pyx_mstate_global->__pyx_kp_s_pydub_overlay_pyx
 #define __pyx_n_s_range __pyx_mstate_global->__pyx_n_s_range
@@ -2478,11 +2523,11 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_times __pyx_mstate_global->__pyx_n_s_times
 #define __pyx_n_s_val_32 __pyx_mstate_global->__pyx_n_s_val_32
 #define __pyx_n_s_val_64 __pyx_mstate_global->__pyx_n_s_val_64
-#define __pyx_tuple__2 __pyx_mstate_global->__pyx_tuple__2
-#define __pyx_codeobj__3 __pyx_mstate_global->__pyx_codeobj__3
+#define __pyx_tuple__3 __pyx_mstate_global->__pyx_tuple__3
+#define __pyx_codeobj__4 __pyx_mstate_global->__pyx_codeobj__4
 /* #### Code section: module_code ### */
 
-/* "pydub/overlay.pyx":7
+/* "pydub/overlay.pyx":8
  * 
  * 
  * @cython.boundscheck(False)             # <<<<<<<<<<<<<<
@@ -2558,7 +2603,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 7, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 8, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
@@ -2566,9 +2611,9 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[1]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 7, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 8, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("overlay_segments", 0, 5, 6, 1); __PYX_ERR(0, 7, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("overlay_segments", 0, 5, 6, 1); __PYX_ERR(0, 8, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
@@ -2576,9 +2621,9 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[2]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 7, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 8, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("overlay_segments", 0, 5, 6, 2); __PYX_ERR(0, 7, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("overlay_segments", 0, 5, 6, 2); __PYX_ERR(0, 8, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
@@ -2586,9 +2631,9 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[3]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 7, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 8, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("overlay_segments", 0, 5, 6, 3); __PYX_ERR(0, 7, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("overlay_segments", 0, 5, 6, 3); __PYX_ERR(0, 8, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
@@ -2596,21 +2641,21 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[4]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 7, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 8, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("overlay_segments", 0, 5, 6, 4); __PYX_ERR(0, 7, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("overlay_segments", 0, 5, 6, 4); __PYX_ERR(0, 8, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  5:
         if (kw_args > 0) {
           PyObject* value = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_gain_during_overlay);
           if (value) { values[5] = __Pyx_Arg_NewRef_FASTCALL(value); kw_args--; }
-          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 7, __pyx_L3_error)
+          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 8, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "overlay_segments") < 0)) __PYX_ERR(0, 7, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "overlay_segments") < 0)) __PYX_ERR(0, 8, __pyx_L3_error)
       }
     } else {
       switch (__pyx_nargs) {
@@ -2627,18 +2672,18 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
     }
     __pyx_v_seg1_data = ((PyObject*)values[0]);
     __pyx_v_seg2_data = ((PyObject*)values[1]);
-    __pyx_v_sample_width = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_sample_width == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 13, __pyx_L3_error)
-    __pyx_v_position = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_position == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 14, __pyx_L3_error)
-    __pyx_v_times = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_times == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 15, __pyx_L3_error)
+    __pyx_v_sample_width = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_sample_width == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 14, __pyx_L3_error)
+    __pyx_v_position = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_position == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 15, __pyx_L3_error)
+    __pyx_v_times = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_times == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 16, __pyx_L3_error)
     if (values[5]) {
-      __pyx_v_gain_during_overlay = __Pyx_PyInt_As_int(values[5]); if (unlikely((__pyx_v_gain_during_overlay == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 16, __pyx_L3_error)
+      __pyx_v_gain_during_overlay = __Pyx_PyInt_As_int(values[5]); if (unlikely((__pyx_v_gain_during_overlay == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 17, __pyx_L3_error)
     } else {
       __pyx_v_gain_during_overlay = ((int)((int)0));
     }
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("overlay_segments", 0, 5, 6, __pyx_nargs); __PYX_ERR(0, 7, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("overlay_segments", 0, 5, 6, __pyx_nargs); __PYX_ERR(0, 8, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2652,8 +2697,8 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seg1_data), (&PyBytes_Type), 1, "seg1_data", 1))) __PYX_ERR(0, 11, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seg2_data), (&PyBytes_Type), 1, "seg2_data", 1))) __PYX_ERR(0, 12, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seg1_data), (&PyBytes_Type), 1, "seg1_data", 1))) __PYX_ERR(0, 12, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seg2_data), (&PyBytes_Type), 1, "seg2_data", 1))) __PYX_ERR(0, 13, __pyx_L1_error)
   __pyx_r = __pyx_pf_5pydub_7overlay_overlay_segments(__pyx_self, __pyx_v_seg1_data, __pyx_v_seg2_data, __pyx_v_sample_width, __pyx_v_position, __pyx_v_times, __pyx_v_gain_during_overlay);
 
   /* function exit code */
@@ -2700,23 +2745,26 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
   __Pyx_RefNannyDeclarations
   Py_ssize_t __pyx_t_1;
   int __pyx_t_2;
-  PyObject *__pyx_t_3 = NULL;
-  char const *__pyx_t_4;
-  char const *__pyx_t_5;
-  int __pyx_t_6;
-  int __pyx_t_7;
-  int __pyx_t_8;
-  PyObject *__pyx_t_9 = NULL;
-  PyObject *__pyx_t_10 = NULL;
-  PyObject *__pyx_t_11 = NULL;
-  PyObject *__pyx_t_12 = NULL;
-  char const *__pyx_t_13;
+  int __pyx_t_3;
+  int __pyx_t_4;
+  PyObject *__pyx_t_5 = NULL;
+  Py_UCS4 __pyx_t_6;
+  PyObject *__pyx_t_7 = NULL;
+  char const *__pyx_t_8;
+  char const *__pyx_t_9;
+  int __pyx_t_10;
+  int __pyx_t_11;
+  int __pyx_t_12;
+  PyObject *__pyx_t_13 = NULL;
+  PyObject *__pyx_t_14 = NULL;
+  PyObject *__pyx_t_15 = NULL;
+  char const *__pyx_t_16;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("overlay_segments", 1);
 
-  /* "pydub/overlay.pyx":18
+  /* "pydub/overlay.pyx":19
  *     int gain_during_overlay = 0,
  * ):
  *     cdef int seg1_len = len(seg1_data)             # <<<<<<<<<<<<<<
@@ -2725,12 +2773,12 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
   if (unlikely(__pyx_v_seg1_data == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 18, __pyx_L1_error)
+    __PYX_ERR(0, 19, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyBytes_GET_SIZE(__pyx_v_seg1_data); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 18, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBytes_GET_SIZE(__pyx_v_seg1_data); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 19, __pyx_L1_error)
   __pyx_v_seg1_len = __pyx_t_1;
 
-  /* "pydub/overlay.pyx":19
+  /* "pydub/overlay.pyx":20
  * ):
  *     cdef int seg1_len = len(seg1_data)
  *     cdef int seg2_len = len(seg2_data)             # <<<<<<<<<<<<<<
@@ -2739,12 +2787,12 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
   if (unlikely(__pyx_v_seg2_data == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 19, __pyx_L1_error)
+    __PYX_ERR(0, 20, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyBytes_GET_SIZE(__pyx_v_seg2_data); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 19, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBytes_GET_SIZE(__pyx_v_seg2_data); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 20, __pyx_L1_error)
   __pyx_v_seg2_len = __pyx_t_1;
 
-  /* "pydub/overlay.pyx":20
+  /* "pydub/overlay.pyx":21
  *     cdef int seg1_len = len(seg1_data)
  *     cdef int seg2_len = len(seg2_data)
  *     cdef int remaining_times = times             # <<<<<<<<<<<<<<
@@ -2753,7 +2801,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
   __pyx_v_remaining_times = __pyx_v_times;
 
-  /* "pydub/overlay.pyx":23
+  /* "pydub/overlay.pyx":24
  *     cdef int current_position
  *     cdef int remaining, chunk_len, num_samples, i
  *     cdef double db_factor = 1.0             # <<<<<<<<<<<<<<
@@ -2762,7 +2810,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
   __pyx_v_db_factor = 1.0;
 
-  /* "pydub/overlay.pyx":24
+  /* "pydub/overlay.pyx":25
  *     cdef int remaining, chunk_len, num_samples, i
  *     cdef double db_factor = 1.0
  *     cdef int apply_gain = gain_during_overlay != 0             # <<<<<<<<<<<<<<
@@ -2771,7 +2819,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
   __pyx_v_apply_gain = (__pyx_v_gain_during_overlay != 0);
 
-  /* "pydub/overlay.pyx":39
+  /* "pydub/overlay.pyx":40
  *     cdef long long val_64
  * 
  *     if position >= seg1_len:             # <<<<<<<<<<<<<<
@@ -2781,19 +2829,19 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
   __pyx_t_2 = (__pyx_v_position >= __pyx_v_seg1_len);
   if (__pyx_t_2) {
 
-    /* "pydub/overlay.pyx":40
+    /* "pydub/overlay.pyx":41
  * 
  *     if position >= seg1_len:
  *         return seg1_data             # <<<<<<<<<<<<<<
  * 
- *     if apply_gain:
+ *     if sample_width in (2, 4) and position % sample_width != 0:
  */
     __Pyx_XDECREF(__pyx_r);
     __Pyx_INCREF(__pyx_v_seg1_data);
     __pyx_r = __pyx_v_seg1_data;
     goto __pyx_L0;
 
-    /* "pydub/overlay.pyx":39
+    /* "pydub/overlay.pyx":40
  *     cdef long long val_64
  * 
  *     if position >= seg1_len:             # <<<<<<<<<<<<<<
@@ -2802,8 +2850,89 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
   }
 
-  /* "pydub/overlay.pyx":42
+  /* "pydub/overlay.pyx":43
  *         return seg1_data
+ * 
+ *     if sample_width in (2, 4) and position % sample_width != 0:             # <<<<<<<<<<<<<<
+ *         raise ValueError(f"position ({position}) must be aligned to sample_width ({sample_width})")
+ * 
+ */
+  switch (__pyx_v_sample_width) {
+    case 2:
+    case 4:
+    __pyx_t_3 = 1;
+    break;
+    default:
+    __pyx_t_3 = 0;
+    break;
+  }
+  __pyx_t_4 = __pyx_t_3;
+  if (__pyx_t_4) {
+  } else {
+    __pyx_t_2 = __pyx_t_4;
+    goto __pyx_L5_bool_binop_done;
+  }
+  __pyx_t_4 = ((__pyx_v_position % __pyx_v_sample_width) != 0);
+  __pyx_t_2 = __pyx_t_4;
+  __pyx_L5_bool_binop_done:;
+  if (unlikely(__pyx_t_2)) {
+
+    /* "pydub/overlay.pyx":44
+ * 
+ *     if sample_width in (2, 4) and position % sample_width != 0:
+ *         raise ValueError(f"position ({position}) must be aligned to sample_width ({sample_width})")             # <<<<<<<<<<<<<<
+ * 
+ *     if apply_gain:
+ */
+    __pyx_t_5 = PyTuple_New(5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 44, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_1 = 0;
+    __pyx_t_6 = 127;
+    __Pyx_INCREF(__pyx_kp_u_position_2);
+    __pyx_t_1 += 10;
+    __Pyx_GIVEREF(__pyx_kp_u_position_2);
+    PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_kp_u_position_2);
+    __pyx_t_7 = __Pyx_PyUnicode_From_int(__pyx_v_position, 0, ' ', 'd'); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 44, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_7);
+    __pyx_t_1 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_7);
+    __Pyx_GIVEREF(__pyx_t_7);
+    PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_7);
+    __pyx_t_7 = 0;
+    __Pyx_INCREF(__pyx_kp_u_must_be_aligned_to_sample_width);
+    __pyx_t_1 += 35;
+    __Pyx_GIVEREF(__pyx_kp_u_must_be_aligned_to_sample_width);
+    PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_kp_u_must_be_aligned_to_sample_width);
+    __pyx_t_7 = __Pyx_PyUnicode_From_int(__pyx_v_sample_width, 0, ' ', 'd'); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 44, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_7);
+    __pyx_t_1 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_7);
+    __Pyx_GIVEREF(__pyx_t_7);
+    PyTuple_SET_ITEM(__pyx_t_5, 3, __pyx_t_7);
+    __pyx_t_7 = 0;
+    __Pyx_INCREF(__pyx_kp_u_);
+    __pyx_t_1 += 1;
+    __Pyx_GIVEREF(__pyx_kp_u_);
+    PyTuple_SET_ITEM(__pyx_t_5, 4, __pyx_kp_u_);
+    __pyx_t_7 = __Pyx_PyUnicode_Join(__pyx_t_5, 5, __pyx_t_1, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 44, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_7);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_builtin_ValueError, __pyx_t_7); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 44, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __Pyx_Raise(__pyx_t_5, 0, 0, 0);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __PYX_ERR(0, 44, __pyx_L1_error)
+
+    /* "pydub/overlay.pyx":43
+ *         return seg1_data
+ * 
+ *     if sample_width in (2, 4) and position % sample_width != 0:             # <<<<<<<<<<<<<<
+ *         raise ValueError(f"position ({position}) must be aligned to sample_width ({sample_width})")
+ * 
+ */
+  }
+
+  /* "pydub/overlay.pyx":46
+ *         raise ValueError(f"position ({position}) must be aligned to sample_width ({sample_width})")
  * 
  *     if apply_gain:             # <<<<<<<<<<<<<<
  *         db_factor = 10 ** (gain_during_overlay / 20.0)
@@ -2812,7 +2941,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
   __pyx_t_2 = (__pyx_v_apply_gain != 0);
   if (__pyx_t_2) {
 
-    /* "pydub/overlay.pyx":43
+    /* "pydub/overlay.pyx":47
  * 
  *     if apply_gain:
  *         db_factor = 10 ** (gain_during_overlay / 20.0)             # <<<<<<<<<<<<<<
@@ -2821,8 +2950,8 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
     __pyx_v_db_factor = pow(10.0, (((double)__pyx_v_gain_during_overlay) / 20.0));
 
-    /* "pydub/overlay.pyx":42
- *         return seg1_data
+    /* "pydub/overlay.pyx":46
+ *         raise ValueError(f"position ({position}) must be aligned to sample_width ({sample_width})")
  * 
  *     if apply_gain:             # <<<<<<<<<<<<<<
  *         db_factor = 10 ** (gain_during_overlay / 20.0)
@@ -2830,19 +2959,19 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
   }
 
-  /* "pydub/overlay.pyx":45
+  /* "pydub/overlay.pyx":49
  *         db_factor = 10 ** (gain_during_overlay / 20.0)
  * 
  *     output_bytes = PyBytes_FromStringAndSize(NULL, seg1_len)             # <<<<<<<<<<<<<<
  *     out_buf = PyBytes_AS_STRING(output_bytes)
  *     seg1_ptr = <const char*>seg1_data
  */
-  __pyx_t_3 = PyBytes_FromStringAndSize(NULL, __pyx_v_seg1_len); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 45, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __pyx_v_output_bytes = __pyx_t_3;
-  __pyx_t_3 = 0;
+  __pyx_t_5 = PyBytes_FromStringAndSize(NULL, __pyx_v_seg1_len); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_v_output_bytes = __pyx_t_5;
+  __pyx_t_5 = 0;
 
-  /* "pydub/overlay.pyx":46
+  /* "pydub/overlay.pyx":50
  * 
  *     output_bytes = PyBytes_FromStringAndSize(NULL, seg1_len)
  *     out_buf = PyBytes_AS_STRING(output_bytes)             # <<<<<<<<<<<<<<
@@ -2851,7 +2980,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
   __pyx_v_out_buf = PyBytes_AS_STRING(__pyx_v_output_bytes);
 
-  /* "pydub/overlay.pyx":47
+  /* "pydub/overlay.pyx":51
  *     output_bytes = PyBytes_FromStringAndSize(NULL, seg1_len)
  *     out_buf = PyBytes_AS_STRING(output_bytes)
  *     seg1_ptr = <const char*>seg1_data             # <<<<<<<<<<<<<<
@@ -2860,12 +2989,12 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
   if (unlikely(__pyx_v_seg1_data == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "expected bytes, NoneType found");
-    __PYX_ERR(0, 47, __pyx_L1_error)
+    __PYX_ERR(0, 51, __pyx_L1_error)
   }
-  __pyx_t_4 = __Pyx_PyBytes_AsString(__pyx_v_seg1_data); if (unlikely((!__pyx_t_4) && PyErr_Occurred())) __PYX_ERR(0, 47, __pyx_L1_error)
-  __pyx_v_seg1_ptr = ((char const *)__pyx_t_4);
+  __pyx_t_8 = __Pyx_PyBytes_AsString(__pyx_v_seg1_data); if (unlikely((!__pyx_t_8) && PyErr_Occurred())) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_v_seg1_ptr = ((char const *)__pyx_t_8);
 
-  /* "pydub/overlay.pyx":48
+  /* "pydub/overlay.pyx":52
  *     out_buf = PyBytes_AS_STRING(output_bytes)
  *     seg1_ptr = <const char*>seg1_data
  *     seg2_ptr = <const char*>seg2_data             # <<<<<<<<<<<<<<
@@ -2874,12 +3003,12 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
   if (unlikely(__pyx_v_seg2_data == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "expected bytes, NoneType found");
-    __PYX_ERR(0, 48, __pyx_L1_error)
+    __PYX_ERR(0, 52, __pyx_L1_error)
   }
-  __pyx_t_5 = __Pyx_PyBytes_AsString(__pyx_v_seg2_data); if (unlikely((!__pyx_t_5) && PyErr_Occurred())) __PYX_ERR(0, 48, __pyx_L1_error)
-  __pyx_v_seg2_ptr = ((char const *)__pyx_t_5);
+  __pyx_t_9 = __Pyx_PyBytes_AsString(__pyx_v_seg2_data); if (unlikely((!__pyx_t_9) && PyErr_Occurred())) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_v_seg2_ptr = ((char const *)__pyx_t_9);
 
-  /* "pydub/overlay.pyx":49
+  /* "pydub/overlay.pyx":53
  *     seg1_ptr = <const char*>seg1_data
  *     seg2_ptr = <const char*>seg2_data
  *     memcpy(out_buf, seg1_ptr, seg1_len)             # <<<<<<<<<<<<<<
@@ -2888,7 +3017,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
   (void)(memcpy(__pyx_v_out_buf, __pyx_v_seg1_ptr, __pyx_v_seg1_len));
 
-  /* "pydub/overlay.pyx":51
+  /* "pydub/overlay.pyx":55
  *     memcpy(out_buf, seg1_ptr, seg1_len)
  * 
  *     cdef int seg1_len_after_pos = seg1_len - position             # <<<<<<<<<<<<<<
@@ -2897,7 +3026,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
   __pyx_v_seg1_len_after_pos = (__pyx_v_seg1_len - __pyx_v_position);
 
-  /* "pydub/overlay.pyx":52
+  /* "pydub/overlay.pyx":56
  * 
  *     cdef int seg1_len_after_pos = seg1_len - position
  *     current_position = 0             # <<<<<<<<<<<<<<
@@ -2906,7 +3035,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
   __pyx_v_current_position = 0;
 
-  /* "pydub/overlay.pyx":54
+  /* "pydub/overlay.pyx":58
  *     current_position = 0
  * 
  *     if sample_width == 2:             # <<<<<<<<<<<<<<
@@ -2916,7 +3045,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
   switch (__pyx_v_sample_width) {
     case 2:
 
-    /* "pydub/overlay.pyx":55
+    /* "pydub/overlay.pyx":59
  * 
  *     if sample_width == 2:
  *         while True:             # <<<<<<<<<<<<<<
@@ -2925,7 +3054,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
     while (1) {
 
-      /* "pydub/overlay.pyx":56
+      /* "pydub/overlay.pyx":60
  *     if sample_width == 2:
  *         while True:
  *             if remaining_times == 0:             # <<<<<<<<<<<<<<
@@ -2935,16 +3064,16 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
       __pyx_t_2 = (__pyx_v_remaining_times == 0);
       if (__pyx_t_2) {
 
-        /* "pydub/overlay.pyx":57
+        /* "pydub/overlay.pyx":61
  *         while True:
  *             if remaining_times == 0:
  *                 break             # <<<<<<<<<<<<<<
  *             if current_position >= seg1_len_after_pos:
  *                 break
  */
-        goto __pyx_L6_break;
+        goto __pyx_L9_break;
 
-        /* "pydub/overlay.pyx":56
+        /* "pydub/overlay.pyx":60
  *     if sample_width == 2:
  *         while True:
  *             if remaining_times == 0:             # <<<<<<<<<<<<<<
@@ -2953,7 +3082,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       }
 
-      /* "pydub/overlay.pyx":58
+      /* "pydub/overlay.pyx":62
  *             if remaining_times == 0:
  *                 break
  *             if current_position >= seg1_len_after_pos:             # <<<<<<<<<<<<<<
@@ -2963,16 +3092,16 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
       __pyx_t_2 = (__pyx_v_current_position >= __pyx_v_seg1_len_after_pos);
       if (__pyx_t_2) {
 
-        /* "pydub/overlay.pyx":59
+        /* "pydub/overlay.pyx":63
  *                 break
  *             if current_position >= seg1_len_after_pos:
  *                 break             # <<<<<<<<<<<<<<
  * 
  *             remaining = seg1_len_after_pos - current_position
  */
-        goto __pyx_L6_break;
+        goto __pyx_L9_break;
 
-        /* "pydub/overlay.pyx":58
+        /* "pydub/overlay.pyx":62
  *             if remaining_times == 0:
  *                 break
  *             if current_position >= seg1_len_after_pos:             # <<<<<<<<<<<<<<
@@ -2981,7 +3110,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       }
 
-      /* "pydub/overlay.pyx":61
+      /* "pydub/overlay.pyx":65
  *                 break
  * 
  *             remaining = seg1_len_after_pos - current_position             # <<<<<<<<<<<<<<
@@ -2990,7 +3119,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       __pyx_v_remaining = (__pyx_v_seg1_len_after_pos - __pyx_v_current_position);
 
-      /* "pydub/overlay.pyx":62
+      /* "pydub/overlay.pyx":66
  * 
  *             remaining = seg1_len_after_pos - current_position
  *             chunk_len = remaining if remaining < seg2_len else seg2_len             # <<<<<<<<<<<<<<
@@ -2999,13 +3128,13 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       __pyx_t_2 = (__pyx_v_remaining < __pyx_v_seg2_len);
       if (__pyx_t_2) {
-        __pyx_t_6 = __pyx_v_remaining;
+        __pyx_t_10 = __pyx_v_remaining;
       } else {
-        __pyx_t_6 = __pyx_v_seg2_len;
+        __pyx_t_10 = __pyx_v_seg2_len;
       }
-      __pyx_v_chunk_len = __pyx_t_6;
+      __pyx_v_chunk_len = __pyx_t_10;
 
-      /* "pydub/overlay.pyx":63
+      /* "pydub/overlay.pyx":67
  *             remaining = seg1_len_after_pos - current_position
  *             chunk_len = remaining if remaining < seg2_len else seg2_len
  *             num_samples = chunk_len // 2             # <<<<<<<<<<<<<<
@@ -3014,7 +3143,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       __pyx_v_num_samples = (__pyx_v_chunk_len / 2);
 
-      /* "pydub/overlay.pyx":65
+      /* "pydub/overlay.pyx":69
  *             num_samples = chunk_len // 2
  * 
  *             out_16 = <short*>(out_buf + position + current_position)             # <<<<<<<<<<<<<<
@@ -3023,7 +3152,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       __pyx_v_out_16 = ((short *)((__pyx_v_out_buf + __pyx_v_position) + __pyx_v_current_position));
 
-      /* "pydub/overlay.pyx":66
+      /* "pydub/overlay.pyx":70
  * 
  *             out_16 = <short*>(out_buf + position + current_position)
  *             s2_16 = <const short*>seg2_ptr             # <<<<<<<<<<<<<<
@@ -3032,7 +3161,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       __pyx_v_s2_16 = ((short const *)__pyx_v_seg2_ptr);
 
-      /* "pydub/overlay.pyx":68
+      /* "pydub/overlay.pyx":72
  *             s2_16 = <const short*>seg2_ptr
  * 
  *             if apply_gain:             # <<<<<<<<<<<<<<
@@ -3042,155 +3171,155 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
       __pyx_t_2 = (__pyx_v_apply_gain != 0);
       if (__pyx_t_2) {
 
-        /* "pydub/overlay.pyx":69
+        /* "pydub/overlay.pyx":73
  * 
  *             if apply_gain:
  *                 for i in range(num_samples):             # <<<<<<<<<<<<<<
  *                     val_32 = <int>(<double>out_16[i] * db_factor)
- *                     if val_32 > 32767:
+ *                     if val_32 > SHRT_MAX:
  */
-        __pyx_t_6 = __pyx_v_num_samples;
-        __pyx_t_7 = __pyx_t_6;
-        for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
-          __pyx_v_i = __pyx_t_8;
+        __pyx_t_10 = __pyx_v_num_samples;
+        __pyx_t_11 = __pyx_t_10;
+        for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
+          __pyx_v_i = __pyx_t_12;
 
-          /* "pydub/overlay.pyx":70
+          /* "pydub/overlay.pyx":74
  *             if apply_gain:
  *                 for i in range(num_samples):
  *                     val_32 = <int>(<double>out_16[i] * db_factor)             # <<<<<<<<<<<<<<
- *                     if val_32 > 32767:
- *                         val_32 = 32767
+ *                     if val_32 > SHRT_MAX:
+ *                         val_32 = SHRT_MAX
  */
           __pyx_v_val_32 = ((int)(((double)(__pyx_v_out_16[__pyx_v_i])) * __pyx_v_db_factor));
 
-          /* "pydub/overlay.pyx":71
- *                 for i in range(num_samples):
- *                     val_32 = <int>(<double>out_16[i] * db_factor)
- *                     if val_32 > 32767:             # <<<<<<<<<<<<<<
- *                         val_32 = 32767
- *                     elif val_32 < -32768:
- */
-          __pyx_t_2 = (__pyx_v_val_32 > 0x7FFF);
-          if (__pyx_t_2) {
-
-            /* "pydub/overlay.pyx":72
- *                     val_32 = <int>(<double>out_16[i] * db_factor)
- *                     if val_32 > 32767:
- *                         val_32 = 32767             # <<<<<<<<<<<<<<
- *                     elif val_32 < -32768:
- *                         val_32 = -32768
- */
-            __pyx_v_val_32 = 0x7FFF;
-
-            /* "pydub/overlay.pyx":71
- *                 for i in range(num_samples):
- *                     val_32 = <int>(<double>out_16[i] * db_factor)
- *                     if val_32 > 32767:             # <<<<<<<<<<<<<<
- *                         val_32 = 32767
- *                     elif val_32 < -32768:
- */
-            goto __pyx_L12;
-          }
-
-          /* "pydub/overlay.pyx":73
- *                     if val_32 > 32767:
- *                         val_32 = 32767
- *                     elif val_32 < -32768:             # <<<<<<<<<<<<<<
- *                         val_32 = -32768
- *                     val_32 = val_32 + <int>s2_16[i]
- */
-          __pyx_t_2 = (__pyx_v_val_32 < -32768L);
-          if (__pyx_t_2) {
-
-            /* "pydub/overlay.pyx":74
- *                         val_32 = 32767
- *                     elif val_32 < -32768:
- *                         val_32 = -32768             # <<<<<<<<<<<<<<
- *                     val_32 = val_32 + <int>s2_16[i]
- *                     if val_32 > 32767:
- */
-            __pyx_v_val_32 = -32768;
-
-            /* "pydub/overlay.pyx":73
- *                     if val_32 > 32767:
- *                         val_32 = 32767
- *                     elif val_32 < -32768:             # <<<<<<<<<<<<<<
- *                         val_32 = -32768
- *                     val_32 = val_32 + <int>s2_16[i]
- */
-          }
-          __pyx_L12:;
-
           /* "pydub/overlay.pyx":75
- *                     elif val_32 < -32768:
- *                         val_32 = -32768
+ *                 for i in range(num_samples):
+ *                     val_32 = <int>(<double>out_16[i] * db_factor)
+ *                     if val_32 > SHRT_MAX:             # <<<<<<<<<<<<<<
+ *                         val_32 = SHRT_MAX
+ *                     elif val_32 < SHRT_MIN:
+ */
+          __pyx_t_2 = (__pyx_v_val_32 > SHRT_MAX);
+          if (__pyx_t_2) {
+
+            /* "pydub/overlay.pyx":76
+ *                     val_32 = <int>(<double>out_16[i] * db_factor)
+ *                     if val_32 > SHRT_MAX:
+ *                         val_32 = SHRT_MAX             # <<<<<<<<<<<<<<
+ *                     elif val_32 < SHRT_MIN:
+ *                         val_32 = SHRT_MIN
+ */
+            __pyx_v_val_32 = SHRT_MAX;
+
+            /* "pydub/overlay.pyx":75
+ *                 for i in range(num_samples):
+ *                     val_32 = <int>(<double>out_16[i] * db_factor)
+ *                     if val_32 > SHRT_MAX:             # <<<<<<<<<<<<<<
+ *                         val_32 = SHRT_MAX
+ *                     elif val_32 < SHRT_MIN:
+ */
+            goto __pyx_L15;
+          }
+
+          /* "pydub/overlay.pyx":77
+ *                     if val_32 > SHRT_MAX:
+ *                         val_32 = SHRT_MAX
+ *                     elif val_32 < SHRT_MIN:             # <<<<<<<<<<<<<<
+ *                         val_32 = SHRT_MIN
+ *                     val_32 = val_32 + <int>s2_16[i]
+ */
+          __pyx_t_2 = (__pyx_v_val_32 < SHRT_MIN);
+          if (__pyx_t_2) {
+
+            /* "pydub/overlay.pyx":78
+ *                         val_32 = SHRT_MAX
+ *                     elif val_32 < SHRT_MIN:
+ *                         val_32 = SHRT_MIN             # <<<<<<<<<<<<<<
+ *                     val_32 = val_32 + <int>s2_16[i]
+ *                     if val_32 > SHRT_MAX:
+ */
+            __pyx_v_val_32 = SHRT_MIN;
+
+            /* "pydub/overlay.pyx":77
+ *                     if val_32 > SHRT_MAX:
+ *                         val_32 = SHRT_MAX
+ *                     elif val_32 < SHRT_MIN:             # <<<<<<<<<<<<<<
+ *                         val_32 = SHRT_MIN
+ *                     val_32 = val_32 + <int>s2_16[i]
+ */
+          }
+          __pyx_L15:;
+
+          /* "pydub/overlay.pyx":79
+ *                     elif val_32 < SHRT_MIN:
+ *                         val_32 = SHRT_MIN
  *                     val_32 = val_32 + <int>s2_16[i]             # <<<<<<<<<<<<<<
- *                     if val_32 > 32767:
- *                         val_32 = 32767
+ *                     if val_32 > SHRT_MAX:
+ *                         val_32 = SHRT_MAX
  */
           __pyx_v_val_32 = (__pyx_v_val_32 + ((int)(__pyx_v_s2_16[__pyx_v_i])));
 
-          /* "pydub/overlay.pyx":76
- *                         val_32 = -32768
+          /* "pydub/overlay.pyx":80
+ *                         val_32 = SHRT_MIN
  *                     val_32 = val_32 + <int>s2_16[i]
- *                     if val_32 > 32767:             # <<<<<<<<<<<<<<
- *                         val_32 = 32767
- *                     elif val_32 < -32768:
+ *                     if val_32 > SHRT_MAX:             # <<<<<<<<<<<<<<
+ *                         val_32 = SHRT_MAX
+ *                     elif val_32 < SHRT_MIN:
  */
-          __pyx_t_2 = (__pyx_v_val_32 > 0x7FFF);
+          __pyx_t_2 = (__pyx_v_val_32 > SHRT_MAX);
           if (__pyx_t_2) {
 
-            /* "pydub/overlay.pyx":77
+            /* "pydub/overlay.pyx":81
  *                     val_32 = val_32 + <int>s2_16[i]
- *                     if val_32 > 32767:
- *                         val_32 = 32767             # <<<<<<<<<<<<<<
- *                     elif val_32 < -32768:
- *                         val_32 = -32768
+ *                     if val_32 > SHRT_MAX:
+ *                         val_32 = SHRT_MAX             # <<<<<<<<<<<<<<
+ *                     elif val_32 < SHRT_MIN:
+ *                         val_32 = SHRT_MIN
  */
-            __pyx_v_val_32 = 0x7FFF;
+            __pyx_v_val_32 = SHRT_MAX;
 
-            /* "pydub/overlay.pyx":76
- *                         val_32 = -32768
+            /* "pydub/overlay.pyx":80
+ *                         val_32 = SHRT_MIN
  *                     val_32 = val_32 + <int>s2_16[i]
- *                     if val_32 > 32767:             # <<<<<<<<<<<<<<
- *                         val_32 = 32767
- *                     elif val_32 < -32768:
+ *                     if val_32 > SHRT_MAX:             # <<<<<<<<<<<<<<
+ *                         val_32 = SHRT_MAX
+ *                     elif val_32 < SHRT_MIN:
  */
-            goto __pyx_L13;
+            goto __pyx_L16;
           }
 
-          /* "pydub/overlay.pyx":78
- *                     if val_32 > 32767:
- *                         val_32 = 32767
- *                     elif val_32 < -32768:             # <<<<<<<<<<<<<<
- *                         val_32 = -32768
+          /* "pydub/overlay.pyx":82
+ *                     if val_32 > SHRT_MAX:
+ *                         val_32 = SHRT_MAX
+ *                     elif val_32 < SHRT_MIN:             # <<<<<<<<<<<<<<
+ *                         val_32 = SHRT_MIN
  *                     out_16[i] = <short>val_32
  */
-          __pyx_t_2 = (__pyx_v_val_32 < -32768L);
+          __pyx_t_2 = (__pyx_v_val_32 < SHRT_MIN);
           if (__pyx_t_2) {
 
-            /* "pydub/overlay.pyx":79
- *                         val_32 = 32767
- *                     elif val_32 < -32768:
- *                         val_32 = -32768             # <<<<<<<<<<<<<<
+            /* "pydub/overlay.pyx":83
+ *                         val_32 = SHRT_MAX
+ *                     elif val_32 < SHRT_MIN:
+ *                         val_32 = SHRT_MIN             # <<<<<<<<<<<<<<
  *                     out_16[i] = <short>val_32
  *             else:
  */
-            __pyx_v_val_32 = -32768;
+            __pyx_v_val_32 = SHRT_MIN;
 
-            /* "pydub/overlay.pyx":78
- *                     if val_32 > 32767:
- *                         val_32 = 32767
- *                     elif val_32 < -32768:             # <<<<<<<<<<<<<<
- *                         val_32 = -32768
+            /* "pydub/overlay.pyx":82
+ *                     if val_32 > SHRT_MAX:
+ *                         val_32 = SHRT_MAX
+ *                     elif val_32 < SHRT_MIN:             # <<<<<<<<<<<<<<
+ *                         val_32 = SHRT_MIN
  *                     out_16[i] = <short>val_32
  */
           }
-          __pyx_L13:;
+          __pyx_L16:;
 
-          /* "pydub/overlay.pyx":80
- *                     elif val_32 < -32768:
- *                         val_32 = -32768
+          /* "pydub/overlay.pyx":84
+ *                     elif val_32 < SHRT_MIN:
+ *                         val_32 = SHRT_MIN
  *                     out_16[i] = <short>val_32             # <<<<<<<<<<<<<<
  *             else:
  *                 for i in range(num_samples):
@@ -3198,99 +3327,99 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
           (__pyx_v_out_16[__pyx_v_i]) = ((short)__pyx_v_val_32);
         }
 
-        /* "pydub/overlay.pyx":68
+        /* "pydub/overlay.pyx":72
  *             s2_16 = <const short*>seg2_ptr
  * 
  *             if apply_gain:             # <<<<<<<<<<<<<<
  *                 for i in range(num_samples):
  *                     val_32 = <int>(<double>out_16[i] * db_factor)
  */
-        goto __pyx_L9;
+        goto __pyx_L12;
       }
 
-      /* "pydub/overlay.pyx":82
+      /* "pydub/overlay.pyx":86
  *                     out_16[i] = <short>val_32
  *             else:
  *                 for i in range(num_samples):             # <<<<<<<<<<<<<<
  *                     val_32 = <int>out_16[i] + <int>s2_16[i]
- *                     if val_32 > 32767:
+ *                     if val_32 > SHRT_MAX:
  */
       /*else*/ {
-        __pyx_t_6 = __pyx_v_num_samples;
-        __pyx_t_7 = __pyx_t_6;
-        for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
-          __pyx_v_i = __pyx_t_8;
+        __pyx_t_10 = __pyx_v_num_samples;
+        __pyx_t_11 = __pyx_t_10;
+        for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
+          __pyx_v_i = __pyx_t_12;
 
-          /* "pydub/overlay.pyx":83
+          /* "pydub/overlay.pyx":87
  *             else:
  *                 for i in range(num_samples):
  *                     val_32 = <int>out_16[i] + <int>s2_16[i]             # <<<<<<<<<<<<<<
- *                     if val_32 > 32767:
- *                         val_32 = 32767
+ *                     if val_32 > SHRT_MAX:
+ *                         val_32 = SHRT_MAX
  */
           __pyx_v_val_32 = (((int)(__pyx_v_out_16[__pyx_v_i])) + ((int)(__pyx_v_s2_16[__pyx_v_i])));
 
-          /* "pydub/overlay.pyx":84
+          /* "pydub/overlay.pyx":88
  *                 for i in range(num_samples):
  *                     val_32 = <int>out_16[i] + <int>s2_16[i]
- *                     if val_32 > 32767:             # <<<<<<<<<<<<<<
- *                         val_32 = 32767
- *                     elif val_32 < -32768:
+ *                     if val_32 > SHRT_MAX:             # <<<<<<<<<<<<<<
+ *                         val_32 = SHRT_MAX
+ *                     elif val_32 < SHRT_MIN:
  */
-          __pyx_t_2 = (__pyx_v_val_32 > 0x7FFF);
+          __pyx_t_2 = (__pyx_v_val_32 > SHRT_MAX);
           if (__pyx_t_2) {
 
-            /* "pydub/overlay.pyx":85
+            /* "pydub/overlay.pyx":89
  *                     val_32 = <int>out_16[i] + <int>s2_16[i]
- *                     if val_32 > 32767:
- *                         val_32 = 32767             # <<<<<<<<<<<<<<
- *                     elif val_32 < -32768:
- *                         val_32 = -32768
+ *                     if val_32 > SHRT_MAX:
+ *                         val_32 = SHRT_MAX             # <<<<<<<<<<<<<<
+ *                     elif val_32 < SHRT_MIN:
+ *                         val_32 = SHRT_MIN
  */
-            __pyx_v_val_32 = 0x7FFF;
+            __pyx_v_val_32 = SHRT_MAX;
 
-            /* "pydub/overlay.pyx":84
+            /* "pydub/overlay.pyx":88
  *                 for i in range(num_samples):
  *                     val_32 = <int>out_16[i] + <int>s2_16[i]
- *                     if val_32 > 32767:             # <<<<<<<<<<<<<<
- *                         val_32 = 32767
- *                     elif val_32 < -32768:
+ *                     if val_32 > SHRT_MAX:             # <<<<<<<<<<<<<<
+ *                         val_32 = SHRT_MAX
+ *                     elif val_32 < SHRT_MIN:
  */
-            goto __pyx_L16;
+            goto __pyx_L19;
           }
 
-          /* "pydub/overlay.pyx":86
- *                     if val_32 > 32767:
- *                         val_32 = 32767
- *                     elif val_32 < -32768:             # <<<<<<<<<<<<<<
- *                         val_32 = -32768
+          /* "pydub/overlay.pyx":90
+ *                     if val_32 > SHRT_MAX:
+ *                         val_32 = SHRT_MAX
+ *                     elif val_32 < SHRT_MIN:             # <<<<<<<<<<<<<<
+ *                         val_32 = SHRT_MIN
  *                     out_16[i] = <short>val_32
  */
-          __pyx_t_2 = (__pyx_v_val_32 < -32768L);
+          __pyx_t_2 = (__pyx_v_val_32 < SHRT_MIN);
           if (__pyx_t_2) {
 
-            /* "pydub/overlay.pyx":87
- *                         val_32 = 32767
- *                     elif val_32 < -32768:
- *                         val_32 = -32768             # <<<<<<<<<<<<<<
+            /* "pydub/overlay.pyx":91
+ *                         val_32 = SHRT_MAX
+ *                     elif val_32 < SHRT_MIN:
+ *                         val_32 = SHRT_MIN             # <<<<<<<<<<<<<<
  *                     out_16[i] = <short>val_32
  * 
  */
-            __pyx_v_val_32 = -32768;
+            __pyx_v_val_32 = SHRT_MIN;
 
-            /* "pydub/overlay.pyx":86
- *                     if val_32 > 32767:
- *                         val_32 = 32767
- *                     elif val_32 < -32768:             # <<<<<<<<<<<<<<
- *                         val_32 = -32768
+            /* "pydub/overlay.pyx":90
+ *                     if val_32 > SHRT_MAX:
+ *                         val_32 = SHRT_MAX
+ *                     elif val_32 < SHRT_MIN:             # <<<<<<<<<<<<<<
+ *                         val_32 = SHRT_MIN
  *                     out_16[i] = <short>val_32
  */
           }
-          __pyx_L16:;
+          __pyx_L19:;
 
-          /* "pydub/overlay.pyx":88
- *                     elif val_32 < -32768:
- *                         val_32 = -32768
+          /* "pydub/overlay.pyx":92
+ *                     elif val_32 < SHRT_MIN:
+ *                         val_32 = SHRT_MIN
  *                     out_16[i] = <short>val_32             # <<<<<<<<<<<<<<
  * 
  *             current_position += chunk_len
@@ -3298,9 +3427,9 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
           (__pyx_v_out_16[__pyx_v_i]) = ((short)__pyx_v_val_32);
         }
       }
-      __pyx_L9:;
+      __pyx_L12:;
 
-      /* "pydub/overlay.pyx":90
+      /* "pydub/overlay.pyx":94
  *                     out_16[i] = <short>val_32
  * 
  *             current_position += chunk_len             # <<<<<<<<<<<<<<
@@ -3309,7 +3438,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       __pyx_v_current_position = (__pyx_v_current_position + __pyx_v_chunk_len);
 
-      /* "pydub/overlay.pyx":91
+      /* "pydub/overlay.pyx":95
  * 
  *             current_position += chunk_len
  *             if remaining_times > 0:             # <<<<<<<<<<<<<<
@@ -3319,7 +3448,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
       __pyx_t_2 = (__pyx_v_remaining_times > 0);
       if (__pyx_t_2) {
 
-        /* "pydub/overlay.pyx":92
+        /* "pydub/overlay.pyx":96
  *             current_position += chunk_len
  *             if remaining_times > 0:
  *                 remaining_times -= 1             # <<<<<<<<<<<<<<
@@ -3328,7 +3457,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
         __pyx_v_remaining_times = (__pyx_v_remaining_times - 1);
 
-        /* "pydub/overlay.pyx":91
+        /* "pydub/overlay.pyx":95
  * 
  *             current_position += chunk_len
  *             if remaining_times > 0:             # <<<<<<<<<<<<<<
@@ -3337,9 +3466,9 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       }
     }
-    __pyx_L6_break:;
+    __pyx_L9_break:;
 
-    /* "pydub/overlay.pyx":54
+    /* "pydub/overlay.pyx":58
  *     current_position = 0
  * 
  *     if sample_width == 2:             # <<<<<<<<<<<<<<
@@ -3349,7 +3478,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
     break;
     case 4:
 
-    /* "pydub/overlay.pyx":95
+    /* "pydub/overlay.pyx":99
  * 
  *     elif sample_width == 4:
  *         while True:             # <<<<<<<<<<<<<<
@@ -3358,7 +3487,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
     while (1) {
 
-      /* "pydub/overlay.pyx":96
+      /* "pydub/overlay.pyx":100
  *     elif sample_width == 4:
  *         while True:
  *             if remaining_times == 0:             # <<<<<<<<<<<<<<
@@ -3368,16 +3497,16 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
       __pyx_t_2 = (__pyx_v_remaining_times == 0);
       if (__pyx_t_2) {
 
-        /* "pydub/overlay.pyx":97
+        /* "pydub/overlay.pyx":101
  *         while True:
  *             if remaining_times == 0:
  *                 break             # <<<<<<<<<<<<<<
  *             if current_position >= seg1_len_after_pos:
  *                 break
  */
-        goto __pyx_L19_break;
+        goto __pyx_L22_break;
 
-        /* "pydub/overlay.pyx":96
+        /* "pydub/overlay.pyx":100
  *     elif sample_width == 4:
  *         while True:
  *             if remaining_times == 0:             # <<<<<<<<<<<<<<
@@ -3386,7 +3515,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       }
 
-      /* "pydub/overlay.pyx":98
+      /* "pydub/overlay.pyx":102
  *             if remaining_times == 0:
  *                 break
  *             if current_position >= seg1_len_after_pos:             # <<<<<<<<<<<<<<
@@ -3396,16 +3525,16 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
       __pyx_t_2 = (__pyx_v_current_position >= __pyx_v_seg1_len_after_pos);
       if (__pyx_t_2) {
 
-        /* "pydub/overlay.pyx":99
+        /* "pydub/overlay.pyx":103
  *                 break
  *             if current_position >= seg1_len_after_pos:
  *                 break             # <<<<<<<<<<<<<<
  * 
  *             remaining = seg1_len_after_pos - current_position
  */
-        goto __pyx_L19_break;
+        goto __pyx_L22_break;
 
-        /* "pydub/overlay.pyx":98
+        /* "pydub/overlay.pyx":102
  *             if remaining_times == 0:
  *                 break
  *             if current_position >= seg1_len_after_pos:             # <<<<<<<<<<<<<<
@@ -3414,7 +3543,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       }
 
-      /* "pydub/overlay.pyx":101
+      /* "pydub/overlay.pyx":105
  *                 break
  * 
  *             remaining = seg1_len_after_pos - current_position             # <<<<<<<<<<<<<<
@@ -3423,7 +3552,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       __pyx_v_remaining = (__pyx_v_seg1_len_after_pos - __pyx_v_current_position);
 
-      /* "pydub/overlay.pyx":102
+      /* "pydub/overlay.pyx":106
  * 
  *             remaining = seg1_len_after_pos - current_position
  *             chunk_len = remaining if remaining < seg2_len else seg2_len             # <<<<<<<<<<<<<<
@@ -3432,13 +3561,13 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       __pyx_t_2 = (__pyx_v_remaining < __pyx_v_seg2_len);
       if (__pyx_t_2) {
-        __pyx_t_6 = __pyx_v_remaining;
+        __pyx_t_10 = __pyx_v_remaining;
       } else {
-        __pyx_t_6 = __pyx_v_seg2_len;
+        __pyx_t_10 = __pyx_v_seg2_len;
       }
-      __pyx_v_chunk_len = __pyx_t_6;
+      __pyx_v_chunk_len = __pyx_t_10;
 
-      /* "pydub/overlay.pyx":103
+      /* "pydub/overlay.pyx":107
  *             remaining = seg1_len_after_pos - current_position
  *             chunk_len = remaining if remaining < seg2_len else seg2_len
  *             num_samples = chunk_len // 4             # <<<<<<<<<<<<<<
@@ -3447,7 +3576,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       __pyx_v_num_samples = (__pyx_v_chunk_len / 4);
 
-      /* "pydub/overlay.pyx":105
+      /* "pydub/overlay.pyx":109
  *             num_samples = chunk_len // 4
  * 
  *             out_32 = <int*>(out_buf + position + current_position)             # <<<<<<<<<<<<<<
@@ -3456,7 +3585,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       __pyx_v_out_32 = ((int *)((__pyx_v_out_buf + __pyx_v_position) + __pyx_v_current_position));
 
-      /* "pydub/overlay.pyx":106
+      /* "pydub/overlay.pyx":110
  * 
  *             out_32 = <int*>(out_buf + position + current_position)
  *             s2_32 = <const int*>seg2_ptr             # <<<<<<<<<<<<<<
@@ -3465,7 +3594,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       __pyx_v_s2_32 = ((int const *)__pyx_v_seg2_ptr);
 
-      /* "pydub/overlay.pyx":108
+      /* "pydub/overlay.pyx":112
  *             s2_32 = <const int*>seg2_ptr
  * 
  *             if apply_gain:             # <<<<<<<<<<<<<<
@@ -3475,155 +3604,155 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
       __pyx_t_2 = (__pyx_v_apply_gain != 0);
       if (__pyx_t_2) {
 
-        /* "pydub/overlay.pyx":109
+        /* "pydub/overlay.pyx":113
  * 
  *             if apply_gain:
  *                 for i in range(num_samples):             # <<<<<<<<<<<<<<
  *                     val_64 = <long long>(<double>out_32[i] * db_factor)
- *                     if val_64 > 2147483647:
+ *                     if val_64 > INT_MAX:
  */
-        __pyx_t_6 = __pyx_v_num_samples;
-        __pyx_t_7 = __pyx_t_6;
-        for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
-          __pyx_v_i = __pyx_t_8;
+        __pyx_t_10 = __pyx_v_num_samples;
+        __pyx_t_11 = __pyx_t_10;
+        for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
+          __pyx_v_i = __pyx_t_12;
 
-          /* "pydub/overlay.pyx":110
+          /* "pydub/overlay.pyx":114
  *             if apply_gain:
  *                 for i in range(num_samples):
  *                     val_64 = <long long>(<double>out_32[i] * db_factor)             # <<<<<<<<<<<<<<
- *                     if val_64 > 2147483647:
- *                         val_64 = 2147483647
+ *                     if val_64 > INT_MAX:
+ *                         val_64 = INT_MAX
  */
           __pyx_v_val_64 = ((PY_LONG_LONG)(((double)(__pyx_v_out_32[__pyx_v_i])) * __pyx_v_db_factor));
 
-          /* "pydub/overlay.pyx":111
- *                 for i in range(num_samples):
- *                     val_64 = <long long>(<double>out_32[i] * db_factor)
- *                     if val_64 > 2147483647:             # <<<<<<<<<<<<<<
- *                         val_64 = 2147483647
- *                     elif val_64 < -2147483648:
- */
-          __pyx_t_2 = (__pyx_v_val_64 > 0x7FFFFFFF);
-          if (__pyx_t_2) {
-
-            /* "pydub/overlay.pyx":112
- *                     val_64 = <long long>(<double>out_32[i] * db_factor)
- *                     if val_64 > 2147483647:
- *                         val_64 = 2147483647             # <<<<<<<<<<<<<<
- *                     elif val_64 < -2147483648:
- *                         val_64 = -2147483648
- */
-            __pyx_v_val_64 = 0x7FFFFFFF;
-
-            /* "pydub/overlay.pyx":111
- *                 for i in range(num_samples):
- *                     val_64 = <long long>(<double>out_32[i] * db_factor)
- *                     if val_64 > 2147483647:             # <<<<<<<<<<<<<<
- *                         val_64 = 2147483647
- *                     elif val_64 < -2147483648:
- */
-            goto __pyx_L25;
-          }
-
-          /* "pydub/overlay.pyx":113
- *                     if val_64 > 2147483647:
- *                         val_64 = 2147483647
- *                     elif val_64 < -2147483648:             # <<<<<<<<<<<<<<
- *                         val_64 = -2147483648
- *                     val_64 = val_64 + <long long>s2_32[i]
- */
-          __pyx_t_2 = (__pyx_v_val_64 < -2147483648LL);
-          if (__pyx_t_2) {
-
-            /* "pydub/overlay.pyx":114
- *                         val_64 = 2147483647
- *                     elif val_64 < -2147483648:
- *                         val_64 = -2147483648             # <<<<<<<<<<<<<<
- *                     val_64 = val_64 + <long long>s2_32[i]
- *                     if val_64 > 2147483647:
- */
-            __pyx_v_val_64 = -2147483648LL;
-
-            /* "pydub/overlay.pyx":113
- *                     if val_64 > 2147483647:
- *                         val_64 = 2147483647
- *                     elif val_64 < -2147483648:             # <<<<<<<<<<<<<<
- *                         val_64 = -2147483648
- *                     val_64 = val_64 + <long long>s2_32[i]
- */
-          }
-          __pyx_L25:;
-
           /* "pydub/overlay.pyx":115
- *                     elif val_64 < -2147483648:
- *                         val_64 = -2147483648
+ *                 for i in range(num_samples):
+ *                     val_64 = <long long>(<double>out_32[i] * db_factor)
+ *                     if val_64 > INT_MAX:             # <<<<<<<<<<<<<<
+ *                         val_64 = INT_MAX
+ *                     elif val_64 < INT_MIN:
+ */
+          __pyx_t_2 = (__pyx_v_val_64 > INT_MAX);
+          if (__pyx_t_2) {
+
+            /* "pydub/overlay.pyx":116
+ *                     val_64 = <long long>(<double>out_32[i] * db_factor)
+ *                     if val_64 > INT_MAX:
+ *                         val_64 = INT_MAX             # <<<<<<<<<<<<<<
+ *                     elif val_64 < INT_MIN:
+ *                         val_64 = INT_MIN
+ */
+            __pyx_v_val_64 = INT_MAX;
+
+            /* "pydub/overlay.pyx":115
+ *                 for i in range(num_samples):
+ *                     val_64 = <long long>(<double>out_32[i] * db_factor)
+ *                     if val_64 > INT_MAX:             # <<<<<<<<<<<<<<
+ *                         val_64 = INT_MAX
+ *                     elif val_64 < INT_MIN:
+ */
+            goto __pyx_L28;
+          }
+
+          /* "pydub/overlay.pyx":117
+ *                     if val_64 > INT_MAX:
+ *                         val_64 = INT_MAX
+ *                     elif val_64 < INT_MIN:             # <<<<<<<<<<<<<<
+ *                         val_64 = INT_MIN
+ *                     val_64 = val_64 + <long long>s2_32[i]
+ */
+          __pyx_t_2 = (__pyx_v_val_64 < INT_MIN);
+          if (__pyx_t_2) {
+
+            /* "pydub/overlay.pyx":118
+ *                         val_64 = INT_MAX
+ *                     elif val_64 < INT_MIN:
+ *                         val_64 = INT_MIN             # <<<<<<<<<<<<<<
+ *                     val_64 = val_64 + <long long>s2_32[i]
+ *                     if val_64 > INT_MAX:
+ */
+            __pyx_v_val_64 = INT_MIN;
+
+            /* "pydub/overlay.pyx":117
+ *                     if val_64 > INT_MAX:
+ *                         val_64 = INT_MAX
+ *                     elif val_64 < INT_MIN:             # <<<<<<<<<<<<<<
+ *                         val_64 = INT_MIN
+ *                     val_64 = val_64 + <long long>s2_32[i]
+ */
+          }
+          __pyx_L28:;
+
+          /* "pydub/overlay.pyx":119
+ *                     elif val_64 < INT_MIN:
+ *                         val_64 = INT_MIN
  *                     val_64 = val_64 + <long long>s2_32[i]             # <<<<<<<<<<<<<<
- *                     if val_64 > 2147483647:
- *                         val_64 = 2147483647
+ *                     if val_64 > INT_MAX:
+ *                         val_64 = INT_MAX
  */
           __pyx_v_val_64 = (__pyx_v_val_64 + ((PY_LONG_LONG)(__pyx_v_s2_32[__pyx_v_i])));
 
-          /* "pydub/overlay.pyx":116
- *                         val_64 = -2147483648
+          /* "pydub/overlay.pyx":120
+ *                         val_64 = INT_MIN
  *                     val_64 = val_64 + <long long>s2_32[i]
- *                     if val_64 > 2147483647:             # <<<<<<<<<<<<<<
- *                         val_64 = 2147483647
- *                     elif val_64 < -2147483648:
+ *                     if val_64 > INT_MAX:             # <<<<<<<<<<<<<<
+ *                         val_64 = INT_MAX
+ *                     elif val_64 < INT_MIN:
  */
-          __pyx_t_2 = (__pyx_v_val_64 > 0x7FFFFFFF);
+          __pyx_t_2 = (__pyx_v_val_64 > INT_MAX);
           if (__pyx_t_2) {
 
-            /* "pydub/overlay.pyx":117
+            /* "pydub/overlay.pyx":121
  *                     val_64 = val_64 + <long long>s2_32[i]
- *                     if val_64 > 2147483647:
- *                         val_64 = 2147483647             # <<<<<<<<<<<<<<
- *                     elif val_64 < -2147483648:
- *                         val_64 = -2147483648
+ *                     if val_64 > INT_MAX:
+ *                         val_64 = INT_MAX             # <<<<<<<<<<<<<<
+ *                     elif val_64 < INT_MIN:
+ *                         val_64 = INT_MIN
  */
-            __pyx_v_val_64 = 0x7FFFFFFF;
+            __pyx_v_val_64 = INT_MAX;
 
-            /* "pydub/overlay.pyx":116
- *                         val_64 = -2147483648
+            /* "pydub/overlay.pyx":120
+ *                         val_64 = INT_MIN
  *                     val_64 = val_64 + <long long>s2_32[i]
- *                     if val_64 > 2147483647:             # <<<<<<<<<<<<<<
- *                         val_64 = 2147483647
- *                     elif val_64 < -2147483648:
+ *                     if val_64 > INT_MAX:             # <<<<<<<<<<<<<<
+ *                         val_64 = INT_MAX
+ *                     elif val_64 < INT_MIN:
  */
-            goto __pyx_L26;
+            goto __pyx_L29;
           }
 
-          /* "pydub/overlay.pyx":118
- *                     if val_64 > 2147483647:
- *                         val_64 = 2147483647
- *                     elif val_64 < -2147483648:             # <<<<<<<<<<<<<<
- *                         val_64 = -2147483648
+          /* "pydub/overlay.pyx":122
+ *                     if val_64 > INT_MAX:
+ *                         val_64 = INT_MAX
+ *                     elif val_64 < INT_MIN:             # <<<<<<<<<<<<<<
+ *                         val_64 = INT_MIN
  *                     out_32[i] = <int>val_64
  */
-          __pyx_t_2 = (__pyx_v_val_64 < -2147483648LL);
+          __pyx_t_2 = (__pyx_v_val_64 < INT_MIN);
           if (__pyx_t_2) {
 
-            /* "pydub/overlay.pyx":119
- *                         val_64 = 2147483647
- *                     elif val_64 < -2147483648:
- *                         val_64 = -2147483648             # <<<<<<<<<<<<<<
+            /* "pydub/overlay.pyx":123
+ *                         val_64 = INT_MAX
+ *                     elif val_64 < INT_MIN:
+ *                         val_64 = INT_MIN             # <<<<<<<<<<<<<<
  *                     out_32[i] = <int>val_64
  *             else:
  */
-            __pyx_v_val_64 = -2147483648LL;
+            __pyx_v_val_64 = INT_MIN;
 
-            /* "pydub/overlay.pyx":118
- *                     if val_64 > 2147483647:
- *                         val_64 = 2147483647
- *                     elif val_64 < -2147483648:             # <<<<<<<<<<<<<<
- *                         val_64 = -2147483648
+            /* "pydub/overlay.pyx":122
+ *                     if val_64 > INT_MAX:
+ *                         val_64 = INT_MAX
+ *                     elif val_64 < INT_MIN:             # <<<<<<<<<<<<<<
+ *                         val_64 = INT_MIN
  *                     out_32[i] = <int>val_64
  */
           }
-          __pyx_L26:;
+          __pyx_L29:;
 
-          /* "pydub/overlay.pyx":120
- *                     elif val_64 < -2147483648:
- *                         val_64 = -2147483648
+          /* "pydub/overlay.pyx":124
+ *                     elif val_64 < INT_MIN:
+ *                         val_64 = INT_MIN
  *                     out_32[i] = <int>val_64             # <<<<<<<<<<<<<<
  *             else:
  *                 for i in range(num_samples):
@@ -3631,99 +3760,99 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
           (__pyx_v_out_32[__pyx_v_i]) = ((int)__pyx_v_val_64);
         }
 
-        /* "pydub/overlay.pyx":108
+        /* "pydub/overlay.pyx":112
  *             s2_32 = <const int*>seg2_ptr
  * 
  *             if apply_gain:             # <<<<<<<<<<<<<<
  *                 for i in range(num_samples):
  *                     val_64 = <long long>(<double>out_32[i] * db_factor)
  */
-        goto __pyx_L22;
+        goto __pyx_L25;
       }
 
-      /* "pydub/overlay.pyx":122
+      /* "pydub/overlay.pyx":126
  *                     out_32[i] = <int>val_64
  *             else:
  *                 for i in range(num_samples):             # <<<<<<<<<<<<<<
  *                     val_64 = <long long>out_32[i] + <long long>s2_32[i]
- *                     if val_64 > 2147483647:
+ *                     if val_64 > INT_MAX:
  */
       /*else*/ {
-        __pyx_t_6 = __pyx_v_num_samples;
-        __pyx_t_7 = __pyx_t_6;
-        for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
-          __pyx_v_i = __pyx_t_8;
+        __pyx_t_10 = __pyx_v_num_samples;
+        __pyx_t_11 = __pyx_t_10;
+        for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
+          __pyx_v_i = __pyx_t_12;
 
-          /* "pydub/overlay.pyx":123
+          /* "pydub/overlay.pyx":127
  *             else:
  *                 for i in range(num_samples):
  *                     val_64 = <long long>out_32[i] + <long long>s2_32[i]             # <<<<<<<<<<<<<<
- *                     if val_64 > 2147483647:
- *                         val_64 = 2147483647
+ *                     if val_64 > INT_MAX:
+ *                         val_64 = INT_MAX
  */
           __pyx_v_val_64 = (((PY_LONG_LONG)(__pyx_v_out_32[__pyx_v_i])) + ((PY_LONG_LONG)(__pyx_v_s2_32[__pyx_v_i])));
 
-          /* "pydub/overlay.pyx":124
+          /* "pydub/overlay.pyx":128
  *                 for i in range(num_samples):
  *                     val_64 = <long long>out_32[i] + <long long>s2_32[i]
- *                     if val_64 > 2147483647:             # <<<<<<<<<<<<<<
- *                         val_64 = 2147483647
- *                     elif val_64 < -2147483648:
+ *                     if val_64 > INT_MAX:             # <<<<<<<<<<<<<<
+ *                         val_64 = INT_MAX
+ *                     elif val_64 < INT_MIN:
  */
-          __pyx_t_2 = (__pyx_v_val_64 > 0x7FFFFFFF);
+          __pyx_t_2 = (__pyx_v_val_64 > INT_MAX);
           if (__pyx_t_2) {
 
-            /* "pydub/overlay.pyx":125
+            /* "pydub/overlay.pyx":129
  *                     val_64 = <long long>out_32[i] + <long long>s2_32[i]
- *                     if val_64 > 2147483647:
- *                         val_64 = 2147483647             # <<<<<<<<<<<<<<
- *                     elif val_64 < -2147483648:
- *                         val_64 = -2147483648
+ *                     if val_64 > INT_MAX:
+ *                         val_64 = INT_MAX             # <<<<<<<<<<<<<<
+ *                     elif val_64 < INT_MIN:
+ *                         val_64 = INT_MIN
  */
-            __pyx_v_val_64 = 0x7FFFFFFF;
+            __pyx_v_val_64 = INT_MAX;
 
-            /* "pydub/overlay.pyx":124
+            /* "pydub/overlay.pyx":128
  *                 for i in range(num_samples):
  *                     val_64 = <long long>out_32[i] + <long long>s2_32[i]
- *                     if val_64 > 2147483647:             # <<<<<<<<<<<<<<
- *                         val_64 = 2147483647
- *                     elif val_64 < -2147483648:
+ *                     if val_64 > INT_MAX:             # <<<<<<<<<<<<<<
+ *                         val_64 = INT_MAX
+ *                     elif val_64 < INT_MIN:
  */
-            goto __pyx_L29;
+            goto __pyx_L32;
           }
 
-          /* "pydub/overlay.pyx":126
- *                     if val_64 > 2147483647:
- *                         val_64 = 2147483647
- *                     elif val_64 < -2147483648:             # <<<<<<<<<<<<<<
- *                         val_64 = -2147483648
+          /* "pydub/overlay.pyx":130
+ *                     if val_64 > INT_MAX:
+ *                         val_64 = INT_MAX
+ *                     elif val_64 < INT_MIN:             # <<<<<<<<<<<<<<
+ *                         val_64 = INT_MIN
  *                     out_32[i] = <int>val_64
  */
-          __pyx_t_2 = (__pyx_v_val_64 < -2147483648LL);
+          __pyx_t_2 = (__pyx_v_val_64 < INT_MIN);
           if (__pyx_t_2) {
 
-            /* "pydub/overlay.pyx":127
- *                         val_64 = 2147483647
- *                     elif val_64 < -2147483648:
- *                         val_64 = -2147483648             # <<<<<<<<<<<<<<
+            /* "pydub/overlay.pyx":131
+ *                         val_64 = INT_MAX
+ *                     elif val_64 < INT_MIN:
+ *                         val_64 = INT_MIN             # <<<<<<<<<<<<<<
  *                     out_32[i] = <int>val_64
  * 
  */
-            __pyx_v_val_64 = -2147483648LL;
+            __pyx_v_val_64 = INT_MIN;
 
-            /* "pydub/overlay.pyx":126
- *                     if val_64 > 2147483647:
- *                         val_64 = 2147483647
- *                     elif val_64 < -2147483648:             # <<<<<<<<<<<<<<
- *                         val_64 = -2147483648
+            /* "pydub/overlay.pyx":130
+ *                     if val_64 > INT_MAX:
+ *                         val_64 = INT_MAX
+ *                     elif val_64 < INT_MIN:             # <<<<<<<<<<<<<<
+ *                         val_64 = INT_MIN
  *                     out_32[i] = <int>val_64
  */
           }
-          __pyx_L29:;
+          __pyx_L32:;
 
-          /* "pydub/overlay.pyx":128
- *                     elif val_64 < -2147483648:
- *                         val_64 = -2147483648
+          /* "pydub/overlay.pyx":132
+ *                     elif val_64 < INT_MIN:
+ *                         val_64 = INT_MIN
  *                     out_32[i] = <int>val_64             # <<<<<<<<<<<<<<
  * 
  *             current_position += chunk_len
@@ -3731,9 +3860,9 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
           (__pyx_v_out_32[__pyx_v_i]) = ((int)__pyx_v_val_64);
         }
       }
-      __pyx_L22:;
+      __pyx_L25:;
 
-      /* "pydub/overlay.pyx":130
+      /* "pydub/overlay.pyx":134
  *                     out_32[i] = <int>val_64
  * 
  *             current_position += chunk_len             # <<<<<<<<<<<<<<
@@ -3742,7 +3871,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       __pyx_v_current_position = (__pyx_v_current_position + __pyx_v_chunk_len);
 
-      /* "pydub/overlay.pyx":131
+      /* "pydub/overlay.pyx":135
  * 
  *             current_position += chunk_len
  *             if remaining_times > 0:             # <<<<<<<<<<<<<<
@@ -3752,7 +3881,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
       __pyx_t_2 = (__pyx_v_remaining_times > 0);
       if (__pyx_t_2) {
 
-        /* "pydub/overlay.pyx":132
+        /* "pydub/overlay.pyx":136
  *             current_position += chunk_len
  *             if remaining_times > 0:
  *                 remaining_times -= 1             # <<<<<<<<<<<<<<
@@ -3761,7 +3890,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
         __pyx_v_remaining_times = (__pyx_v_remaining_times - 1);
 
-        /* "pydub/overlay.pyx":131
+        /* "pydub/overlay.pyx":135
  * 
  *             current_position += chunk_len
  *             if remaining_times > 0:             # <<<<<<<<<<<<<<
@@ -3770,9 +3899,9 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       }
     }
-    __pyx_L19_break:;
+    __pyx_L22_break:;
 
-    /* "pydub/overlay.pyx":94
+    /* "pydub/overlay.pyx":98
  *                 remaining_times -= 1
  * 
  *     elif sample_width == 4:             # <<<<<<<<<<<<<<
@@ -3782,7 +3911,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
     break;
     default:
 
-    /* "pydub/overlay.pyx":135
+    /* "pydub/overlay.pyx":139
  * 
  *     else:
  *         while True:             # <<<<<<<<<<<<<<
@@ -3791,7 +3920,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
     while (1) {
 
-      /* "pydub/overlay.pyx":136
+      /* "pydub/overlay.pyx":140
  *     else:
  *         while True:
  *             if remaining_times == 0:             # <<<<<<<<<<<<<<
@@ -3801,16 +3930,16 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
       __pyx_t_2 = (__pyx_v_remaining_times == 0);
       if (__pyx_t_2) {
 
-        /* "pydub/overlay.pyx":137
+        /* "pydub/overlay.pyx":141
  *         while True:
  *             if remaining_times == 0:
  *                 break             # <<<<<<<<<<<<<<
  *             if current_position >= seg1_len_after_pos:
  *                 break
  */
-        goto __pyx_L32_break;
+        goto __pyx_L35_break;
 
-        /* "pydub/overlay.pyx":136
+        /* "pydub/overlay.pyx":140
  *     else:
  *         while True:
  *             if remaining_times == 0:             # <<<<<<<<<<<<<<
@@ -3819,7 +3948,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       }
 
-      /* "pydub/overlay.pyx":138
+      /* "pydub/overlay.pyx":142
  *             if remaining_times == 0:
  *                 break
  *             if current_position >= seg1_len_after_pos:             # <<<<<<<<<<<<<<
@@ -3829,16 +3958,16 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
       __pyx_t_2 = (__pyx_v_current_position >= __pyx_v_seg1_len_after_pos);
       if (__pyx_t_2) {
 
-        /* "pydub/overlay.pyx":139
+        /* "pydub/overlay.pyx":143
  *                 break
  *             if current_position >= seg1_len_after_pos:
  *                 break             # <<<<<<<<<<<<<<
  * 
  *             remaining = seg1_len_after_pos - current_position
  */
-        goto __pyx_L32_break;
+        goto __pyx_L35_break;
 
-        /* "pydub/overlay.pyx":138
+        /* "pydub/overlay.pyx":142
  *             if remaining_times == 0:
  *                 break
  *             if current_position >= seg1_len_after_pos:             # <<<<<<<<<<<<<<
@@ -3847,7 +3976,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       }
 
-      /* "pydub/overlay.pyx":141
+      /* "pydub/overlay.pyx":145
  *                 break
  * 
  *             remaining = seg1_len_after_pos - current_position             # <<<<<<<<<<<<<<
@@ -3856,7 +3985,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       __pyx_v_remaining = (__pyx_v_seg1_len_after_pos - __pyx_v_current_position);
 
-      /* "pydub/overlay.pyx":142
+      /* "pydub/overlay.pyx":146
  * 
  *             remaining = seg1_len_after_pos - current_position
  *             chunk_len = remaining if remaining < seg2_len else seg2_len             # <<<<<<<<<<<<<<
@@ -3865,25 +3994,25 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       __pyx_t_2 = (__pyx_v_remaining < __pyx_v_seg2_len);
       if (__pyx_t_2) {
-        __pyx_t_6 = __pyx_v_remaining;
+        __pyx_t_10 = __pyx_v_remaining;
       } else {
-        __pyx_t_6 = __pyx_v_seg2_len;
+        __pyx_t_10 = __pyx_v_seg2_len;
       }
-      __pyx_v_chunk_len = __pyx_t_6;
+      __pyx_v_chunk_len = __pyx_t_10;
 
-      /* "pydub/overlay.pyx":144
+      /* "pydub/overlay.pyx":148
  *             chunk_len = remaining if remaining < seg2_len else seg2_len
  * 
  *             seg1_slice = output_bytes[position + current_position:position + current_position + chunk_len]             # <<<<<<<<<<<<<<
  *             seg2_slice = seg2_data[:chunk_len]
  * 
  */
-      __pyx_t_3 = __Pyx_PyObject_GetSlice(__pyx_v_output_bytes, (__pyx_v_position + __pyx_v_current_position), ((__pyx_v_position + __pyx_v_current_position) + __pyx_v_chunk_len), NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 144, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_XDECREF_SET(__pyx_v_seg1_slice, __pyx_t_3);
-      __pyx_t_3 = 0;
+      __pyx_t_5 = __Pyx_PyObject_GetSlice(__pyx_v_output_bytes, (__pyx_v_position + __pyx_v_current_position), ((__pyx_v_position + __pyx_v_current_position) + __pyx_v_chunk_len), NULL, NULL, NULL, 1, 1, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 148, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_XDECREF_SET(__pyx_v_seg1_slice, __pyx_t_5);
+      __pyx_t_5 = 0;
 
-      /* "pydub/overlay.pyx":145
+      /* "pydub/overlay.pyx":149
  * 
  *             seg1_slice = output_bytes[position + current_position:position + current_position + chunk_len]
  *             seg2_slice = seg2_data[:chunk_len]             # <<<<<<<<<<<<<<
@@ -3892,14 +4021,14 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       if (unlikely(__pyx_v_seg2_data == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 145, __pyx_L1_error)
+        __PYX_ERR(0, 149, __pyx_L1_error)
       }
-      __pyx_t_3 = PySequence_GetSlice(__pyx_v_seg2_data, 0, __pyx_v_chunk_len); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 145, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_XDECREF_SET(__pyx_v_seg2_slice, ((PyObject*)__pyx_t_3));
-      __pyx_t_3 = 0;
+      __pyx_t_5 = PySequence_GetSlice(__pyx_v_seg2_data, 0, __pyx_v_chunk_len); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 149, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_XDECREF_SET(__pyx_v_seg2_slice, ((PyObject*)__pyx_t_5));
+      __pyx_t_5 = 0;
 
-      /* "pydub/overlay.pyx":147
+      /* "pydub/overlay.pyx":151
  *             seg2_slice = seg2_data[:chunk_len]
  * 
  *             if apply_gain:             # <<<<<<<<<<<<<<
@@ -3909,50 +4038,50 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
       __pyx_t_2 = (__pyx_v_apply_gain != 0);
       if (__pyx_t_2) {
 
-        /* "pydub/overlay.pyx":148
+        /* "pydub/overlay.pyx":152
  * 
  *             if apply_gain:
  *                 seg1_slice = audioop.mul(seg1_slice, sample_width, db_factor)             # <<<<<<<<<<<<<<
  * 
  *             overlaid = audioop.add(seg1_slice, seg2_slice, sample_width)
  */
-        __Pyx_GetModuleGlobalName(__pyx_t_9, __pyx_n_s_audioop); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 148, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_9);
-        __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_mul); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 148, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-        __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_sample_width); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 148, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_9);
-        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_db_factor); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 148, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_11);
-        __pyx_t_12 = NULL;
-        __pyx_t_6 = 0;
+        __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_audioop); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 152, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_7);
+        __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_mul); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 152, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_13);
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+        __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_sample_width); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 152, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_7);
+        __pyx_t_14 = PyFloat_FromDouble(__pyx_v_db_factor); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 152, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_14);
+        __pyx_t_15 = NULL;
+        __pyx_t_10 = 0;
         #if CYTHON_UNPACK_METHODS
-        if (unlikely(PyMethod_Check(__pyx_t_10))) {
-          __pyx_t_12 = PyMethod_GET_SELF(__pyx_t_10);
-          if (likely(__pyx_t_12)) {
-            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
-            __Pyx_INCREF(__pyx_t_12);
+        if (unlikely(PyMethod_Check(__pyx_t_13))) {
+          __pyx_t_15 = PyMethod_GET_SELF(__pyx_t_13);
+          if (likely(__pyx_t_15)) {
+            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_13);
+            __Pyx_INCREF(__pyx_t_15);
             __Pyx_INCREF(function);
-            __Pyx_DECREF_SET(__pyx_t_10, function);
-            __pyx_t_6 = 1;
+            __Pyx_DECREF_SET(__pyx_t_13, function);
+            __pyx_t_10 = 1;
           }
         }
         #endif
         {
-          PyObject *__pyx_callargs[4] = {__pyx_t_12, __pyx_v_seg1_slice, __pyx_t_9, __pyx_t_11};
-          __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_10, __pyx_callargs+1-__pyx_t_6, 3+__pyx_t_6);
-          __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
-          __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-          __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-          if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 148, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+          PyObject *__pyx_callargs[4] = {__pyx_t_15, __pyx_v_seg1_slice, __pyx_t_7, __pyx_t_14};
+          __pyx_t_5 = __Pyx_PyObject_FastCall(__pyx_t_13, __pyx_callargs+1-__pyx_t_10, 3+__pyx_t_10);
+          __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
+          __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+          if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 152, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_5);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
         }
-        __Pyx_DECREF_SET(__pyx_v_seg1_slice, __pyx_t_3);
-        __pyx_t_3 = 0;
+        __Pyx_DECREF_SET(__pyx_v_seg1_slice, __pyx_t_5);
+        __pyx_t_5 = 0;
 
-        /* "pydub/overlay.pyx":147
+        /* "pydub/overlay.pyx":151
  *             seg2_slice = seg2_data[:chunk_len]
  * 
  *             if apply_gain:             # <<<<<<<<<<<<<<
@@ -3961,57 +4090,57 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       }
 
-      /* "pydub/overlay.pyx":150
+      /* "pydub/overlay.pyx":154
  *                 seg1_slice = audioop.mul(seg1_slice, sample_width, db_factor)
  * 
  *             overlaid = audioop.add(seg1_slice, seg2_slice, sample_width)             # <<<<<<<<<<<<<<
  *             memcpy(out_buf + position + current_position, <const char*>overlaid, chunk_len)
  * 
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_n_s_audioop); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 150, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_n_s_add); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 150, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_11);
-      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_sample_width); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 150, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_9 = NULL;
-      __pyx_t_6 = 0;
+      __Pyx_GetModuleGlobalName(__pyx_t_13, __pyx_n_s_audioop); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 154, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_13);
+      __pyx_t_14 = __Pyx_PyObject_GetAttrStr(__pyx_t_13, __pyx_n_s_add); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 154, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_14);
+      __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+      __pyx_t_13 = __Pyx_PyInt_From_int(__pyx_v_sample_width); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 154, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_13);
+      __pyx_t_7 = NULL;
+      __pyx_t_10 = 0;
       #if CYTHON_UNPACK_METHODS
-      if (unlikely(PyMethod_Check(__pyx_t_11))) {
-        __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_11);
-        if (likely(__pyx_t_9)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_11);
-          __Pyx_INCREF(__pyx_t_9);
+      if (unlikely(PyMethod_Check(__pyx_t_14))) {
+        __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_14);
+        if (likely(__pyx_t_7)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_14);
+          __Pyx_INCREF(__pyx_t_7);
           __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_11, function);
-          __pyx_t_6 = 1;
+          __Pyx_DECREF_SET(__pyx_t_14, function);
+          __pyx_t_10 = 1;
         }
       }
       #endif
       {
-        PyObject *__pyx_callargs[4] = {__pyx_t_9, __pyx_v_seg1_slice, __pyx_v_seg2_slice, __pyx_t_10};
-        __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_11, __pyx_callargs+1-__pyx_t_6, 3+__pyx_t_6);
-        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 150, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
-        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        PyObject *__pyx_callargs[4] = {__pyx_t_7, __pyx_v_seg1_slice, __pyx_v_seg2_slice, __pyx_t_13};
+        __pyx_t_5 = __Pyx_PyObject_FastCall(__pyx_t_14, __pyx_callargs+1-__pyx_t_10, 3+__pyx_t_10);
+        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+        __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
+        if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 154, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_5);
+        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
       }
-      __Pyx_XDECREF_SET(__pyx_v_overlaid, __pyx_t_3);
-      __pyx_t_3 = 0;
+      __Pyx_XDECREF_SET(__pyx_v_overlaid, __pyx_t_5);
+      __pyx_t_5 = 0;
 
-      /* "pydub/overlay.pyx":151
+      /* "pydub/overlay.pyx":155
  * 
  *             overlaid = audioop.add(seg1_slice, seg2_slice, sample_width)
  *             memcpy(out_buf + position + current_position, <const char*>overlaid, chunk_len)             # <<<<<<<<<<<<<<
  * 
  *             current_position += chunk_len
  */
-      __pyx_t_13 = __Pyx_PyObject_AsString(__pyx_v_overlaid); if (unlikely((!__pyx_t_13) && PyErr_Occurred())) __PYX_ERR(0, 151, __pyx_L1_error)
-      (void)(memcpy(((__pyx_v_out_buf + __pyx_v_position) + __pyx_v_current_position), ((char const *)__pyx_t_13), __pyx_v_chunk_len));
+      __pyx_t_16 = __Pyx_PyObject_AsString(__pyx_v_overlaid); if (unlikely((!__pyx_t_16) && PyErr_Occurred())) __PYX_ERR(0, 155, __pyx_L1_error)
+      (void)(memcpy(((__pyx_v_out_buf + __pyx_v_position) + __pyx_v_current_position), ((char const *)__pyx_t_16), __pyx_v_chunk_len));
 
-      /* "pydub/overlay.pyx":153
+      /* "pydub/overlay.pyx":157
  *             memcpy(out_buf + position + current_position, <const char*>overlaid, chunk_len)
  * 
  *             current_position += chunk_len             # <<<<<<<<<<<<<<
@@ -4020,7 +4149,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       __pyx_v_current_position = (__pyx_v_current_position + __pyx_v_chunk_len);
 
-      /* "pydub/overlay.pyx":154
+      /* "pydub/overlay.pyx":158
  * 
  *             current_position += chunk_len
  *             if remaining_times > 0:             # <<<<<<<<<<<<<<
@@ -4030,7 +4159,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
       __pyx_t_2 = (__pyx_v_remaining_times > 0);
       if (__pyx_t_2) {
 
-        /* "pydub/overlay.pyx":155
+        /* "pydub/overlay.pyx":159
  *             current_position += chunk_len
  *             if remaining_times > 0:
  *                 remaining_times -= 1             # <<<<<<<<<<<<<<
@@ -4039,7 +4168,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
         __pyx_v_remaining_times = (__pyx_v_remaining_times - 1);
 
-        /* "pydub/overlay.pyx":154
+        /* "pydub/overlay.pyx":158
  * 
  *             current_position += chunk_len
  *             if remaining_times > 0:             # <<<<<<<<<<<<<<
@@ -4048,11 +4177,11 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  */
       }
     }
-    __pyx_L32_break:;
+    __pyx_L35_break:;
     break;
   }
 
-  /* "pydub/overlay.pyx":157
+  /* "pydub/overlay.pyx":161
  *                 remaining_times -= 1
  * 
  *     return output_bytes             # <<<<<<<<<<<<<<
@@ -4062,7 +4191,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
   __pyx_r = __pyx_v_output_bytes;
   goto __pyx_L0;
 
-  /* "pydub/overlay.pyx":7
+  /* "pydub/overlay.pyx":8
  * 
  * 
  * @cython.boundscheck(False)             # <<<<<<<<<<<<<<
@@ -4072,11 +4201,11 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_XDECREF(__pyx_t_11);
-  __Pyx_XDECREF(__pyx_t_12);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_13);
+  __Pyx_XDECREF(__pyx_t_14);
+  __Pyx_XDECREF(__pyx_t_15);
   __Pyx_AddTraceback("pydub.overlay.overlay_segments", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -4105,8 +4234,10 @@ static PyMethodDef __pyx_methods[] = {
 
 static int __Pyx_CreateStringTabAndInitStrings(void) {
   __Pyx_StringTabEntry __pyx_string_tab[] = {
-    {&__pyx_n_s_, __pyx_k_, sizeof(__pyx_k_), 0, 0, 1, 1},
-    {&__pyx_n_s__4, __pyx_k__4, sizeof(__pyx_k__4), 0, 0, 1, 1},
+    {&__pyx_kp_u_, __pyx_k_, sizeof(__pyx_k_), 0, 1, 0, 0},
+    {&__pyx_n_s_ValueError, __pyx_k_ValueError, sizeof(__pyx_k_ValueError), 0, 0, 1, 1},
+    {&__pyx_n_s__2, __pyx_k__2, sizeof(__pyx_k__2), 0, 0, 1, 1},
+    {&__pyx_n_s__5, __pyx_k__5, sizeof(__pyx_k__5), 0, 0, 1, 1},
     {&__pyx_n_s_add, __pyx_k_add, sizeof(__pyx_k_add), 0, 0, 1, 1},
     {&__pyx_n_s_apply_gain, __pyx_k_apply_gain, sizeof(__pyx_k_apply_gain), 0, 0, 1, 1},
     {&__pyx_n_s_asyncio_coroutines, __pyx_k_asyncio_coroutines, sizeof(__pyx_k_asyncio_coroutines), 0, 0, 1, 1},
@@ -4122,6 +4253,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_is_coroutine, __pyx_k_is_coroutine, sizeof(__pyx_k_is_coroutine), 0, 0, 1, 1},
     {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
     {&__pyx_n_s_mul, __pyx_k_mul, sizeof(__pyx_k_mul), 0, 0, 1, 1},
+    {&__pyx_kp_u_must_be_aligned_to_sample_width, __pyx_k_must_be_aligned_to_sample_width, sizeof(__pyx_k_must_be_aligned_to_sample_width), 0, 1, 0, 0},
     {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
     {&__pyx_n_s_num_samples, __pyx_k_num_samples, sizeof(__pyx_k_num_samples), 0, 0, 1, 1},
     {&__pyx_n_s_out_16, __pyx_k_out_16, sizeof(__pyx_k_out_16), 0, 0, 1, 1},
@@ -4131,6 +4263,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_overlaid, __pyx_k_overlaid, sizeof(__pyx_k_overlaid), 0, 0, 1, 1},
     {&__pyx_n_s_overlay_segments, __pyx_k_overlay_segments, sizeof(__pyx_k_overlay_segments), 0, 0, 1, 1},
     {&__pyx_n_s_position, __pyx_k_position, sizeof(__pyx_k_position), 0, 0, 1, 1},
+    {&__pyx_kp_u_position_2, __pyx_k_position_2, sizeof(__pyx_k_position_2), 0, 1, 0, 0},
     {&__pyx_n_s_pydub_overlay, __pyx_k_pydub_overlay, sizeof(__pyx_k_pydub_overlay), 0, 0, 1, 1},
     {&__pyx_kp_s_pydub_overlay_pyx, __pyx_k_pydub_overlay_pyx, sizeof(__pyx_k_pydub_overlay_pyx), 0, 0, 1, 0},
     {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
@@ -4159,7 +4292,8 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
 }
 /* #### Code section: cached_builtins ### */
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 69, __pyx_L1_error)
+  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(0, 44, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 73, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -4170,17 +4304,17 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "pydub/overlay.pyx":7
+  /* "pydub/overlay.pyx":8
  * 
  * 
  * @cython.boundscheck(False)             # <<<<<<<<<<<<<<
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  */
-  __pyx_tuple__2 = PyTuple_Pack(30, __pyx_n_s_seg1_data, __pyx_n_s_seg2_data, __pyx_n_s_sample_width, __pyx_n_s_position, __pyx_n_s_times, __pyx_n_s_gain_during_overlay, __pyx_n_s_seg1_len, __pyx_n_s_seg2_len, __pyx_n_s_remaining_times, __pyx_n_s_current_position, __pyx_n_s_remaining, __pyx_n_s_chunk_len, __pyx_n_s_num_samples, __pyx_n_s_i, __pyx_n_s_db_factor, __pyx_n_s_apply_gain, __pyx_n_s_out_buf, __pyx_n_s_seg1_ptr, __pyx_n_s_seg2_ptr, __pyx_n_s_output_bytes, __pyx_n_s_out_16, __pyx_n_s_s2_16, __pyx_n_s_val_32, __pyx_n_s_out_32, __pyx_n_s_s2_32, __pyx_n_s_val_64, __pyx_n_s_seg1_len_after_pos, __pyx_n_s_seg1_slice, __pyx_n_s_seg2_slice, __pyx_n_s_overlaid); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 7, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__2);
-  __Pyx_GIVEREF(__pyx_tuple__2);
-  __pyx_codeobj__3 = (PyObject*)__Pyx_PyCode_New(6, 0, 0, 30, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_pydub_overlay_pyx, __pyx_n_s_overlay_segments, 7, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__3)) __PYX_ERR(0, 7, __pyx_L1_error)
+  __pyx_tuple__3 = PyTuple_Pack(30, __pyx_n_s_seg1_data, __pyx_n_s_seg2_data, __pyx_n_s_sample_width, __pyx_n_s_position, __pyx_n_s_times, __pyx_n_s_gain_during_overlay, __pyx_n_s_seg1_len, __pyx_n_s_seg2_len, __pyx_n_s_remaining_times, __pyx_n_s_current_position, __pyx_n_s_remaining, __pyx_n_s_chunk_len, __pyx_n_s_num_samples, __pyx_n_s_i, __pyx_n_s_db_factor, __pyx_n_s_apply_gain, __pyx_n_s_out_buf, __pyx_n_s_seg1_ptr, __pyx_n_s_seg2_ptr, __pyx_n_s_output_bytes, __pyx_n_s_out_16, __pyx_n_s_s2_16, __pyx_n_s_val_32, __pyx_n_s_out_32, __pyx_n_s_s2_32, __pyx_n_s_val_64, __pyx_n_s_seg1_len_after_pos, __pyx_n_s_seg1_slice, __pyx_n_s_seg2_slice, __pyx_n_s_overlaid); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 8, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__3);
+  __Pyx_GIVEREF(__pyx_tuple__3);
+  __pyx_codeobj__4 = (PyObject*)__Pyx_PyCode_New(6, 0, 0, 30, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__3, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_pydub_overlay_pyx, __pyx_n_s_overlay_segments, 8, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__4)) __PYX_ERR(0, 8, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -4565,51 +4699,51 @@ if (!__Pyx_RefNanny) {
   if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
 
-  /* "pydub/overlay.pyx":4
- * from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
+  /* "pydub/overlay.pyx":5
+ * from libc.limits cimport SHRT_MAX, SHRT_MIN, INT_MAX, INT_MIN
  * from libc.string cimport memcpy
  * import audioop             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_2 = __Pyx_ImportDottedModule(__pyx_n_s_audioop, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 4, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_ImportDottedModule(__pyx_n_s_audioop, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_audioop, __pyx_t_2) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_audioop, __pyx_t_2) < 0) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "pydub/overlay.pyx":16
+  /* "pydub/overlay.pyx":17
  *     int position,
  *     int times,
  *     int gain_during_overlay = 0,             # <<<<<<<<<<<<<<
  * ):
  *     cdef int seg1_len = len(seg1_data)
  */
-  __pyx_t_2 = __Pyx_PyInt_From_int(((int)0)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 16, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(((int)0)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 17, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
 
-  /* "pydub/overlay.pyx":7
+  /* "pydub/overlay.pyx":8
  * 
  * 
  * @cython.boundscheck(False)             # <<<<<<<<<<<<<<
  * @cython.wraparound(False)
  * @cython.cdivision(True)
  */
-  __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 7, __pyx_L1_error)
+  __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 8, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_2);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2)) __PYX_ERR(0, 7, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2)) __PYX_ERR(0, 8, __pyx_L1_error);
   __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5pydub_7overlay_1overlay_segments, 0, __pyx_n_s_overlay_segments, NULL, __pyx_n_s_pydub_overlay, __pyx_d, ((PyObject *)__pyx_codeobj__3)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 7, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_5pydub_7overlay_1overlay_segments, 0, __pyx_n_s_overlay_segments, NULL, __pyx_n_s_pydub_overlay, __pyx_d, ((PyObject *)__pyx_codeobj__4)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 8, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_2, __pyx_t_3);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_overlay_segments, __pyx_t_2) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_overlay_segments, __pyx_t_2) < 0) __PYX_ERR(0, 8, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "pydub/overlay.pyx":1
  * cimport cython             # <<<<<<<<<<<<<<
  * from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AS_STRING
- * from libc.string cimport memcpy
+ * from libc.limits cimport SHRT_MAX, SHRT_MIN, INT_MAX, INT_MIN
  */
   __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -5292,177 +5426,248 @@ static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *nam
     return 0;
 }
 
-/* SliceObject */
-static CYTHON_INLINE PyObject* __Pyx_PyObject_GetSlice(PyObject* obj,
-        Py_ssize_t cstart, Py_ssize_t cstop,
-        PyObject** _py_start, PyObject** _py_stop, PyObject** _py_slice,
-        int has_cstart, int has_cstop, int wraparound) {
-    __Pyx_TypeName obj_type_name;
-#if CYTHON_USE_TYPE_SLOTS
-    PyMappingMethods* mp;
-#if PY_MAJOR_VERSION < 3
-    PySequenceMethods* ms = Py_TYPE(obj)->tp_as_sequence;
-    if (likely(ms && ms->sq_slice)) {
-        if (!has_cstart) {
-            if (_py_start && (*_py_start != Py_None)) {
-                cstart = __Pyx_PyIndex_AsSsize_t(*_py_start);
-                if ((cstart == (Py_ssize_t)-1) && PyErr_Occurred()) goto bad;
-            } else
-                cstart = 0;
+/* CIntToDigits */
+static const char DIGIT_PAIRS_10[2*10*10+1] = {
+    "00010203040506070809"
+    "10111213141516171819"
+    "20212223242526272829"
+    "30313233343536373839"
+    "40414243444546474849"
+    "50515253545556575859"
+    "60616263646566676869"
+    "70717273747576777879"
+    "80818283848586878889"
+    "90919293949596979899"
+};
+static const char DIGIT_PAIRS_8[2*8*8+1] = {
+    "0001020304050607"
+    "1011121314151617"
+    "2021222324252627"
+    "3031323334353637"
+    "4041424344454647"
+    "5051525354555657"
+    "6061626364656667"
+    "7071727374757677"
+};
+static const char DIGITS_HEX[2*16+1] = {
+    "0123456789abcdef"
+    "0123456789ABCDEF"
+};
+
+/* BuildPyUnicode */
+static PyObject* __Pyx_PyUnicode_BuildFromAscii(Py_ssize_t ulength, char* chars, int clength,
+                                                int prepend_sign, char padding_char) {
+    PyObject *uval;
+    Py_ssize_t uoffset = ulength - clength;
+#if CYTHON_USE_UNICODE_INTERNALS
+    Py_ssize_t i;
+#if CYTHON_PEP393_ENABLED
+    void *udata;
+    uval = PyUnicode_New(ulength, 127);
+    if (unlikely(!uval)) return NULL;
+    udata = PyUnicode_DATA(uval);
+#else
+    Py_UNICODE *udata;
+    uval = PyUnicode_FromUnicode(NULL, ulength);
+    if (unlikely(!uval)) return NULL;
+    udata = PyUnicode_AS_UNICODE(uval);
+#endif
+    if (uoffset > 0) {
+        i = 0;
+        if (prepend_sign) {
+            __Pyx_PyUnicode_WRITE(PyUnicode_1BYTE_KIND, udata, 0, '-');
+            i++;
         }
-        if (!has_cstop) {
-            if (_py_stop && (*_py_stop != Py_None)) {
-                cstop = __Pyx_PyIndex_AsSsize_t(*_py_stop);
-                if ((cstop == (Py_ssize_t)-1) && PyErr_Occurred()) goto bad;
-            } else
-                cstop = PY_SSIZE_T_MAX;
+        for (; i < uoffset; i++) {
+            __Pyx_PyUnicode_WRITE(PyUnicode_1BYTE_KIND, udata, i, padding_char);
         }
-        if (wraparound && unlikely((cstart < 0) | (cstop < 0)) && likely(ms->sq_length)) {
-            Py_ssize_t l = ms->sq_length(obj);
-            if (likely(l >= 0)) {
-                if (cstop < 0) {
-                    cstop += l;
-                    if (cstop < 0) cstop = 0;
-                }
-                if (cstart < 0) {
-                    cstart += l;
-                    if (cstart < 0) cstart = 0;
-                }
-            } else {
-                if (!PyErr_ExceptionMatches(PyExc_OverflowError))
-                    goto bad;
-                PyErr_Clear();
-            }
-        }
-        return ms->sq_slice(obj, cstart, cstop);
+    }
+    for (i=0; i < clength; i++) {
+        __Pyx_PyUnicode_WRITE(PyUnicode_1BYTE_KIND, udata, uoffset+i, chars[i]);
     }
 #else
-    CYTHON_UNUSED_VAR(wraparound);
-#endif
-    mp = Py_TYPE(obj)->tp_as_mapping;
-    if (likely(mp && mp->mp_subscript))
-#else
-    CYTHON_UNUSED_VAR(wraparound);
-#endif
     {
-        PyObject* result;
-        PyObject *py_slice, *py_start, *py_stop;
-        if (_py_slice) {
-            py_slice = *_py_slice;
+        PyObject *sign = NULL, *padding = NULL;
+        uval = NULL;
+        if (uoffset > 0) {
+            prepend_sign = !!prepend_sign;
+            if (uoffset > prepend_sign) {
+                padding = PyUnicode_FromOrdinal(padding_char);
+                if (likely(padding) && uoffset > prepend_sign + 1) {
+                    PyObject *tmp;
+                    PyObject *repeat = PyInt_FromSsize_t(uoffset - prepend_sign);
+                    if (unlikely(!repeat)) goto done_or_error;
+                    tmp = PyNumber_Multiply(padding, repeat);
+                    Py_DECREF(repeat);
+                    Py_DECREF(padding);
+                    padding = tmp;
+                }
+                if (unlikely(!padding)) goto done_or_error;
+            }
+            if (prepend_sign) {
+                sign = PyUnicode_FromOrdinal('-');
+                if (unlikely(!sign)) goto done_or_error;
+            }
+        }
+        uval = PyUnicode_DecodeASCII(chars, clength, NULL);
+        if (likely(uval) && padding) {
+            PyObject *tmp = PyNumber_Add(padding, uval);
+            Py_DECREF(uval);
+            uval = tmp;
+        }
+        if (likely(uval) && sign) {
+            PyObject *tmp = PyNumber_Add(sign, uval);
+            Py_DECREF(uval);
+            uval = tmp;
+        }
+done_or_error:
+        Py_XDECREF(padding);
+        Py_XDECREF(sign);
+    }
+#endif
+    return uval;
+}
+
+/* CIntToPyUnicode */
+static CYTHON_INLINE PyObject* __Pyx_PyUnicode_From_int(int value, Py_ssize_t width, char padding_char, char format_char) {
+    char digits[sizeof(int)*3+2];
+    char *dpos, *end = digits + sizeof(int)*3+2;
+    const char *hex_digits = DIGITS_HEX;
+    Py_ssize_t length, ulength;
+    int prepend_sign, last_one_off;
+    int remaining;
+#ifdef __Pyx_HAS_GCC_DIAGNOSTIC
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#endif
+    const int neg_one = (int) -1, const_zero = (int) 0;
+#ifdef __Pyx_HAS_GCC_DIAGNOSTIC
+#pragma GCC diagnostic pop
+#endif
+    const int is_unsigned = neg_one > const_zero;
+    if (format_char == 'X') {
+        hex_digits += 16;
+        format_char = 'x';
+    }
+    remaining = value;
+    last_one_off = 0;
+    dpos = end;
+    do {
+        int digit_pos;
+        switch (format_char) {
+        case 'o':
+            digit_pos = abs((int)(remaining % (8*8)));
+            remaining = (int) (remaining / (8*8));
+            dpos -= 2;
+            memcpy(dpos, DIGIT_PAIRS_8 + digit_pos * 2, 2);
+            last_one_off = (digit_pos < 8);
+            break;
+        case 'd':
+            digit_pos = abs((int)(remaining % (10*10)));
+            remaining = (int) (remaining / (10*10));
+            dpos -= 2;
+            memcpy(dpos, DIGIT_PAIRS_10 + digit_pos * 2, 2);
+            last_one_off = (digit_pos < 10);
+            break;
+        case 'x':
+            *(--dpos) = hex_digits[abs((int)(remaining % 16))];
+            remaining = (int) (remaining / 16);
+            break;
+        default:
+            assert(0);
+            break;
+        }
+    } while (unlikely(remaining != 0));
+    assert(!last_one_off || *dpos == '0');
+    dpos += last_one_off;
+    length = end - dpos;
+    ulength = length;
+    prepend_sign = 0;
+    if (!is_unsigned && value <= neg_one) {
+        if (padding_char == ' ' || width <= length + 1) {
+            *(--dpos) = '-';
+            ++length;
         } else {
-            PyObject* owned_start = NULL;
-            PyObject* owned_stop = NULL;
-            if (_py_start) {
-                py_start = *_py_start;
-            } else {
-                if (has_cstart) {
-                    owned_start = py_start = PyInt_FromSsize_t(cstart);
-                    if (unlikely(!py_start)) goto bad;
-                } else
-                    py_start = Py_None;
-            }
-            if (_py_stop) {
-                py_stop = *_py_stop;
-            } else {
-                if (has_cstop) {
-                    owned_stop = py_stop = PyInt_FromSsize_t(cstop);
-                    if (unlikely(!py_stop)) {
-                        Py_XDECREF(owned_start);
-                        goto bad;
-                    }
-                } else
-                    py_stop = Py_None;
-            }
-            py_slice = PySlice_New(py_start, py_stop, Py_None);
-            Py_XDECREF(owned_start);
-            Py_XDECREF(owned_stop);
-            if (unlikely(!py_slice)) goto bad;
+            prepend_sign = 1;
         }
-#if CYTHON_USE_TYPE_SLOTS
-        result = mp->mp_subscript(obj, py_slice);
-#else
-        result = PyObject_GetItem(obj, py_slice);
-#endif
-        if (!_py_slice) {
-            Py_DECREF(py_slice);
-        }
-        return result;
+        ++ulength;
     }
-    obj_type_name = __Pyx_PyType_GetName(Py_TYPE(obj));
-    PyErr_Format(PyExc_TypeError,
-        "'" __Pyx_FMT_TYPENAME "' object is unsliceable", obj_type_name);
-    __Pyx_DECREF_TypeName(obj_type_name);
+    if (width > ulength) {
+        ulength = width;
+    }
+    if (ulength == 1) {
+        return PyUnicode_FromOrdinal(*dpos);
+    }
+    return __Pyx_PyUnicode_BuildFromAscii(ulength, dpos, (int) length, prepend_sign, padding_char);
+}
+
+/* JoinPyUnicode */
+static PyObject* __Pyx_PyUnicode_Join(PyObject* value_tuple, Py_ssize_t value_count, Py_ssize_t result_ulength,
+                                      Py_UCS4 max_char) {
+#if CYTHON_USE_UNICODE_INTERNALS && CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    PyObject *result_uval;
+    int result_ukind, kind_shift;
+    Py_ssize_t i, char_pos;
+    void *result_udata;
+    CYTHON_MAYBE_UNUSED_VAR(max_char);
+#if CYTHON_PEP393_ENABLED
+    result_uval = PyUnicode_New(result_ulength, max_char);
+    if (unlikely(!result_uval)) return NULL;
+    result_ukind = (max_char <= 255) ? PyUnicode_1BYTE_KIND : (max_char <= 65535) ? PyUnicode_2BYTE_KIND : PyUnicode_4BYTE_KIND;
+    kind_shift = (result_ukind == PyUnicode_4BYTE_KIND) ? 2 : result_ukind - 1;
+    result_udata = PyUnicode_DATA(result_uval);
+#else
+    result_uval = PyUnicode_FromUnicode(NULL, result_ulength);
+    if (unlikely(!result_uval)) return NULL;
+    result_ukind = sizeof(Py_UNICODE);
+    kind_shift = (result_ukind == 4) ? 2 : result_ukind - 1;
+    result_udata = PyUnicode_AS_UNICODE(result_uval);
+#endif
+    assert(kind_shift == 2 || kind_shift == 1 || kind_shift == 0);
+    char_pos = 0;
+    for (i=0; i < value_count; i++) {
+        int ukind;
+        Py_ssize_t ulength;
+        void *udata;
+        PyObject *uval = PyTuple_GET_ITEM(value_tuple, i);
+        if (unlikely(__Pyx_PyUnicode_READY(uval)))
+            goto bad;
+        ulength = __Pyx_PyUnicode_GET_LENGTH(uval);
+        if (unlikely(!ulength))
+            continue;
+        if (unlikely((PY_SSIZE_T_MAX >> kind_shift) - ulength < char_pos))
+            goto overflow;
+        ukind = __Pyx_PyUnicode_KIND(uval);
+        udata = __Pyx_PyUnicode_DATA(uval);
+        if (!CYTHON_PEP393_ENABLED || ukind == result_ukind) {
+            memcpy((char *)result_udata + (char_pos << kind_shift), udata, (size_t) (ulength << kind_shift));
+        } else {
+            #if PY_VERSION_HEX >= 0x030d0000
+            if (unlikely(PyUnicode_CopyCharacters(result_uval, char_pos, uval, 0, ulength) < 0)) goto bad;
+            #elif CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030300F0 || defined(_PyUnicode_FastCopyCharacters)
+            _PyUnicode_FastCopyCharacters(result_uval, char_pos, uval, 0, ulength);
+            #else
+            Py_ssize_t j;
+            for (j=0; j < ulength; j++) {
+                Py_UCS4 uchar = __Pyx_PyUnicode_READ(ukind, udata, j);
+                __Pyx_PyUnicode_WRITE(result_ukind, result_udata, char_pos+j, uchar);
+            }
+            #endif
+        }
+        char_pos += ulength;
+    }
+    return result_uval;
+overflow:
+    PyErr_SetString(PyExc_OverflowError, "join() result is too long for a Python string");
 bad:
+    Py_DECREF(result_uval);
     return NULL;
-}
-
-/* PyDictVersioning */
-#if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
-static CYTHON_INLINE PY_UINT64_T __Pyx_get_tp_dict_version(PyObject *obj) {
-    PyObject *dict = Py_TYPE(obj)->tp_dict;
-    return likely(dict) ? __PYX_GET_DICT_VERSION(dict) : 0;
-}
-static CYTHON_INLINE PY_UINT64_T __Pyx_get_object_dict_version(PyObject *obj) {
-    PyObject **dictptr = NULL;
-    Py_ssize_t offset = Py_TYPE(obj)->tp_dictoffset;
-    if (offset) {
-#if CYTHON_COMPILING_IN_CPYTHON
-        dictptr = (likely(offset > 0)) ? (PyObject **) ((char *)obj + offset) : _PyObject_GetDictPtr(obj);
 #else
-        dictptr = _PyObject_GetDictPtr(obj);
+    CYTHON_UNUSED_VAR(max_char);
+    CYTHON_UNUSED_VAR(result_ulength);
+    CYTHON_UNUSED_VAR(value_count);
+    return PyUnicode_Join(__pyx_empty_unicode, value_tuple);
 #endif
-    }
-    return (dictptr && *dictptr) ? __PYX_GET_DICT_VERSION(*dictptr) : 0;
-}
-static CYTHON_INLINE int __Pyx_object_dict_version_matches(PyObject* obj, PY_UINT64_T tp_dict_version, PY_UINT64_T obj_dict_version) {
-    PyObject *dict = Py_TYPE(obj)->tp_dict;
-    if (unlikely(!dict) || unlikely(tp_dict_version != __PYX_GET_DICT_VERSION(dict)))
-        return 0;
-    return obj_dict_version == __Pyx_get_object_dict_version(obj);
-}
-#endif
-
-/* GetModuleGlobalName */
-#if CYTHON_USE_DICT_VERSIONS
-static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value)
-#else
-static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name)
-#endif
-{
-    PyObject *result;
-#if !CYTHON_AVOID_BORROWED_REFS
-#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030500A1 && PY_VERSION_HEX < 0x030d0000
-    result = _PyDict_GetItem_KnownHash(__pyx_d, name, ((PyASCIIObject *) name)->hash);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    } else if (unlikely(PyErr_Occurred())) {
-        return NULL;
-    }
-#elif CYTHON_COMPILING_IN_LIMITED_API
-    if (unlikely(!__pyx_m)) {
-        return NULL;
-    }
-    result = PyObject_GetAttr(__pyx_m, name);
-    if (likely(result)) {
-        return result;
-    }
-#else
-    result = PyDict_GetItem(__pyx_d, name);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    }
-#endif
-#else
-    result = PyObject_GetItem(__pyx_d, name);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    }
-    PyErr_Clear();
-#endif
-    return __Pyx_GetBuiltinName(name);
 }
 
 /* PyFunctionFastCall */
@@ -5716,6 +5921,346 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_FastCallDict(PyObject *func, PyObj
     #endif
 }
 
+/* PyObjectCallOneArg */
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg) {
+    PyObject *args[2] = {NULL, arg};
+    return __Pyx_PyObject_FastCall(func, args+1, 1 | __Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET);
+}
+
+/* RaiseException */
+#if PY_MAJOR_VERSION < 3
+static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause) {
+    __Pyx_PyThreadState_declare
+    CYTHON_UNUSED_VAR(cause);
+    Py_XINCREF(type);
+    if (!value || value == Py_None)
+        value = NULL;
+    else
+        Py_INCREF(value);
+    if (!tb || tb == Py_None)
+        tb = NULL;
+    else {
+        Py_INCREF(tb);
+        if (!PyTraceBack_Check(tb)) {
+            PyErr_SetString(PyExc_TypeError,
+                "raise: arg 3 must be a traceback or None");
+            goto raise_error;
+        }
+    }
+    if (PyType_Check(type)) {
+#if CYTHON_COMPILING_IN_PYPY
+        if (!value) {
+            Py_INCREF(Py_None);
+            value = Py_None;
+        }
+#endif
+        PyErr_NormalizeException(&type, &value, &tb);
+    } else {
+        if (value) {
+            PyErr_SetString(PyExc_TypeError,
+                "instance exception may not have a separate value");
+            goto raise_error;
+        }
+        value = type;
+        type = (PyObject*) Py_TYPE(type);
+        Py_INCREF(type);
+        if (!PyType_IsSubtype((PyTypeObject *)type, (PyTypeObject *)PyExc_BaseException)) {
+            PyErr_SetString(PyExc_TypeError,
+                "raise: exception class must be a subclass of BaseException");
+            goto raise_error;
+        }
+    }
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrRestore(type, value, tb);
+    return;
+raise_error:
+    Py_XDECREF(value);
+    Py_XDECREF(type);
+    Py_XDECREF(tb);
+    return;
+}
+#else
+static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause) {
+    PyObject* owned_instance = NULL;
+    if (tb == Py_None) {
+        tb = 0;
+    } else if (tb && !PyTraceBack_Check(tb)) {
+        PyErr_SetString(PyExc_TypeError,
+            "raise: arg 3 must be a traceback or None");
+        goto bad;
+    }
+    if (value == Py_None)
+        value = 0;
+    if (PyExceptionInstance_Check(type)) {
+        if (value) {
+            PyErr_SetString(PyExc_TypeError,
+                "instance exception may not have a separate value");
+            goto bad;
+        }
+        value = type;
+        type = (PyObject*) Py_TYPE(value);
+    } else if (PyExceptionClass_Check(type)) {
+        PyObject *instance_class = NULL;
+        if (value && PyExceptionInstance_Check(value)) {
+            instance_class = (PyObject*) Py_TYPE(value);
+            if (instance_class != type) {
+                int is_subclass = PyObject_IsSubclass(instance_class, type);
+                if (!is_subclass) {
+                    instance_class = NULL;
+                } else if (unlikely(is_subclass == -1)) {
+                    goto bad;
+                } else {
+                    type = instance_class;
+                }
+            }
+        }
+        if (!instance_class) {
+            PyObject *args;
+            if (!value)
+                args = PyTuple_New(0);
+            else if (PyTuple_Check(value)) {
+                Py_INCREF(value);
+                args = value;
+            } else
+                args = PyTuple_Pack(1, value);
+            if (!args)
+                goto bad;
+            owned_instance = PyObject_Call(type, args, NULL);
+            Py_DECREF(args);
+            if (!owned_instance)
+                goto bad;
+            value = owned_instance;
+            if (!PyExceptionInstance_Check(value)) {
+                PyErr_Format(PyExc_TypeError,
+                             "calling %R should have returned an instance of "
+                             "BaseException, not %R",
+                             type, Py_TYPE(value));
+                goto bad;
+            }
+        }
+    } else {
+        PyErr_SetString(PyExc_TypeError,
+            "raise: exception class must be a subclass of BaseException");
+        goto bad;
+    }
+    if (cause) {
+        PyObject *fixed_cause;
+        if (cause == Py_None) {
+            fixed_cause = NULL;
+        } else if (PyExceptionClass_Check(cause)) {
+            fixed_cause = PyObject_CallObject(cause, NULL);
+            if (fixed_cause == NULL)
+                goto bad;
+        } else if (PyExceptionInstance_Check(cause)) {
+            fixed_cause = cause;
+            Py_INCREF(fixed_cause);
+        } else {
+            PyErr_SetString(PyExc_TypeError,
+                            "exception causes must derive from "
+                            "BaseException");
+            goto bad;
+        }
+        PyException_SetCause(value, fixed_cause);
+    }
+    PyErr_SetObject(type, value);
+    if (tb) {
+      #if PY_VERSION_HEX >= 0x030C00A6
+        PyException_SetTraceback(value, tb);
+      #elif CYTHON_FAST_THREAD_STATE
+        PyThreadState *tstate = __Pyx_PyThreadState_Current;
+        PyObject* tmp_tb = tstate->curexc_traceback;
+        if (tb != tmp_tb) {
+            Py_INCREF(tb);
+            tstate->curexc_traceback = tb;
+            Py_XDECREF(tmp_tb);
+        }
+#else
+        PyObject *tmp_type, *tmp_value, *tmp_tb;
+        PyErr_Fetch(&tmp_type, &tmp_value, &tmp_tb);
+        Py_INCREF(tb);
+        PyErr_Restore(tmp_type, tmp_value, tb);
+        Py_XDECREF(tmp_tb);
+#endif
+    }
+bad:
+    Py_XDECREF(owned_instance);
+    return;
+}
+#endif
+
+/* SliceObject */
+static CYTHON_INLINE PyObject* __Pyx_PyObject_GetSlice(PyObject* obj,
+        Py_ssize_t cstart, Py_ssize_t cstop,
+        PyObject** _py_start, PyObject** _py_stop, PyObject** _py_slice,
+        int has_cstart, int has_cstop, int wraparound) {
+    __Pyx_TypeName obj_type_name;
+#if CYTHON_USE_TYPE_SLOTS
+    PyMappingMethods* mp;
+#if PY_MAJOR_VERSION < 3
+    PySequenceMethods* ms = Py_TYPE(obj)->tp_as_sequence;
+    if (likely(ms && ms->sq_slice)) {
+        if (!has_cstart) {
+            if (_py_start && (*_py_start != Py_None)) {
+                cstart = __Pyx_PyIndex_AsSsize_t(*_py_start);
+                if ((cstart == (Py_ssize_t)-1) && PyErr_Occurred()) goto bad;
+            } else
+                cstart = 0;
+        }
+        if (!has_cstop) {
+            if (_py_stop && (*_py_stop != Py_None)) {
+                cstop = __Pyx_PyIndex_AsSsize_t(*_py_stop);
+                if ((cstop == (Py_ssize_t)-1) && PyErr_Occurred()) goto bad;
+            } else
+                cstop = PY_SSIZE_T_MAX;
+        }
+        if (wraparound && unlikely((cstart < 0) | (cstop < 0)) && likely(ms->sq_length)) {
+            Py_ssize_t l = ms->sq_length(obj);
+            if (likely(l >= 0)) {
+                if (cstop < 0) {
+                    cstop += l;
+                    if (cstop < 0) cstop = 0;
+                }
+                if (cstart < 0) {
+                    cstart += l;
+                    if (cstart < 0) cstart = 0;
+                }
+            } else {
+                if (!PyErr_ExceptionMatches(PyExc_OverflowError))
+                    goto bad;
+                PyErr_Clear();
+            }
+        }
+        return ms->sq_slice(obj, cstart, cstop);
+    }
+#else
+    CYTHON_UNUSED_VAR(wraparound);
+#endif
+    mp = Py_TYPE(obj)->tp_as_mapping;
+    if (likely(mp && mp->mp_subscript))
+#else
+    CYTHON_UNUSED_VAR(wraparound);
+#endif
+    {
+        PyObject* result;
+        PyObject *py_slice, *py_start, *py_stop;
+        if (_py_slice) {
+            py_slice = *_py_slice;
+        } else {
+            PyObject* owned_start = NULL;
+            PyObject* owned_stop = NULL;
+            if (_py_start) {
+                py_start = *_py_start;
+            } else {
+                if (has_cstart) {
+                    owned_start = py_start = PyInt_FromSsize_t(cstart);
+                    if (unlikely(!py_start)) goto bad;
+                } else
+                    py_start = Py_None;
+            }
+            if (_py_stop) {
+                py_stop = *_py_stop;
+            } else {
+                if (has_cstop) {
+                    owned_stop = py_stop = PyInt_FromSsize_t(cstop);
+                    if (unlikely(!py_stop)) {
+                        Py_XDECREF(owned_start);
+                        goto bad;
+                    }
+                } else
+                    py_stop = Py_None;
+            }
+            py_slice = PySlice_New(py_start, py_stop, Py_None);
+            Py_XDECREF(owned_start);
+            Py_XDECREF(owned_stop);
+            if (unlikely(!py_slice)) goto bad;
+        }
+#if CYTHON_USE_TYPE_SLOTS
+        result = mp->mp_subscript(obj, py_slice);
+#else
+        result = PyObject_GetItem(obj, py_slice);
+#endif
+        if (!_py_slice) {
+            Py_DECREF(py_slice);
+        }
+        return result;
+    }
+    obj_type_name = __Pyx_PyType_GetName(Py_TYPE(obj));
+    PyErr_Format(PyExc_TypeError,
+        "'" __Pyx_FMT_TYPENAME "' object is unsliceable", obj_type_name);
+    __Pyx_DECREF_TypeName(obj_type_name);
+bad:
+    return NULL;
+}
+
+/* PyDictVersioning */
+#if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
+static CYTHON_INLINE PY_UINT64_T __Pyx_get_tp_dict_version(PyObject *obj) {
+    PyObject *dict = Py_TYPE(obj)->tp_dict;
+    return likely(dict) ? __PYX_GET_DICT_VERSION(dict) : 0;
+}
+static CYTHON_INLINE PY_UINT64_T __Pyx_get_object_dict_version(PyObject *obj) {
+    PyObject **dictptr = NULL;
+    Py_ssize_t offset = Py_TYPE(obj)->tp_dictoffset;
+    if (offset) {
+#if CYTHON_COMPILING_IN_CPYTHON
+        dictptr = (likely(offset > 0)) ? (PyObject **) ((char *)obj + offset) : _PyObject_GetDictPtr(obj);
+#else
+        dictptr = _PyObject_GetDictPtr(obj);
+#endif
+    }
+    return (dictptr && *dictptr) ? __PYX_GET_DICT_VERSION(*dictptr) : 0;
+}
+static CYTHON_INLINE int __Pyx_object_dict_version_matches(PyObject* obj, PY_UINT64_T tp_dict_version, PY_UINT64_T obj_dict_version) {
+    PyObject *dict = Py_TYPE(obj)->tp_dict;
+    if (unlikely(!dict) || unlikely(tp_dict_version != __PYX_GET_DICT_VERSION(dict)))
+        return 0;
+    return obj_dict_version == __Pyx_get_object_dict_version(obj);
+}
+#endif
+
+/* GetModuleGlobalName */
+#if CYTHON_USE_DICT_VERSIONS
+static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value)
+#else
+static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name)
+#endif
+{
+    PyObject *result;
+#if !CYTHON_AVOID_BORROWED_REFS
+#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030500A1 && PY_VERSION_HEX < 0x030d0000
+    result = _PyDict_GetItem_KnownHash(__pyx_d, name, ((PyASCIIObject *) name)->hash);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    } else if (unlikely(PyErr_Occurred())) {
+        return NULL;
+    }
+#elif CYTHON_COMPILING_IN_LIMITED_API
+    if (unlikely(!__pyx_m)) {
+        return NULL;
+    }
+    result = PyObject_GetAttr(__pyx_m, name);
+    if (likely(result)) {
+        return result;
+    }
+#else
+    result = PyDict_GetItem(__pyx_d, name);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    }
+#endif
+#else
+    result = PyObject_GetItem(__pyx_d, name);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    }
+    PyErr_Clear();
+#endif
+    return __Pyx_GetBuiltinName(name);
+}
+
 /* TypeImport */
 #ifndef __PYX_HAVE_RT_ImportType_3_0_9
 #define __PYX_HAVE_RT_ImportType_3_0_9
@@ -5932,7 +6477,7 @@ static PyObject *__Pyx_ImportDottedModule_WalkParts(PyObject *module, PyObject *
 #endif
 static PyObject *__Pyx__ImportDottedModule(PyObject *name, PyObject *parts_tuple) {
 #if PY_MAJOR_VERSION < 3
-    PyObject *module, *from_list, *star = __pyx_n_s_;
+    PyObject *module, *from_list, *star = __pyx_n_s__2;
     CYTHON_UNUSED_VAR(parts_tuple);
     from_list = PyList_New(1);
     if (unlikely(!from_list))
@@ -7918,7 +8463,7 @@ __Pyx_PyType_GetName(PyTypeObject* tp)
     if (unlikely(name == NULL) || unlikely(!PyUnicode_Check(name))) {
         PyErr_Clear();
         Py_XDECREF(name);
-        name = __Pyx_NewRef(__pyx_n_s__4);
+        name = __Pyx_NewRef(__pyx_n_s__5);
     }
     return name;
 }

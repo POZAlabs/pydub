@@ -13,7 +13,7 @@ cdef inline short gain_16(short sample, double factor) noexcept nogil:
         return SHRT_MIN
     return <short>val
 
-cdef inline short add_16(short a, short b) noexcept nogil:
+cdef inline short mix_16(short a, short b) noexcept nogil:
     cdef int val = <int>a + <int>b
     if val > SHRT_MAX:
         return SHRT_MAX
@@ -29,7 +29,7 @@ cdef inline int gain_32(int sample, double factor) noexcept nogil:
         return INT_MIN
     return <int>val
 
-cdef inline int add_32(int a, int b) noexcept nogil:
+cdef inline int mix_32(int a, int b) noexcept nogil:
     cdef long long val = <long long>a + <long long>b
     if val > INT_MAX:
         return INT_MAX
@@ -102,10 +102,10 @@ def overlay_segments(
 
             if apply_gain:
                 for i in range(num_samples):
-                    out_16[i] = add_16(gain_16(out_16[i], db_factor), s2_16[i])
+                    out_16[i] = mix_16(gain_16(out_16[i], db_factor), s2_16[i])
             else:
                 for i in range(num_samples):
-                    out_16[i] = add_16(out_16[i], s2_16[i])
+                    out_16[i] = mix_16(out_16[i], s2_16[i])
 
             current_position += chunk_len
             if remaining_times > 0:
@@ -127,10 +127,10 @@ def overlay_segments(
 
             if apply_gain:
                 for i in range(num_samples):
-                    out_32[i] = add_32(gain_32(out_32[i], db_factor), s2_32[i])
+                    out_32[i] = mix_32(gain_32(out_32[i], db_factor), s2_32[i])
             else:
                 for i in range(num_samples):
-                    out_32[i] = add_32(out_32[i], s2_32[i])
+                    out_32[i] = mix_32(out_32[i], s2_32[i])
 
             current_position += chunk_len
             if remaining_times > 0:

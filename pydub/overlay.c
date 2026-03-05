@@ -2100,9 +2100,9 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
 /* Module declarations from "pydub.overlay" */
 static CYTHON_INLINE short __pyx_f_5pydub_7overlay_gain_16(short, double); /*proto*/
-static CYTHON_INLINE short __pyx_f_5pydub_7overlay_add_16(short, short); /*proto*/
+static CYTHON_INLINE short __pyx_f_5pydub_7overlay_mix_16(short, short); /*proto*/
 static CYTHON_INLINE int __pyx_f_5pydub_7overlay_gain_32(int, double); /*proto*/
-static CYTHON_INLINE int __pyx_f_5pydub_7overlay_add_32(int, int); /*proto*/
+static CYTHON_INLINE int __pyx_f_5pydub_7overlay_mix_32(int, int); /*proto*/
 /* #### Code section: typeinfo ### */
 /* #### Code section: before_global_var ### */
 #define __Pyx_MODULE_NAME "pydub.overlay"
@@ -2622,7 +2622,7 @@ static CYTHON_INLINE short __pyx_f_5pydub_7overlay_gain_16(short __pyx_v_sample,
  *         return SHRT_MIN
  *     return <short>val             # <<<<<<<<<<<<<<
  * 
- * cdef inline short add_16(short a, short b) noexcept nogil:
+ * cdef inline short mix_16(short a, short b) noexcept nogil:
  */
   __pyx_r = ((short)__pyx_v_val);
   goto __pyx_L0;
@@ -2643,19 +2643,19 @@ static CYTHON_INLINE short __pyx_f_5pydub_7overlay_gain_16(short __pyx_v_sample,
 /* "pydub/overlay.pyx":16
  *     return <short>val
  * 
- * cdef inline short add_16(short a, short b) noexcept nogil:             # <<<<<<<<<<<<<<
+ * cdef inline short mix_16(short a, short b) noexcept nogil:             # <<<<<<<<<<<<<<
  *     cdef int val = <int>a + <int>b
  *     if val > SHRT_MAX:
  */
 
-static CYTHON_INLINE short __pyx_f_5pydub_7overlay_add_16(short __pyx_v_a, short __pyx_v_b) {
+static CYTHON_INLINE short __pyx_f_5pydub_7overlay_mix_16(short __pyx_v_a, short __pyx_v_b) {
   int __pyx_v_val;
   short __pyx_r;
   int __pyx_t_1;
 
   /* "pydub/overlay.pyx":17
  * 
- * cdef inline short add_16(short a, short b) noexcept nogil:
+ * cdef inline short mix_16(short a, short b) noexcept nogil:
  *     cdef int val = <int>a + <int>b             # <<<<<<<<<<<<<<
  *     if val > SHRT_MAX:
  *         return SHRT_MAX
@@ -2663,7 +2663,7 @@ static CYTHON_INLINE short __pyx_f_5pydub_7overlay_add_16(short __pyx_v_a, short
   __pyx_v_val = (((int)__pyx_v_a) + ((int)__pyx_v_b));
 
   /* "pydub/overlay.pyx":18
- * cdef inline short add_16(short a, short b) noexcept nogil:
+ * cdef inline short mix_16(short a, short b) noexcept nogil:
  *     cdef int val = <int>a + <int>b
  *     if val > SHRT_MAX:             # <<<<<<<<<<<<<<
  *         return SHRT_MAX
@@ -2683,7 +2683,7 @@ static CYTHON_INLINE short __pyx_f_5pydub_7overlay_add_16(short __pyx_v_a, short
     goto __pyx_L0;
 
     /* "pydub/overlay.pyx":18
- * cdef inline short add_16(short a, short b) noexcept nogil:
+ * cdef inline short mix_16(short a, short b) noexcept nogil:
  *     cdef int val = <int>a + <int>b
  *     if val > SHRT_MAX:             # <<<<<<<<<<<<<<
  *         return SHRT_MAX
@@ -2733,7 +2733,7 @@ static CYTHON_INLINE short __pyx_f_5pydub_7overlay_add_16(short __pyx_v_a, short
   /* "pydub/overlay.pyx":16
  *     return <short>val
  * 
- * cdef inline short add_16(short a, short b) noexcept nogil:             # <<<<<<<<<<<<<<
+ * cdef inline short mix_16(short a, short b) noexcept nogil:             # <<<<<<<<<<<<<<
  *     cdef int val = <int>a + <int>b
  *     if val > SHRT_MAX:
  */
@@ -2828,7 +2828,7 @@ static CYTHON_INLINE int __pyx_f_5pydub_7overlay_gain_32(int __pyx_v_sample, dou
  *         return INT_MIN
  *     return <int>val             # <<<<<<<<<<<<<<
  * 
- * cdef inline int add_32(int a, int b) noexcept nogil:
+ * cdef inline int mix_32(int a, int b) noexcept nogil:
  */
   __pyx_r = ((int)__pyx_v_val);
   goto __pyx_L0;
@@ -2849,19 +2849,19 @@ static CYTHON_INLINE int __pyx_f_5pydub_7overlay_gain_32(int __pyx_v_sample, dou
 /* "pydub/overlay.pyx":32
  *     return <int>val
  * 
- * cdef inline int add_32(int a, int b) noexcept nogil:             # <<<<<<<<<<<<<<
+ * cdef inline int mix_32(int a, int b) noexcept nogil:             # <<<<<<<<<<<<<<
  *     cdef long long val = <long long>a + <long long>b
  *     if val > INT_MAX:
  */
 
-static CYTHON_INLINE int __pyx_f_5pydub_7overlay_add_32(int __pyx_v_a, int __pyx_v_b) {
+static CYTHON_INLINE int __pyx_f_5pydub_7overlay_mix_32(int __pyx_v_a, int __pyx_v_b) {
   PY_LONG_LONG __pyx_v_val;
   int __pyx_r;
   int __pyx_t_1;
 
   /* "pydub/overlay.pyx":33
  * 
- * cdef inline int add_32(int a, int b) noexcept nogil:
+ * cdef inline int mix_32(int a, int b) noexcept nogil:
  *     cdef long long val = <long long>a + <long long>b             # <<<<<<<<<<<<<<
  *     if val > INT_MAX:
  *         return INT_MAX
@@ -2869,7 +2869,7 @@ static CYTHON_INLINE int __pyx_f_5pydub_7overlay_add_32(int __pyx_v_a, int __pyx
   __pyx_v_val = (((PY_LONG_LONG)__pyx_v_a) + ((PY_LONG_LONG)__pyx_v_b));
 
   /* "pydub/overlay.pyx":34
- * cdef inline int add_32(int a, int b) noexcept nogil:
+ * cdef inline int mix_32(int a, int b) noexcept nogil:
  *     cdef long long val = <long long>a + <long long>b
  *     if val > INT_MAX:             # <<<<<<<<<<<<<<
  *         return INT_MAX
@@ -2889,7 +2889,7 @@ static CYTHON_INLINE int __pyx_f_5pydub_7overlay_add_32(int __pyx_v_a, int __pyx
     goto __pyx_L0;
 
     /* "pydub/overlay.pyx":34
- * cdef inline int add_32(int a, int b) noexcept nogil:
+ * cdef inline int mix_32(int a, int b) noexcept nogil:
  *     cdef long long val = <long long>a + <long long>b
  *     if val > INT_MAX:             # <<<<<<<<<<<<<<
  *         return INT_MAX
@@ -2939,7 +2939,7 @@ static CYTHON_INLINE int __pyx_f_5pydub_7overlay_add_32(int __pyx_v_a, int __pyx
   /* "pydub/overlay.pyx":32
  *     return <int>val
  * 
- * cdef inline int add_32(int a, int b) noexcept nogil:             # <<<<<<<<<<<<<<
+ * cdef inline int mix_32(int a, int b) noexcept nogil:             # <<<<<<<<<<<<<<
  *     cdef long long val = <long long>a + <long long>b
  *     if val > INT_MAX:
  */
@@ -3586,7 +3586,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  * 
  *             if apply_gain:             # <<<<<<<<<<<<<<
  *                 for i in range(num_samples):
- *                     out_16[i] = add_16(gain_16(out_16[i], db_factor), s2_16[i])
+ *                     out_16[i] = mix_16(gain_16(out_16[i], db_factor), s2_16[i])
  */
       __pyx_t_2 = (__pyx_v_apply_gain != 0);
       if (__pyx_t_2) {
@@ -3595,7 +3595,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  * 
  *             if apply_gain:
  *                 for i in range(num_samples):             # <<<<<<<<<<<<<<
- *                     out_16[i] = add_16(gain_16(out_16[i], db_factor), s2_16[i])
+ *                     out_16[i] = mix_16(gain_16(out_16[i], db_factor), s2_16[i])
  *             else:
  */
         __pyx_t_10 = __pyx_v_num_samples;
@@ -3606,11 +3606,11 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
           /* "pydub/overlay.pyx":105
  *             if apply_gain:
  *                 for i in range(num_samples):
- *                     out_16[i] = add_16(gain_16(out_16[i], db_factor), s2_16[i])             # <<<<<<<<<<<<<<
+ *                     out_16[i] = mix_16(gain_16(out_16[i], db_factor), s2_16[i])             # <<<<<<<<<<<<<<
  *             else:
  *                 for i in range(num_samples):
  */
-          (__pyx_v_out_16[__pyx_v_i]) = __pyx_f_5pydub_7overlay_add_16(__pyx_f_5pydub_7overlay_gain_16((__pyx_v_out_16[__pyx_v_i]), __pyx_v_db_factor), (__pyx_v_s2_16[__pyx_v_i]));
+          (__pyx_v_out_16[__pyx_v_i]) = __pyx_f_5pydub_7overlay_mix_16(__pyx_f_5pydub_7overlay_gain_16((__pyx_v_out_16[__pyx_v_i]), __pyx_v_db_factor), (__pyx_v_s2_16[__pyx_v_i]));
         }
 
         /* "pydub/overlay.pyx":103
@@ -3618,16 +3618,16 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  * 
  *             if apply_gain:             # <<<<<<<<<<<<<<
  *                 for i in range(num_samples):
- *                     out_16[i] = add_16(gain_16(out_16[i], db_factor), s2_16[i])
+ *                     out_16[i] = mix_16(gain_16(out_16[i], db_factor), s2_16[i])
  */
         goto __pyx_L12;
       }
 
       /* "pydub/overlay.pyx":107
- *                     out_16[i] = add_16(gain_16(out_16[i], db_factor), s2_16[i])
+ *                     out_16[i] = mix_16(gain_16(out_16[i], db_factor), s2_16[i])
  *             else:
  *                 for i in range(num_samples):             # <<<<<<<<<<<<<<
- *                     out_16[i] = add_16(out_16[i], s2_16[i])
+ *                     out_16[i] = mix_16(out_16[i], s2_16[i])
  * 
  */
       /*else*/ {
@@ -3639,17 +3639,17 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
           /* "pydub/overlay.pyx":108
  *             else:
  *                 for i in range(num_samples):
- *                     out_16[i] = add_16(out_16[i], s2_16[i])             # <<<<<<<<<<<<<<
+ *                     out_16[i] = mix_16(out_16[i], s2_16[i])             # <<<<<<<<<<<<<<
  * 
  *             current_position += chunk_len
  */
-          (__pyx_v_out_16[__pyx_v_i]) = __pyx_f_5pydub_7overlay_add_16((__pyx_v_out_16[__pyx_v_i]), (__pyx_v_s2_16[__pyx_v_i]));
+          (__pyx_v_out_16[__pyx_v_i]) = __pyx_f_5pydub_7overlay_mix_16((__pyx_v_out_16[__pyx_v_i]), (__pyx_v_s2_16[__pyx_v_i]));
         }
       }
       __pyx_L12:;
 
       /* "pydub/overlay.pyx":110
- *                     out_16[i] = add_16(out_16[i], s2_16[i])
+ *                     out_16[i] = mix_16(out_16[i], s2_16[i])
  * 
  *             current_position += chunk_len             # <<<<<<<<<<<<<<
  *             if remaining_times > 0:
@@ -3818,7 +3818,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  * 
  *             if apply_gain:             # <<<<<<<<<<<<<<
  *                 for i in range(num_samples):
- *                     out_32[i] = add_32(gain_32(out_32[i], db_factor), s2_32[i])
+ *                     out_32[i] = mix_32(gain_32(out_32[i], db_factor), s2_32[i])
  */
       __pyx_t_2 = (__pyx_v_apply_gain != 0);
       if (__pyx_t_2) {
@@ -3827,7 +3827,7 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  * 
  *             if apply_gain:
  *                 for i in range(num_samples):             # <<<<<<<<<<<<<<
- *                     out_32[i] = add_32(gain_32(out_32[i], db_factor), s2_32[i])
+ *                     out_32[i] = mix_32(gain_32(out_32[i], db_factor), s2_32[i])
  *             else:
  */
         __pyx_t_10 = __pyx_v_num_samples;
@@ -3838,11 +3838,11 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
           /* "pydub/overlay.pyx":130
  *             if apply_gain:
  *                 for i in range(num_samples):
- *                     out_32[i] = add_32(gain_32(out_32[i], db_factor), s2_32[i])             # <<<<<<<<<<<<<<
+ *                     out_32[i] = mix_32(gain_32(out_32[i], db_factor), s2_32[i])             # <<<<<<<<<<<<<<
  *             else:
  *                 for i in range(num_samples):
  */
-          (__pyx_v_out_32[__pyx_v_i]) = __pyx_f_5pydub_7overlay_add_32(__pyx_f_5pydub_7overlay_gain_32((__pyx_v_out_32[__pyx_v_i]), __pyx_v_db_factor), (__pyx_v_s2_32[__pyx_v_i]));
+          (__pyx_v_out_32[__pyx_v_i]) = __pyx_f_5pydub_7overlay_mix_32(__pyx_f_5pydub_7overlay_gain_32((__pyx_v_out_32[__pyx_v_i]), __pyx_v_db_factor), (__pyx_v_s2_32[__pyx_v_i]));
         }
 
         /* "pydub/overlay.pyx":128
@@ -3850,16 +3850,16 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
  * 
  *             if apply_gain:             # <<<<<<<<<<<<<<
  *                 for i in range(num_samples):
- *                     out_32[i] = add_32(gain_32(out_32[i], db_factor), s2_32[i])
+ *                     out_32[i] = mix_32(gain_32(out_32[i], db_factor), s2_32[i])
  */
         goto __pyx_L22;
       }
 
       /* "pydub/overlay.pyx":132
- *                     out_32[i] = add_32(gain_32(out_32[i], db_factor), s2_32[i])
+ *                     out_32[i] = mix_32(gain_32(out_32[i], db_factor), s2_32[i])
  *             else:
  *                 for i in range(num_samples):             # <<<<<<<<<<<<<<
- *                     out_32[i] = add_32(out_32[i], s2_32[i])
+ *                     out_32[i] = mix_32(out_32[i], s2_32[i])
  * 
  */
       /*else*/ {
@@ -3871,17 +3871,17 @@ static PyObject *__pyx_pf_5pydub_7overlay_overlay_segments(CYTHON_UNUSED PyObjec
           /* "pydub/overlay.pyx":133
  *             else:
  *                 for i in range(num_samples):
- *                     out_32[i] = add_32(out_32[i], s2_32[i])             # <<<<<<<<<<<<<<
+ *                     out_32[i] = mix_32(out_32[i], s2_32[i])             # <<<<<<<<<<<<<<
  * 
  *             current_position += chunk_len
  */
-          (__pyx_v_out_32[__pyx_v_i]) = __pyx_f_5pydub_7overlay_add_32((__pyx_v_out_32[__pyx_v_i]), (__pyx_v_s2_32[__pyx_v_i]));
+          (__pyx_v_out_32[__pyx_v_i]) = __pyx_f_5pydub_7overlay_mix_32((__pyx_v_out_32[__pyx_v_i]), (__pyx_v_s2_32[__pyx_v_i]));
         }
       }
       __pyx_L22:;
 
       /* "pydub/overlay.pyx":135
- *                     out_32[i] = add_32(out_32[i], s2_32[i])
+ *                     out_32[i] = mix_32(out_32[i], s2_32[i])
  * 
  *             current_position += chunk_len             # <<<<<<<<<<<<<<
  *             if remaining_times > 0:

@@ -34,7 +34,7 @@ dev = [
     "memray>=1.13.4",
     "memory-profiler>=0.61.0",
     "Cython>=3.0.2,<3.0.10",
-    "pytest>=8.0.0",
+    "pytest>=9.0.2",
 ]
 
 [build-system]

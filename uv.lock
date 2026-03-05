@@ -382,7 +382,7 @@ dev = [
     { name = "cython", specifier = ">=3.0.2,<3.0.10" },
     { name = "memory-profiler", specifier = ">=0.61.0" },
     { name = "memray", specifier = ">=1.13.4" },
-    { name = "pytest", specifier = ">=8.0.0" },
+    { name = "pytest", specifier = ">=9.0.2" },
 ]
 
 [[package]]

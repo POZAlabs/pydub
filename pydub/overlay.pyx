@@ -5,6 +5,39 @@ from libc.string cimport memcpy
 import audioop
 
 
+cdef inline short gain_16(short sample, double factor) noexcept nogil:
+    cdef int val = <int>(<double>sample * factor)
+    if val > SHRT_MAX:
+        return SHRT_MAX
+    elif val < SHRT_MIN:
+        return SHRT_MIN
+    return <short>val
+
+cdef inline short add_16(short a, short b) noexcept nogil:
+    cdef int val = <int>a + <int>b
+    if val > SHRT_MAX:
+        return SHRT_MAX
+    elif val < SHRT_MIN:
+        return SHRT_MIN
+    return <short>val
+
+cdef inline int gain_32(int sample, double factor) noexcept nogil:
+    cdef long long val = <long long>(<double>sample * factor)
+    if val > INT_MAX:
+        return INT_MAX
+    elif val < INT_MIN:
+        return INT_MIN
+    return <int>val
+
+cdef inline int add_32(int a, int b) noexcept nogil:
+    cdef long long val = <long long>a + <long long>b
+    if val > INT_MAX:
+        return INT_MAX
+    elif val < INT_MIN:
+        return INT_MIN
+    return <int>val
+
+
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
@@ -31,11 +64,9 @@ def overlay_segments(
 
     cdef short* out_16
     cdef const short* s2_16
-    cdef int val_32
 
     cdef int* out_32
     cdef const int* s2_32
-    cdef long long val_64
 
     if position >= seg1_len:
         return seg1_data
@@ -71,25 +102,10 @@ def overlay_segments(
 
             if apply_gain:
                 for i in range(num_samples):
-                    val_32 = <int>(<double>out_16[i] * db_factor)
-                    if val_32 > SHRT_MAX:
-                        val_32 = SHRT_MAX
-                    elif val_32 < SHRT_MIN:
-                        val_32 = SHRT_MIN
-                    val_32 = val_32 + <int>s2_16[i]
-                    if val_32 > SHRT_MAX:
-                        val_32 = SHRT_MAX
-                    elif val_32 < SHRT_MIN:
-                        val_32 = SHRT_MIN
-                    out_16[i] = <short>val_32
+                    out_16[i] = add_16(gain_16(out_16[i], db_factor), s2_16[i])
             else:
                 for i in range(num_samples):
-                    val_32 = <int>out_16[i] + <int>s2_16[i]
-                    if val_32 > SHRT_MAX:
-                        val_32 = SHRT_MAX
-                    elif val_32 < SHRT_MIN:
-                        val_32 = SHRT_MIN
-                    out_16[i] = <short>val_32
+                    out_16[i] = add_16(out_16[i], s2_16[i])
 
             current_position += chunk_len
             if remaining_times > 0:
@@ -111,25 +127,10 @@ def overlay_segments(
 
             if apply_gain:
                 for i in range(num_samples):
-                    val_64 = <long long>(<double>out_32[i] * db_factor)
-                    if val_64 > INT_MAX:
-                        val_64 = INT_MAX
-                    elif val_64 < INT_MIN:
-                        val_64 = INT_MIN
-                    val_64 = val_64 + <long long>s2_32[i]
-                    if val_64 > INT_MAX:
-                        val_64 = INT_MAX
-                    elif val_64 < INT_MIN:
-                        val_64 = INT_MIN
-                    out_32[i] = <int>val_64
+                    out_32[i] = add_32(gain_32(out_32[i], db_factor), s2_32[i])
             else:
                 for i in range(num_samples):
-                    val_64 = <long long>out_32[i] + <long long>s2_32[i]
-                    if val_64 > INT_MAX:
-                        val_64 = INT_MAX
-                    elif val_64 < INT_MIN:
-                        val_64 = INT_MIN
-                    out_32[i] = <int>val_64
+                    out_32[i] = add_32(out_32[i], s2_32[i])
 
             current_position += chunk_len
             if remaining_times > 0:

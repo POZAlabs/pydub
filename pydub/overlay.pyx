@@ -51,6 +51,7 @@ def overlay_segments(
 ):
     cdef int seg1_len = len(seg1_data)
     cdef int seg2_len = len(seg2_data)
+    cdef bint repeat_forever = times < 0
     cdef int remaining_times = times
     cdef int current_position
     cdef int remaining, chunk_len, num_samples, i
@@ -88,7 +89,7 @@ def overlay_segments(
 
     if sample_width == 2:
         while True:
-            if remaining_times == 0:
+            if not repeat_forever and remaining_times == 0:
                 break
             if current_position >= seg1_len_after_pos:
                 break
@@ -108,12 +109,12 @@ def overlay_segments(
                     out_16[i] = mix_16(out_16[i], s2_16[i])
 
             current_position += chunk_len
-            if remaining_times > 0:
+            if not repeat_forever:
                 remaining_times -= 1
 
     elif sample_width == 4:
         while True:
-            if remaining_times == 0:
+            if not repeat_forever and remaining_times == 0:
                 break
             if current_position >= seg1_len_after_pos:
                 break
@@ -133,12 +134,12 @@ def overlay_segments(
                     out_32[i] = mix_32(out_32[i], s2_32[i])
 
             current_position += chunk_len
-            if remaining_times > 0:
+            if not repeat_forever:
                 remaining_times -= 1
 
     else:
         while True:
-            if remaining_times == 0:
+            if not repeat_forever and remaining_times == 0:
                 break
             if current_position >= seg1_len_after_pos:
                 break
@@ -156,7 +157,7 @@ def overlay_segments(
             memcpy(out_buf + position + current_position, <const char*>overlaid, chunk_len)
 
             current_position += chunk_len
-            if remaining_times > 0:
+            if not repeat_forever:
                 remaining_times -= 1
 
     return output_bytes

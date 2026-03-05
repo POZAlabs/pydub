@@ -13,7 +13,7 @@ This is a [Pozalabs](https://github.com/Pozalabs) fork of [jiaaro/pydub](https:/
 
 ### Performance (Cython Extensions)
 
-- `overlay.pyx` - 사전 할당 버퍼 + typed pointer 연산으로 audioop.add/mul 대체 (16-bit 3~5x, 32-bit 10~18x)
+- `overlay.pyx` - Pre-allocated buffer + typed pointer arithmetic replacing audioop.add/mul (3~4x faster with real 24-bit audio)
 - `sample.pyx` - Cython-optimized 24-bit to 32-bit sample extension using direct memory operations
 - `fade()` - Memory-efficient fade using `memoryview`, with coarse/precise two-path implementation
 - 24-bit `AudioSegment` initialization allocates significantly less memory

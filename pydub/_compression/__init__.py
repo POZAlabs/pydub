@@ -30,10 +30,9 @@ def is_compressed(
     for compressor in Compressor.__members__.values():
         try:
             module = importlib.import_module(f".{compressor}", package="pydub._compression")
+            if module.is_compressed(stream):
+                return True, compressor
         except ImportError:
             continue
-
-        if module.is_compressed(stream):
-            return True, compressor
 
     return False, None

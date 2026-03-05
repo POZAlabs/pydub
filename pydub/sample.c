@@ -5,7 +5,6 @@
     "distutils": {
         "depends": [],
         "extra_compile_args": [
-            "-march=native",
             "-O3"
         ],
         "name": "pydub.sample",

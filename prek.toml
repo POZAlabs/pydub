@@ -12,3 +12,9 @@ hooks = [
 repo = "https://github.com/astral-sh/uv-pre-commit"
 rev = "0.10.2"
 hooks = [{ id = "uv-lock" }]
+
+[[repos]]
+repo = "local"
+hooks = [
+  { id = "check-cython-c", name = "check-cython-c", entry = "scripts/check-cython-c.sh", language = "script", types = ["cython"] },
+]

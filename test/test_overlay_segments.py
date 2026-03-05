@@ -66,117 +66,110 @@ def _assert_match(seg1, seg2, sw, position, times, gain=0):
     assert result == expected
 
 
-# --- 16-bit tests ---
+def test_16bit_no_gain():
+    seg1 = _make_16bit(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000)
+    seg2 = _make_16bit(100, 200, 300, 400)
+    _assert_match(seg1, seg2, 2, 0, 1)
 
 
-class Test16Bit:
-    def test_no_gain(self):
-        seg1 = _make_16bit(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000)
-        seg2 = _make_16bit(100, 200, 300, 400)
-        _assert_match(seg1, seg2, 2, 0, 1)
-
-    def test_positive_gain(self):
-        seg1 = _make_16bit(1000, 2000, 3000, 4000, 5000, 6000)
-        seg2 = _make_16bit(100, 200, 300)
-        _assert_match(seg1, seg2, 2, 0, 1, gain=6)
-
-    def test_negative_gain(self):
-        seg1 = _make_16bit(1000, 2000, 3000, 4000, 5000, 6000)
-        seg2 = _make_16bit(100, 200, 300)
-        _assert_match(seg1, seg2, 2, 0, 1, gain=-6)
+def test_16bit_positive_gain():
+    seg1 = _make_16bit(1000, 2000, 3000, 4000, 5000, 6000)
+    seg2 = _make_16bit(100, 200, 300)
+    _assert_match(seg1, seg2, 2, 0, 1, gain=6)
 
 
-# --- 32-bit tests ---
+def test_16bit_negative_gain():
+    seg1 = _make_16bit(1000, 2000, 3000, 4000, 5000, 6000)
+    seg2 = _make_16bit(100, 200, 300)
+    _assert_match(seg1, seg2, 2, 0, 1, gain=-6)
 
 
-class Test32Bit:
-    def test_no_gain(self):
-        seg1 = _make_32bit(100000, 200000, 300000, 400000, 500000, 600000)
-        seg2 = _make_32bit(10000, 20000, 30000)
-        _assert_match(seg1, seg2, 4, 0, 1)
-
-    def test_positive_gain(self):
-        seg1 = _make_32bit(100000, 200000, 300000, 400000)
-        seg2 = _make_32bit(10000, 20000)
-        _assert_match(seg1, seg2, 4, 0, 1, gain=6)
-
-    def test_negative_gain(self):
-        seg1 = _make_32bit(100000, 200000, 300000, 400000)
-        seg2 = _make_32bit(10000, 20000)
-        _assert_match(seg1, seg2, 4, 0, 1, gain=-6)
+def test_32bit_no_gain():
+    seg1 = _make_32bit(100000, 200000, 300000, 400000, 500000, 600000)
+    seg2 = _make_32bit(10000, 20000, 30000)
+    _assert_match(seg1, seg2, 4, 0, 1)
 
 
-# --- Loop / times tests ---
+def test_32bit_positive_gain():
+    seg1 = _make_32bit(100000, 200000, 300000, 400000)
+    seg2 = _make_32bit(10000, 20000)
+    _assert_match(seg1, seg2, 4, 0, 1, gain=6)
 
 
-class TestLoopAndTimes:
-    def test_loop_infinite(self):
-        seg1 = _make_16bit(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000)
-        seg2 = _make_16bit(100, 200)
-        _assert_match(seg1, seg2, 2, 0, -1)
-
-    def test_fixed_times_1(self):
-        seg1 = _make_16bit(1000, 2000, 3000, 4000, 5000, 6000)
-        seg2 = _make_16bit(100, 200)
-        _assert_match(seg1, seg2, 2, 0, 1)
-
-    def test_fixed_times_2(self):
-        seg1 = _make_16bit(1000, 2000, 3000, 4000, 5000, 6000)
-        seg2 = _make_16bit(100, 200)
-        _assert_match(seg1, seg2, 2, 0, 2)
-
-    def test_fixed_times_3(self):
-        seg1 = _make_16bit(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000)
-        seg2 = _make_16bit(100, 200)
-        _assert_match(seg1, seg2, 2, 0, 3)
-
-    def test_seg2_longer_than_seg1(self):
-        seg1 = _make_16bit(1000, 2000)
-        seg2 = _make_16bit(100, 200, 300, 400, 500)
-        _assert_match(seg1, seg2, 2, 0, 1)
+def test_32bit_negative_gain():
+    seg1 = _make_32bit(100000, 200000, 300000, 400000)
+    seg2 = _make_32bit(10000, 20000)
+    _assert_match(seg1, seg2, 4, 0, 1, gain=-6)
 
 
-# --- Position tests ---
+def test_loop_infinite():
+    seg1 = _make_16bit(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000)
+    seg2 = _make_16bit(100, 200)
+    _assert_match(seg1, seg2, 2, 0, -1)
 
 
-class TestPosition:
-    def test_position_zero(self):
-        seg1 = _make_16bit(1000, 2000, 3000, 4000)
-        seg2 = _make_16bit(100, 200)
-        _assert_match(seg1, seg2, 2, 0, 1)
-
-    def test_position_middle(self):
-        seg1 = _make_16bit(1000, 2000, 3000, 4000, 5000, 6000)
-        seg2 = _make_16bit(100, 200)
-        _assert_match(seg1, seg2, 2, 4, 1)
-
-    def test_position_past_end(self):
-        seg1 = _make_16bit(1000, 2000, 3000)
-        seg2 = _make_16bit(100, 200)
-        result = overlay_segments(seg1, seg2, 2, 100, 1)
-        assert result == seg1
+def test_fixed_times_1():
+    seg1 = _make_16bit(1000, 2000, 3000, 4000, 5000, 6000)
+    seg2 = _make_16bit(100, 200)
+    _assert_match(seg1, seg2, 2, 0, 1)
 
 
-# --- Saturation / clamp tests ---
+def test_fixed_times_2():
+    seg1 = _make_16bit(1000, 2000, 3000, 4000, 5000, 6000)
+    seg2 = _make_16bit(100, 200)
+    _assert_match(seg1, seg2, 2, 0, 2)
 
 
-class TestSaturationClamp:
-    def test_saturation_clamp_16bit(self):
-        seg1 = _make_16bit(32000, -32000, 30000, -30000)
-        seg2 = _make_16bit(32000, -32000, 32000, -32000)
-        _assert_match(seg1, seg2, 2, 0, 1)
+def test_fixed_times_3():
+    seg1 = _make_16bit(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000)
+    seg2 = _make_16bit(100, 200)
+    _assert_match(seg1, seg2, 2, 0, 3)
 
-    def test_saturation_clamp_32bit(self):
-        seg1 = _make_32bit(2147483000, -2147483000, 2000000000, -2000000000)
-        seg2 = _make_32bit(2147483000, -2147483000, 2147483000, -2147483000)
-        _assert_match(seg1, seg2, 4, 0, 1)
 
-    def test_saturation_clamp_16bit_with_gain(self):
-        seg1 = _make_16bit(30000, -30000)
-        seg2 = _make_16bit(10000, -10000)
-        _assert_match(seg1, seg2, 2, 0, 1, gain=6)
+def test_seg2_longer_than_seg1():
+    seg1 = _make_16bit(1000, 2000)
+    seg2 = _make_16bit(100, 200, 300, 400, 500)
+    _assert_match(seg1, seg2, 2, 0, 1)
 
-    def test_saturation_clamp_32bit_with_gain(self):
-        seg1 = _make_32bit(2000000000, -2000000000)
-        seg2 = _make_32bit(1000000000, -1000000000)
-        _assert_match(seg1, seg2, 4, 0, 1, gain=6)
+
+def test_position_zero():
+    seg1 = _make_16bit(1000, 2000, 3000, 4000)
+    seg2 = _make_16bit(100, 200)
+    _assert_match(seg1, seg2, 2, 0, 1)
+
+
+def test_position_middle():
+    seg1 = _make_16bit(1000, 2000, 3000, 4000, 5000, 6000)
+    seg2 = _make_16bit(100, 200)
+    _assert_match(seg1, seg2, 2, 4, 1)
+
+
+def test_position_past_end():
+    seg1 = _make_16bit(1000, 2000, 3000)
+    seg2 = _make_16bit(100, 200)
+    result = overlay_segments(seg1, seg2, 2, 100, 1)
+    assert result == seg1
+
+
+def test_saturation_clamp_16bit():
+    seg1 = _make_16bit(32000, -32000, 30000, -30000)
+    seg2 = _make_16bit(32000, -32000, 32000, -32000)
+    _assert_match(seg1, seg2, 2, 0, 1)
+
+
+def test_saturation_clamp_32bit():
+    seg1 = _make_32bit(2147483000, -2147483000, 2000000000, -2000000000)
+    seg2 = _make_32bit(2147483000, -2147483000, 2147483000, -2147483000)
+    _assert_match(seg1, seg2, 4, 0, 1)
+
+
+def test_saturation_clamp_16bit_with_gain():
+    seg1 = _make_16bit(30000, -30000)
+    seg2 = _make_16bit(10000, -10000)
+    _assert_match(seg1, seg2, 2, 0, 1, gain=6)
+
+
+def test_saturation_clamp_32bit_with_gain():
+    seg1 = _make_32bit(2000000000, -2000000000)
+    seg2 = _make_32bit(1000000000, -1000000000)
+    _assert_match(seg1, seg2, 4, 0, 1, gain=6)

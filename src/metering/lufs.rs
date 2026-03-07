@@ -39,10 +39,10 @@ pub fn measure_loudness(
                 .add_frames_f64(chunk)
                 .map_err(|e| PyValueError::new_err(e.to_string()))?;
             if let Ok(m) = meter.loudness_momentary() {
-                momentary.push(round_loudness(m));
+                momentary.push(m);
             }
         }
-        let integrated = round_loudness(meter.loudness_global().unwrap_or(f64::NEG_INFINITY));
+        let integrated = meter.loudness_global().unwrap_or(f64::NEG_INFINITY);
 
         Ok::<_, PyErr>((integrated, momentary))
     })?;
@@ -53,21 +53,4 @@ pub fn measure_loudness(
         integrated,
         momentary,
     })
-}
-
-pub fn round_loudness(f: f64) -> f64 {
-    (f * 10.0).round() / 10.0
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_round_loudness() {
-        assert_eq!(round_loudness(1.04), 1.0);
-        assert_eq!(round_loudness(1.05), 1.1);
-        assert_eq!(round_loudness(-14.15), -14.2);
-        assert_eq!(round_loudness(-14.06), -14.1);
-    }
 }

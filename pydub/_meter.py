@@ -2,22 +2,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypedDict
 
-from .utils import create_extra_required
+from . import _pydub_core
 
 if TYPE_CHECKING:
     from .audio_segment import AudioSegment
-
-try:
-    import audiometer
-except ImportError:
-    audiometer = None
-    pass
-
-
-audiometer_required = create_extra_required(
-    module="audiometer",
-    message="`audiometer` is required to measure meter levels",
-)
 
 
 class Loudness(TypedDict):
@@ -31,10 +19,9 @@ class AudioLevel(TypedDict, total=False):
     loudness: Loudness
 
 
-@audiometer_required
 def measure_rms(audio_segment: AudioSegment) -> float:
     return round(
-        audiometer.measure_rms(
+        _pydub_core.measure_rms(
             samples=audio_segment.get_array_of_samples(),
             channels=audio_segment.channels,
             max_amplitude=audio_segment.max_possible_amplitude,
@@ -44,10 +31,9 @@ def measure_rms(audio_segment: AudioSegment) -> float:
     )
 
 
-@audiometer_required
 def measure_peak(audio_segment: AudioSegment) -> float:
     return round(
-        audiometer.measure_peak(
+        _pydub_core.measure_peak(
             samples=audio_segment.get_array_of_samples(),
             channels=audio_segment.channels,
             max_amplitude=audio_segment.max_possible_amplitude,
@@ -56,13 +42,14 @@ def measure_peak(audio_segment: AudioSegment) -> float:
     )
 
 
-@audiometer_required
 def measure_loudness(audio_segment: AudioSegment) -> Loudness:
+    result = _pydub_core.measure_loudness(
+        samples=audio_segment.get_array_of_samples(),
+        channels=audio_segment.channels,
+        max_amplitude=audio_segment.max_possible_amplitude,
+        sample_rate=audio_segment.frame_rate,
+    )
     return Loudness(
-        **audiometer.measure_loudness(
-            samples=audio_segment.get_array_of_samples(),
-            channels=audio_segment.channels,
-            max_amplitude=audio_segment.max_possible_amplitude,
-            sample_rate=audio_segment.frame_rate,
-        )
+        integrated=round(result.integrated, 1),
+        momentary=[round(m, 1) for m in result.momentary],
     )

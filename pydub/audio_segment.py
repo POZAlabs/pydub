@@ -15,7 +15,7 @@ from collections import namedtuple
 from tempfile import NamedTemporaryFile
 from typing import IO, Any, Literal, Self, TypedDict, Unpack
 
-from . import _compression, _meter
+from . import _compression, _meter, _pydub_core
 from ._subprocess import _ConversionCommand, _PopenParams
 from .exceptions import (
     CouldntDecodeError,
@@ -27,8 +27,6 @@ from .exceptions import (
     TooManyMissingFrames,
 )
 from .logging_utils import log_conversion, log_subprocess_output
-from .overlay import overlay_segments
-from .sample import extend_24bit_to_32bit
 from .utils import (
     _fd_or_path_or_tempfile,
     db_to_float,
@@ -279,7 +277,7 @@ class AudioSegment:
         if self.sample_width != 3:
             return
 
-        self._data = extend_24bit_to_32bit(self._data)
+        self._data = _pydub_core.extend_24bit_to_32bit(self._data)
         self.sample_width = 4
         self.frame_width = self.channels * self.sample_width
 
@@ -397,11 +395,11 @@ class AudioSegment:
         """
         if rarg == 0:
             return self
-        raise TypeError("Gains must be the second addend after the " "AudioSegment")
+        raise TypeError("Gains must be the second addend after the AudioSegment")
 
     def __sub__(self, arg):
         if isinstance(arg, AudioSegment):
-            raise TypeError("AudioSegment objects can't be subtracted from " "each other")
+            raise TypeError("AudioSegment objects can't be subtracted from each other")
         else:
             return self.apply_gain(-arg)
 
@@ -500,7 +498,7 @@ class AudioSegment:
 
         if segs[0].channels != 1:
             raise ValueError(
-                "AudioSegment.from_mono_audiosegments requires all arguments are mono AudioSegment instances"  # noqa: E501
+                "AudioSegment.from_mono_audiosegments requires all arguments are mono AudioSegment instances"
             )
 
         channels = len(segs)
@@ -1291,7 +1289,7 @@ class AudioSegment:
 
         seg1, seg2 = AudioSegment._sync(self, seg)
         position_in_bytes = self._parse_position(position) * seg1.frame_width
-        result = overlay_segments(
+        result = _pydub_core.overlay_segments(
             seg1_data=seg1.raw_data,
             seg2_data=seg2.raw_data,
             sample_width=seg1.sample_width,
@@ -1362,8 +1360,7 @@ class AudioSegment:
         """
         if None not in [duration, end, start]:
             raise TypeError(
-                'Only two of the three arguments, "start", '
-                '"end", and "duration" may be specified'
+                'Only two of the three arguments, "start", "end", and "duration" may be specified'
             )
 
         # no fade == the same audio
@@ -1480,4 +1477,4 @@ class AudioSegment:
         return [(amplitude / max_amplitude) for amplitude in amplitudes]
 
 
-from . import effects  # noqa: E402, F401, F403
+from . import effects  # noqa: E402, F401

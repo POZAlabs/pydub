@@ -11,6 +11,7 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
     "Topic :: Multimedia :: Sound/Audio",
@@ -26,34 +27,22 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-meter = ["audiometer>=0.17.0,<1.0.0"]
 zstd = ["zstandard>=0.23.0"]
 
 [dependency-groups]
 dev = [
     "memray>=1.13.4",
     "memory-profiler>=0.61.0",
-    "Cython>=3.0.2,<3.0.10",
     "pytest>=9.0.2",
     "pytest-benchmark>=5.1.0",
-    "pydub-core",
 ]
 
-[tool.uv.workspace]
-members = ["pydub-core"]
-
-[tool.uv.sources]
-pydub-core = { workspace = true }
-
 [build-system]
-requires = ["setuptools", "Cython>=3.0.2,<3.0.10"]
-build-backend = "setuptools.build_meta"
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
 
-[tool.setuptools]
-include-package-data = true
-
-[tool.setuptools.packages.find]
-include = ["pydub", "pydub.*"]
+[tool.maturin]
+module-name = "pydub._pydub_core"
 
 [tool.ruff]
 target-version = "py311"

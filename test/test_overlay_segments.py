@@ -1,7 +1,7 @@
 import audioop
 import struct
 
-from pydub.overlay import overlay_segments
+from pydub import _pydub_core
 
 
 def _reference_overlay_segments(
@@ -61,7 +61,7 @@ def _make_32bit(*samples):
 
 
 def _assert_match(seg1, seg2, sw, position, times, gain=0):
-    result = overlay_segments(seg1, seg2, sw, position, times, gain)
+    result = _pydub_core.overlay_segments(seg1, seg2, sw, position, times, gain)
     expected = _reference_overlay_segments(seg1, seg2, sw, position, times, gain)
     assert result == expected
 
@@ -147,7 +147,7 @@ def test_position_middle():
 def test_position_past_end():
     seg1 = _make_16bit(1000, 2000, 3000)
     seg2 = _make_16bit(100, 200)
-    result = overlay_segments(seg1, seg2, 2, 100, 1)
+    result = _pydub_core.overlay_segments(seg1, seg2, 2, 100, 1)
     assert result == seg1
 
 

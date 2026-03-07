@@ -35,7 +35,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: uv sync --all-extras
+        run: uv sync
 
       - name: Run tests
-        run: uv run pytest test/ pydub-core/tests/ -v --ignore=pydub-core/tests/bench_overlay.py --ignore=pydub-core/tests/bench_sample.py --ignore=pydub-core/tests/bench_metering.py
+        run: uv run pytest test/ -v

@@ -89,97 +89,49 @@ pub fn overlay_segments<'py>(
         let position = position as usize;
         let seg2_len = seg2_len as usize;
 
+        macro_rules! overlay_loop {
+            ($sample_type:ty, $gain_fn:ident, $mix_fn:ident) => {
+                while (repeat_to_fill || remaining_times > 0)
+                    && current_position < seg1_len_after_pos
+                {
+                    let remaining = (seg1_len_after_pos - current_position) as usize;
+                    let chunk_len = remaining.min(seg2_len);
+                    let num_samples = chunk_len / std::mem::size_of::<$sample_type>();
+                    let offset = position + current_position as usize;
+
+                    let out_slice = unsafe {
+                        std::slice::from_raw_parts_mut(
+                            out_buf.as_mut_ptr().add(offset) as *mut $sample_type,
+                            num_samples,
+                        )
+                    };
+                    let s2_slice = unsafe {
+                        std::slice::from_raw_parts(
+                            seg2_data.as_ptr() as *const $sample_type,
+                            num_samples,
+                        )
+                    };
+
+                    for i in 0..num_samples {
+                        if apply_gain {
+                            out_slice[i] = $mix_fn($gain_fn(out_slice[i], db_factor), s2_slice[i]);
+                        } else {
+                            out_slice[i] = $mix_fn(out_slice[i], s2_slice[i]);
+                        }
+                    }
+
+                    current_position += chunk_len as i32;
+                    if !repeat_to_fill {
+                        remaining_times -= 1;
+                    }
+                }
+            };
+        }
+
         match sample_width {
-            1 => {
-                while (repeat_to_fill || remaining_times > 0)
-                    && current_position < seg1_len_after_pos
-                {
-                    let remaining = (seg1_len_after_pos - current_position) as usize;
-                    let chunk_len = remaining.min(seg2_len);
-                    let num_samples = chunk_len;
-                    let offset = position + current_position as usize;
-
-                    unsafe {
-                        let out_ptr = out_buf.as_mut_ptr().add(offset) as *mut i8;
-                        let s2_ptr = seg2_data.as_ptr() as *const i8;
-
-                        for i in 0..num_samples {
-                            let out_val = *out_ptr.add(i);
-                            let s2_val = *s2_ptr.add(i);
-                            if apply_gain {
-                                *out_ptr.add(i) = mix_8(gain_8(out_val, db_factor), s2_val);
-                            } else {
-                                *out_ptr.add(i) = mix_8(out_val, s2_val);
-                            }
-                        }
-                    }
-
-                    current_position += chunk_len as i32;
-                    if !repeat_to_fill {
-                        remaining_times -= 1;
-                    }
-                }
-            }
-            2 => {
-                while (repeat_to_fill || remaining_times > 0)
-                    && current_position < seg1_len_after_pos
-                {
-                    let remaining = (seg1_len_after_pos - current_position) as usize;
-                    let chunk_len = remaining.min(seg2_len);
-                    let num_samples = chunk_len / 2;
-                    let offset = position + current_position as usize;
-
-                    unsafe {
-                        let out_ptr = out_buf.as_mut_ptr().add(offset) as *mut i16;
-                        let s2_ptr = seg2_data.as_ptr() as *const i16;
-
-                        for i in 0..num_samples {
-                            let out_val = *out_ptr.add(i);
-                            let s2_val = *s2_ptr.add(i);
-                            if apply_gain {
-                                *out_ptr.add(i) = mix_16(gain_16(out_val, db_factor), s2_val);
-                            } else {
-                                *out_ptr.add(i) = mix_16(out_val, s2_val);
-                            }
-                        }
-                    }
-
-                    current_position += chunk_len as i32;
-                    if !repeat_to_fill {
-                        remaining_times -= 1;
-                    }
-                }
-            }
-            4 => {
-                while (repeat_to_fill || remaining_times > 0)
-                    && current_position < seg1_len_after_pos
-                {
-                    let remaining = (seg1_len_after_pos - current_position) as usize;
-                    let chunk_len = remaining.min(seg2_len);
-                    let num_samples = chunk_len / 4;
-                    let offset = position + current_position as usize;
-
-                    unsafe {
-                        let out_ptr = out_buf.as_mut_ptr().add(offset) as *mut i32;
-                        let s2_ptr = seg2_data.as_ptr() as *const i32;
-
-                        for i in 0..num_samples {
-                            let out_val = *out_ptr.add(i);
-                            let s2_val = *s2_ptr.add(i);
-                            if apply_gain {
-                                *out_ptr.add(i) = mix_32(gain_32(out_val, db_factor), s2_val);
-                            } else {
-                                *out_ptr.add(i) = mix_32(out_val, s2_val);
-                            }
-                        }
-                    }
-
-                    current_position += chunk_len as i32;
-                    if !repeat_to_fill {
-                        remaining_times -= 1;
-                    }
-                }
-            }
+            1 => overlay_loop!(i8, gain_8, mix_8),
+            2 => overlay_loop!(i16, gain_16, mix_16),
+            4 => overlay_loop!(i32, gain_32, mix_32),
             _ => unreachable!(),
         }
 

@@ -9,9 +9,15 @@ DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 
 @pytest.fixture
 def drums1():
-    return AudioSegment.from_file(DATA_DIR / "drums1.wav")
+    path = DATA_DIR / "drums1.wav"
+    if not path.exists():
+        pytest.skip(f"{path} not found")
+    return AudioSegment.from_file(path)
 
 
 @pytest.fixture
 def bass1():
-    return AudioSegment.from_file(DATA_DIR / "bass1.wav")
+    path = DATA_DIR / "bass1.wav"
+    if not path.exists():
+        pytest.skip(f"{path} not found")
+    return AudioSegment.from_file(path)

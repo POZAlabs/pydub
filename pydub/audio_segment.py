@@ -15,8 +15,7 @@ from collections import namedtuple
 from tempfile import NamedTemporaryFile
 from typing import IO, Any, Literal, Self, TypedDict, Unpack
 
-from . import _compression, _meter
-from ._pydub_core import extend_24bit_to_32bit, overlay_segments
+from . import _compression, _meter, _pydub_core
 from ._subprocess import _ConversionCommand, _PopenParams
 from .exceptions import (
     CouldntDecodeError,
@@ -278,7 +277,7 @@ class AudioSegment:
         if self.sample_width != 3:
             return
 
-        self._data = extend_24bit_to_32bit(self._data)
+        self._data = _pydub_core.extend_24bit_to_32bit(self._data)
         self.sample_width = 4
         self.frame_width = self.channels * self.sample_width
 
@@ -1290,7 +1289,7 @@ class AudioSegment:
 
         seg1, seg2 = AudioSegment._sync(self, seg)
         position_in_bytes = self._parse_position(position) * seg1.frame_width
-        result = overlay_segments(
+        result = _pydub_core.overlay_segments(
             seg1_data=seg1.raw_data,
             seg2_data=seg2.raw_data,
             sample_width=seg1.sample_width,

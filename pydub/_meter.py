@@ -2,9 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypedDict
 
-from ._pydub_core import measure_loudness as _measure_loudness
-from ._pydub_core import measure_peak as _measure_peak
-from ._pydub_core import measure_rms as _measure_rms
+from . import _pydub_core
 
 if TYPE_CHECKING:
     from .audio_segment import AudioSegment
@@ -23,7 +21,7 @@ class AudioLevel(TypedDict, total=False):
 
 def measure_rms(audio_segment: AudioSegment) -> float:
     return round(
-        _measure_rms(
+        _pydub_core.measure_rms(
             samples=audio_segment.get_array_of_samples(),
             channels=audio_segment.channels,
             max_amplitude=audio_segment.max_possible_amplitude,
@@ -35,7 +33,7 @@ def measure_rms(audio_segment: AudioSegment) -> float:
 
 def measure_peak(audio_segment: AudioSegment) -> float:
     return round(
-        _measure_peak(
+        _pydub_core.measure_peak(
             samples=audio_segment.get_array_of_samples(),
             channels=audio_segment.channels,
             max_amplitude=audio_segment.max_possible_amplitude,
@@ -45,7 +43,7 @@ def measure_peak(audio_segment: AudioSegment) -> float:
 
 
 def measure_loudness(audio_segment: AudioSegment) -> Loudness:
-    result = _measure_loudness(
+    result = _pydub_core.measure_loudness(
         samples=audio_segment.get_array_of_samples(),
         channels=audio_segment.channels,
         max_amplitude=audio_segment.max_possible_amplitude,

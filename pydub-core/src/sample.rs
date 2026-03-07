@@ -14,28 +14,24 @@ pub fn extend_24bit_to_32bit<'py>(py: Python<'py>, data: &[u8]) -> PyResult<Boun
     let num_samples = input_size / 3;
     let output_size = num_samples * 4;
 
-    let result = py.detach(|| {
-        let mut output = vec![0u8; output_size];
-
+    let output = PyBytes::new_with(py, output_size, |out_buf| {
         unsafe {
             let input_ptr = data.as_ptr();
-            let output_ptr = output.as_mut_ptr();
+            let output_ptr = out_buf.as_mut_ptr();
 
             for i in 0..num_samples {
                 let src = input_ptr.add(i * 3);
                 let dst = output_ptr.add(i * 4);
 
-                // Sign extend: if high bit of MSB is set, pad with 0xFF, else 0x00
                 *dst = if *src.add(2) & 0x80 != 0 { 0xFF } else { 0x00 };
-                // Copy 3 bytes
                 std::ptr::copy_nonoverlapping(src, dst.add(1), 3);
             }
         }
 
-        output
-    });
+        Ok(())
+    })?;
 
-    Ok(PyBytes::new(py, &result))
+    Ok(output)
 }
 
 #[cfg(test)]

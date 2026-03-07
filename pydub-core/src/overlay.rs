@@ -81,8 +81,10 @@ pub fn overlay_segments<'py>(
         1.0
     };
 
-    let result = py.detach(|| {
-        let mut result = seg1_data.to_vec();
+    let seg1_len_u = seg1_len as usize;
+    let output = PyBytes::new_with(py, seg1_len_u, |out_buf| {
+        out_buf.copy_from_slice(seg1_data);
+
         let repeat_to_fill = times < 0;
         let mut remaining_times = times;
         let seg1_len_after_pos = seg1_len - position;
@@ -101,7 +103,7 @@ pub fn overlay_segments<'py>(
                     let offset = position + current_position as usize;
 
                     unsafe {
-                        let out_ptr = result.as_mut_ptr().add(offset) as *mut i8;
+                        let out_ptr = out_buf.as_mut_ptr().add(offset) as *mut i8;
                         let s2_ptr = seg2_data.as_ptr() as *const i8;
 
                         for i in 0..num_samples {
@@ -131,7 +133,7 @@ pub fn overlay_segments<'py>(
                     let offset = position + current_position as usize;
 
                     unsafe {
-                        let out_ptr = result.as_mut_ptr().add(offset) as *mut i16;
+                        let out_ptr = out_buf.as_mut_ptr().add(offset) as *mut i16;
                         let s2_ptr = seg2_data.as_ptr() as *const i16;
 
                         for i in 0..num_samples {
@@ -161,7 +163,7 @@ pub fn overlay_segments<'py>(
                     let offset = position + current_position as usize;
 
                     unsafe {
-                        let out_ptr = result.as_mut_ptr().add(offset) as *mut i32;
+                        let out_ptr = out_buf.as_mut_ptr().add(offset) as *mut i32;
                         let s2_ptr = seg2_data.as_ptr() as *const i32;
 
                         for i in 0..num_samples {
@@ -184,10 +186,10 @@ pub fn overlay_segments<'py>(
             _ => unreachable!(),
         }
 
-        result
-    });
+        Ok(())
+    })?;
 
-    Ok(PyBytes::new(py, &result))
+    Ok(output)
 }
 
 #[cfg(test)]

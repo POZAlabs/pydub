@@ -6,6 +6,12 @@ resolution-markers = [
     "python_full_version < '3.13'",
 ]
 
+[manifest]
+members = [
+    "pozalabs-pydub",
+    "pydub-core",
+]
+
 [[package]]
 name = "audiometer"
 version = "0.17.0"
@@ -366,6 +372,7 @@ dev = [
     { name = "cython" },
     { name = "memory-profiler" },
     { name = "memray" },
+    { name = "pydub-core" },
     { name = "pytest" },
 ]
 
@@ -382,6 +389,7 @@ dev = [
     { name = "cython", specifier = ">=3.0.2,<3.0.10" },
     { name = "memory-profiler", specifier = ">=0.61.0" },
     { name = "memray", specifier = ">=1.13.4" },
+    { name = "pydub-core", editable = "pydub-core" },
     { name = "pytest", specifier = ">=9.0.2" },
 ]
 
@@ -412,6 +420,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/b4/90/e2159492b5426be0c1fef7acba807a03511f97c5f86b3caeda6ad92351a7/psutil-7.2.2-cp37-abi3-win_amd64.whl", hash = "sha256:eb7e81434c8d223ec4a219b5fc1c47d0417b12be7ea866e24fb5ad6e84b3d988", size = 137737, upload-time = "2026-01-28T18:15:33.849Z" },
     { url = "https://files.pythonhosted.org/packages/8c/c7/7bb2e321574b10df20cbde462a94e2b71d05f9bbda251ef27d104668306a/psutil-7.2.2-cp37-abi3-win_arm64.whl", hash = "sha256:8c233660f575a5a89e6d4cb65d9f938126312bca76d8fe087b947b3a1aaac9ee", size = 134617, upload-time = "2026-01-28T18:15:36.514Z" },
 ]
+
+[[package]]
+name = "pydub-core"
+version = "0.1.0"
+source = { editable = "pydub-core" }
 
 [[package]]
 name = "pygments"

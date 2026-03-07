@@ -11,17 +11,17 @@ This is a [Pozalabs](https://github.com/Pozalabs) fork of [jiaaro/pydub](https:/
 - Python 3.11+ (upstream supports Python 2.7+)
 - All legacy Python 2 compatibility code has been removed
 
-### Performance (Cython Extensions)
+### Performance (Rust/PyO3 Extensions)
 
-- `overlay.pyx` - Pre-allocated buffer + typed pointer arithmetic replacing audioop.add/mul (3~4x faster with real 24-bit audio)
-- `sample.pyx` - Cython-optimized 24-bit to 32-bit sample extension using direct memory operations
+- `overlay_segments` - Pre-allocated buffer overlay replacing audioop.add/mul (3~4x faster with real 24-bit audio)
+- `extend_24bit_to_32bit` - Optimized 24-bit to 32-bit sample extension using direct memory operations
 - `fade()` - Memory-efficient fade using `memoryview`, with coarse/precise two-path implementation
 - 24-bit `AudioSegment` initialization allocates significantly less memory
 
 ### New Features
 
 - **Compressed audio I/O** - `from_file()` auto-detects and decompresses gzip/zstd files; `export()` accepts an optional `compressor` parameter
-- **Audio level metering** - `measure_audio_level()` for RMS, peak, and LUFS measurement (requires optional `audiometer` dependency)
+- **Audio level metering** - `measure_audio_level()` for RMS, peak, and LUFS measurement
 - **Waveform data** - `get_normalized_amplitudes()` computes normalized amplitude values for waveform visualization
 - **Silent audio generation** - Create silent audio matching the original segment's parameters
 - **Audio processing framework** - Command-based processor architecture for merge, overlay, and format conversion
@@ -34,13 +34,12 @@ This is a [Pozalabs](https://github.com/Pozalabs) fork of [jiaaro/pydub](https:/
 
 ### Build System
 
-- `pyproject.toml` with setuptools backend, managed by uv
-- `setup.py` for Cython extension compilation with `-O3` flag
+- `pyproject.toml` with maturin backend, managed by uv
+- Rust(PyO3) native extension compiled via maturin
 - Wheel distribution via GitHub Actions
 
 ### Optional Dependencies
 
-- `audiometer` (>=0.17.0) - Audio level metering (`pip install pozalabs-pydub[meter]`)
 - `zstandard` (>=0.23.0) - Zstandard compression (`pip install pozalabs-pydub[zstd]`)
 
 For general usage, API documentation, and ffmpeg setup, see the [upstream README](https://github.com/jiaaro/pydub#readme).

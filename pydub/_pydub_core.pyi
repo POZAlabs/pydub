@@ -1,4 +1,4 @@
-from array import array
+import array
 
 def overlay_segments(
     seg1_data: bytes,
@@ -10,13 +10,13 @@ def overlay_segments(
 ) -> bytes: ...
 def extend_24bit_to_32bit(data: bytes) -> bytes: ...
 def measure_rms(
-    samples: array[int],
+    samples: array.array[int],
     channels: int,
     max_amplitude: float,
     sample_rate: int,
 ) -> float: ...
 def measure_peak(
-    samples: array[int],
+    samples: array.array[int],
     channels: int,
     max_amplitude: float,
 ) -> float: ...
@@ -28,7 +28,7 @@ class Loudness:
     def momentary(self) -> list[float]: ...
 
 def measure_loudness(
-    samples: array[int],
+    samples: array.array[int],
     channels: int,
     max_amplitude: float,
     sample_rate: int,

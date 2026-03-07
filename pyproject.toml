@@ -35,7 +35,15 @@ dev = [
     "memory-profiler>=0.61.0",
     "Cython>=3.0.2,<3.0.10",
     "pytest>=9.0.2",
+    "pytest-benchmark>=5.1.0",
+    "pydub-core",
 ]
+
+[tool.uv.workspace]
+members = ["pydub-core"]
+
+[tool.uv.sources]
+pydub-core = { workspace = true }
 
 [build-system]
 requires = ["setuptools", "Cython>=3.0.2,<3.0.10"]
@@ -45,7 +53,7 @@ build-backend = "setuptools.build_meta"
 include-package-data = true
 
 [tool.setuptools.packages.find]
-include = ["pydub*"]
+include = ["pydub", "pydub.*"]
 
 [tool.ruff]
 target-version = "py311"

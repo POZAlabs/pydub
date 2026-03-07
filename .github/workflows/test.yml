@@ -28,6 +28,8 @@ jobs:
       - uses: FedericoCarboni/setup-ffmpeg@v3
         id: setup-ffmpeg
 
+      - uses: dtolnay/rust-toolchain@stable
+
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
@@ -36,4 +38,4 @@ jobs:
         run: uv sync --all-extras
 
       - name: Run tests
-        run: uv run pytest test/ -v
+        run: uv run pytest test/ pydub-core/tests/ -v --ignore=pydub-core/tests/bench_overlay.py --ignore=pydub-core/tests/bench_sample.py --ignore=pydub-core/tests/bench_metering.py

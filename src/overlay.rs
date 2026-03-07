@@ -2,35 +2,32 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
 
-fn gain_8(sample: i8, factor: f64) -> i8 {
-    let val = (sample as f64 * factor) as i16;
-    val.clamp(i8::MIN as i16, i8::MAX as i16) as i8
+macro_rules! define_gain {
+    ($fn_name:ident, $sample_type:ty, $wider_type:ty) => {
+        fn $fn_name(sample: $sample_type, factor: f64) -> $sample_type {
+            let val = (sample as f64 * factor) as $wider_type;
+            val.clamp(<$sample_type>::MIN as $wider_type, <$sample_type>::MAX as $wider_type)
+                as $sample_type
+        }
+    };
 }
 
-fn mix_8(a: i8, b: i8) -> i8 {
-    let val = a as i16 + b as i16;
-    val.clamp(i8::MIN as i16, i8::MAX as i16) as i8
+macro_rules! define_mix {
+    ($fn_name:ident, $sample_type:ty, $wider_type:ty) => {
+        fn $fn_name(a: $sample_type, b: $sample_type) -> $sample_type {
+            let val = a as $wider_type + b as $wider_type;
+            val.clamp(<$sample_type>::MIN as $wider_type, <$sample_type>::MAX as $wider_type)
+                as $sample_type
+        }
+    };
 }
 
-fn gain_16(sample: i16, factor: f64) -> i16 {
-    let val = (sample as f64 * factor) as i32;
-    val.clamp(i16::MIN as i32, i16::MAX as i32) as i16
-}
-
-fn mix_16(a: i16, b: i16) -> i16 {
-    let val = a as i32 + b as i32;
-    val.clamp(i16::MIN as i32, i16::MAX as i32) as i16
-}
-
-fn gain_32(sample: i32, factor: f64) -> i32 {
-    let val = (sample as f64 * factor) as i64;
-    val.clamp(i32::MIN as i64, i32::MAX as i64) as i32
-}
-
-fn mix_32(a: i32, b: i32) -> i32 {
-    let val = a as i64 + b as i64;
-    val.clamp(i32::MIN as i64, i32::MAX as i64) as i32
-}
+define_gain!(gain_8, i8, i16);
+define_gain!(gain_16, i16, i32);
+define_gain!(gain_32, i32, i64);
+define_mix!(mix_8, i8, i16);
+define_mix!(mix_16, i16, i32);
+define_mix!(mix_32, i32, i64);
 
 #[pyfunction]
 #[pyo3(signature = (seg1_data, seg2_data, sample_width, position, times, gain_during_overlay=0))]

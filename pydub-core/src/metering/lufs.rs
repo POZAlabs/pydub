@@ -27,12 +27,9 @@ pub fn measure_loudness(
     sample_rate: u32,
 ) -> PyResult<Loudness> {
     let (integrated, momentary_values) = py.detach(|| {
-        let mut meter = ebur128::EbuR128::new(
-            channels,
-            sample_rate,
-            ebur128::Mode::I | ebur128::Mode::M,
-        )
-        .map_err(|e| PyValueError::new_err(e.to_string()))?;
+        let mut meter =
+            ebur128::EbuR128::new(channels, sample_rate, ebur128::Mode::I | ebur128::Mode::M)
+                .map_err(|e| PyValueError::new_err(e.to_string()))?;
 
         let samples_in_100ms = (sample_rate as usize + 5) / 10;
         let chunk_size = channels as usize * samples_in_100ms;

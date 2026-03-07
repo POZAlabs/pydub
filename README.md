@@ -13,10 +13,9 @@ This is a [Pozalabs](https://github.com/Pozalabs) fork of [jiaaro/pydub](https:/
 
 ### Performance (Rust/PyO3 Extensions)
 
-- `overlay_segments` - Pre-allocated buffer overlay replacing audioop.add/mul (3~4x faster with real 24-bit audio)
-- `extend_24bit_to_32bit` - Optimized 24-bit to 32-bit sample extension using direct memory operations
+- `overlay_segments` - Pre-allocated buffer overlay replacing audioop.add/mul (16-bit 4~5x, 32-bit 11~16x faster)
+- `extend_24bit_to_32bit` - Zero-copy 24-bit to 32-bit sample extension via direct PyBytes allocation (~400x faster than pure Python)
 - `fade()` - Memory-efficient fade using `memoryview`, with coarse/precise two-path implementation
-- 24-bit `AudioSegment` initialization allocates significantly less memory
 
 ### New Features
 

@@ -1,3 +1,0 @@
-import array
-
-def extend_24bit_to_32bit(data: bytes) -> array.array: ...

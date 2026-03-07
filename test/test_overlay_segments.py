@@ -1,7 +1,7 @@
 import audioop
 import struct
 
-from pydub.overlay import overlay_segments
+from pydub._pydub_core import overlay_segments
 
 
 def _reference_overlay_segments(

@@ -6,34 +6,6 @@ resolution-markers = [
     "python_full_version < '3.13'",
 ]
 
-[manifest]
-members = [
-    "pozalabs-pydub",
-    "pydub-core",
-]
-
-[[package]]
-name = "audiometer"
-version = "0.17.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/8e/f6/d74e5ab96b2a09aa1f0aedcb6f69a2b83db0805b8185fc1e28588c90b617/audiometer-0.17.0.tar.gz", hash = "sha256:1a98fa51e6504bdeff161514b7dfdd87662f53a034fa0a036fe97173f7fb65e3", size = 251859, upload-time = "2025-01-07T02:07:40.089Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e0/05/6f16942a41b7b3bf09e8228ae529b57a61239ced25136b132d2ec49529e6/audiometer-0.17.0-cp311-cp311-macosx_10_12_x86_64.whl", hash = "sha256:ebd0cddbbe600ed7ace2177fc3ab7e2a84c1b0f1ee86bfbe64e0d8f685b8b75e", size = 254449, upload-time = "2025-01-07T02:07:05.734Z" },
-    { url = "https://files.pythonhosted.org/packages/8c/31/9b7008ad25d2ca822f1ca2ff4745ad049e12fc025f75d65b542bd45bdbea/audiometer-0.17.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:208e5e5af9a8bd71ca1586b634510f0cef546cf0e74e9a63af224e337fcdc78c", size = 248867, upload-time = "2025-01-07T02:07:07.984Z" },
-    { url = "https://files.pythonhosted.org/packages/6f/06/476b5179db5ac7d11bf63bdc1639a75e3f411213ac378b0c7c8726ffe35a/audiometer-0.17.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:252dde1344a0363009c92665e25455d3784e0928707f8a490b11c32875171e18", size = 280440, upload-time = "2025-01-07T02:07:10.214Z" },
-    { url = "https://files.pythonhosted.org/packages/02/2f/6bc5df3cf919c6a61e63365afb9a02938eb744748b29825b691d0642d302/audiometer-0.17.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f5bac08b48e48d5e571fb9c04920b36d57fdbf9323250b8a668fb45c7f07e6e2", size = 284417, upload-time = "2025-01-07T02:07:12.894Z" },
-    { url = "https://files.pythonhosted.org/packages/c5/4b/f4df98843925d2471ea18b4ede96392ccab4d4eb9af253f9af0884dc5f64/audiometer-0.17.0-cp311-cp311-win_amd64.whl", hash = "sha256:2d74d9b971c93e65b30697fca9a1ac936a20406a2cee21dd07615f25e00ad23f", size = 148773, upload-time = "2025-01-07T02:07:15.1Z" },
-    { url = "https://files.pythonhosted.org/packages/2b/a2/418819254a5760fa9bd41304797bfb5bfb01d2ca9868ae120d5b4194af8c/audiometer-0.17.0-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:c909907bc426784ec2984423271165368bd6586f18c6ac10840d7aa076da6c71", size = 253849, upload-time = "2025-01-07T02:07:16.33Z" },
-    { url = "https://files.pythonhosted.org/packages/e8/97/9a8e0b70d0d46324061db90c009f66510349da7a71399a40ce64d897fd88/audiometer-0.17.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:8872f04e6f3889efdf92a0d0e7b04966f1ed181e1b832f918beeb7a142f5a5f1", size = 247903, upload-time = "2025-01-07T02:07:17.637Z" },
-    { url = "https://files.pythonhosted.org/packages/3c/d7/580911b7816eda8e2c05056cf47e6bc86ceefe5bd9f620d4ece6fc91d8be/audiometer-0.17.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:5f8298aada2bcdd083dba26a9db5eededbd16573a59ea49d7a8781810bf7bce4", size = 280095, upload-time = "2025-01-07T02:07:19.886Z" },
-    { url = "https://files.pythonhosted.org/packages/bb/51/566a01c1c62be9b7f35100d08369ce992822f1ded681289e1c584c6368dc/audiometer-0.17.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0b307cc0335fe5e73a308c38b5f61303f7344e909ea09c77da866dc3b6bd3c11", size = 284172, upload-time = "2025-01-07T02:07:21.002Z" },
-    { url = "https://files.pythonhosted.org/packages/35/46/2c2ba3c1bd537d933a8686497011729636b76d286dfc247bd12054c790ab/audiometer-0.17.0-cp312-cp312-win_amd64.whl", hash = "sha256:9b723ed14a8e5584c16f3f1974870386b2d869208fb569e483a07ea63e11ca26", size = 149129, upload-time = "2025-01-07T02:07:22.175Z" },
-    { url = "https://files.pythonhosted.org/packages/e6/a8/235df2820ac574e78c2075076e269d8de4779bfded1fbea5e6df28e006ea/audiometer-0.17.0-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:d6f4b89c2516150a3ccd2dac0305d1d0f768ba68e4140f2c6b875b8179bf6933", size = 253848, upload-time = "2025-01-07T02:07:23.298Z" },
-    { url = "https://files.pythonhosted.org/packages/ab/0f/0691cdb82f6a42b5f4fcc7eea8d806e1d66c0dee2ba8a10e4885565870d5/audiometer-0.17.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:f526b17e0b758088da237a2e6d1d2900bfc9fd68fbae92305c7ff5cbd09836cf", size = 247906, upload-time = "2025-01-07T02:07:24.618Z" },
-    { url = "https://files.pythonhosted.org/packages/32/67/b0cea0d0d2f035369a99926d756a2859d2c3526c360f6652c4b5518c1f68/audiometer-0.17.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c7992aa8f6c38636b18ac07de7dc22e1ea233e0f8f1195da4c9b3ba1c5c7c5d7", size = 280095, upload-time = "2025-01-07T02:07:26.878Z" },
-    { url = "https://files.pythonhosted.org/packages/ef/f9/9aa4c569a4d7743b98815ace9f69732f257c744848174362be5171dbc87b/audiometer-0.17.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:153728cb94fbba872421e90670c05bd722687b32d12fd605f59560491c34db91", size = 284172, upload-time = "2025-01-07T02:07:29.839Z" },
-]
-
 [[package]]
 name = "audioop-lts"
 version = "0.2.2"
@@ -97,31 +69,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/d8/53/6f443c9a4a8358a93a6792e2acffb9d9d5cb0a5cfd8802644b7b1c9a02e4/colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44", size = 27697, upload-time = "2022-10-25T02:36:22.414Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221/colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6", size = 25335, upload-time = "2022-10-25T02:36:20.889Z" },
-]
-
-[[package]]
-name = "cython"
-version = "3.0.9"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/0e/17/c5b026cea7a634ee3b8950a7be16aaa49deeb3b9824ba5e81c13ac26f3c4/Cython-3.0.9.tar.gz", hash = "sha256:a2d354f059d1f055d34cfaa62c5b68bc78ac2ceab6407148d47fb508cf3ba4f3", size = 2748462, upload-time = "2024-03-05T19:34:50.144Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d7/40/ab311db246d44334eefbe5b52729da959088ff213b4f8e3a97b613f37ace/Cython-3.0.9-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:35e6665a20d6b8a152d72b7fd87dbb2af6bb6b18a235b71add68122d594dbd41", size = 3120018, upload-time = "2024-03-05T19:41:16.127Z" },
-    { url = "https://files.pythonhosted.org/packages/55/8d/961dfe1c49ee7fb8b68c9a5fee76084f84779ad93bc6a81042735af99ed4/Cython-3.0.9-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f92f4960c40ad027bd8c364c50db11104eadc59ffeb9e5b7f605ca2f05946e20", size = 3440167, upload-time = "2024-03-05T19:41:18.921Z" },
-    { url = "https://files.pythonhosted.org/packages/53/19/a8a35b1629999862573089793ed916f0bd93a37e8ad997f7dd683f202138/Cython-3.0.9-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:38df37d0e732fbd9a2fef898788492e82b770c33d1e4ed12444bbc8a3b3f89c0", size = 3595938, upload-time = "2024-03-05T19:41:21.911Z" },
-    { url = "https://files.pythonhosted.org/packages/17/9b/072ace4faf1bdd9f48340192cd4f202470dadf22da720ac02e088f91ebe5/Cython-3.0.9-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:ad7fd88ebaeaf2e76fd729a8919fae80dab3d6ac0005e28494261d52ff347a8f", size = 3640255, upload-time = "2024-03-05T19:41:25.198Z" },
-    { url = "https://files.pythonhosted.org/packages/15/18/980ebc300e98bd57d74461b00a45d35834230ab27ea970fb3390502aa715/Cython-3.0.9-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:1365d5f76bf4d19df3d19ce932584c9bb76e9fb096185168918ef9b36e06bfa4", size = 3461194, upload-time = "2024-03-05T19:41:28.334Z" },
-    { url = "https://files.pythonhosted.org/packages/ac/1f/9acb4d193b7e691500b8709947995687b2645880a021b293da6e2f6e2ece/Cython-3.0.9-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:c232e7f279388ac9625c3e5a5a9f0078a9334959c5d6458052c65bbbba895e1e", size = 3617883, upload-time = "2024-03-05T19:41:32.124Z" },
-    { url = "https://files.pythonhosted.org/packages/d5/c7/f266dbd4a7e1b7bed526068dc7ef5aa20c88ea6f68acf647ed20b09eb3c1/Cython-3.0.9-cp311-cp311-win32.whl", hash = "sha256:357e2fad46a25030b0c0496487e01a9dc0fdd0c09df0897f554d8ba3c1bc4872", size = 2576117, upload-time = "2024-03-05T19:41:34.894Z" },
-    { url = "https://files.pythonhosted.org/packages/20/50/638cbeb5b202b39d0605f6170fe25ed75287152827b0282d64135995b32b/Cython-3.0.9-cp311-cp311-win_amd64.whl", hash = "sha256:1315aee506506e8d69cf6631d8769e6b10131fdcc0eb66df2698f2a3ddaeeff2", size = 2787366, upload-time = "2024-03-05T19:41:38.571Z" },
-    { url = "https://files.pythonhosted.org/packages/be/67/6a1316e4b3201b44d245873f62395bd8ea7d181c4b6b2d43fe7da486bf61/Cython-3.0.9-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:157973807c2796addbed5fbc4d9c882ab34bbc60dc297ca729504901479d5df7", size = 3142273, upload-time = "2024-03-05T19:41:42.311Z" },
-    { url = "https://files.pythonhosted.org/packages/40/e2/e664dea62ce17410519ab7a270f8244a8544e0b2a2c11336229f63fa3cb8/Cython-3.0.9-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:00b105b5d050645dd59e6767bc0f18b48a4aa11c85f42ec7dd8181606f4059e3", size = 3343722, upload-time = "2024-03-05T19:41:45.913Z" },
-    { url = "https://files.pythonhosted.org/packages/6c/72/1b427f76e14e486760ac57639faf4389f451e2499c3d7cc14acf5ffdd363/Cython-3.0.9-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ac5536d09bef240cae0416d5a703d298b74c7bbc397da803ac9d344e732d4369", size = 3514630, upload-time = "2024-03-05T19:41:49.722Z" },
-    { url = "https://files.pythonhosted.org/packages/3e/5e/1ce28e8d1316cadd3939ab2fb3764cd4d16b6a4844c4648e7cf7e31347e4/Cython-3.0.9-cp312-cp312-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:09c44501d476d16aaa4cbc29c87f8c0f54fc20e69b650d59cbfa4863426fc70c", size = 3577811, upload-time = "2024-03-05T19:41:53.18Z" },
-    { url = "https://files.pythonhosted.org/packages/ec/e6/1b062f6de5c1aed2c4874e0641f0553072d47a41c1d31e211759fed51446/Cython-3.0.9-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:cc9c3b9f20d8e298618e5ccd32083ca386e785b08f9893fbec4c50b6b85be772", size = 3359693, upload-time = "2024-03-05T19:41:56.848Z" },
-    { url = "https://files.pythonhosted.org/packages/ba/ca/0b7cc2ee2980a21ac3160b8c8e2a4d2395902a04f85dc9da7e29e0e8d637/Cython-3.0.9-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:a30d96938c633e3ec37000ac3796525da71254ef109e66bdfd78f29891af6454", size = 3526514, upload-time = "2024-03-05T19:42:00.423Z" },
-    { url = "https://files.pythonhosted.org/packages/96/a9/47fdb1b8ea66ff7737908b927bafc714536f15834e0a843876ec75334060/Cython-3.0.9-cp312-cp312-win32.whl", hash = "sha256:757ca93bdd80702546df4d610d2494ef2e74249cac4d5ba9464589fb464bd8a3", size = 2606222, upload-time = "2024-03-05T19:42:03.831Z" },
-    { url = "https://files.pythonhosted.org/packages/d5/14/f5958c24126b46b151041fda498ef06e0ec527b5cec21fe4b6e9296e547d/Cython-3.0.9-cp312-cp312-win_amd64.whl", hash = "sha256:1dc320a9905ab95414013f6de805efbff9e17bb5fb3b90bbac533f017bec8136", size = 2794275, upload-time = "2024-03-05T19:42:06.493Z" },
-    { url = "https://files.pythonhosted.org/packages/fc/84/5748f255f1689c95cf8dd0f2789480f7261ec0c82880a6a1f4daead6894d/Cython-3.0.9-py2.py3-none-any.whl", hash = "sha256:bf96417714353c5454c2e3238fca9338599330cf51625cdc1ca698684465646f", size = 1169396, upload-time = "2024-03-05T19:34:43.493Z" },
 ]
 
 [[package]]
@@ -360,37 +307,29 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
-meter = [
-    { name = "audiometer" },
-]
 zstd = [
     { name = "zstandard" },
 ]
 
 [package.dev-dependencies]
 dev = [
-    { name = "cython" },
     { name = "memory-profiler" },
     { name = "memray" },
-    { name = "pydub-core" },
     { name = "pytest" },
     { name = "pytest-benchmark" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "audiometer", marker = "extra == 'meter'", specifier = ">=0.17.0,<1.0.0" },
     { name = "audioop-lts", marker = "python_full_version >= '3.13'", specifier = ">=0.2.1" },
     { name = "zstandard", marker = "extra == 'zstd'", specifier = ">=0.23.0" },
 ]
-provides-extras = ["meter", "zstd"]
+provides-extras = ["zstd"]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "cython", specifier = ">=3.0.2,<3.0.10" },
     { name = "memory-profiler", specifier = ">=0.61.0" },
     { name = "memray", specifier = ">=1.13.4" },
-    { name = "pydub-core", editable = "pydub-core" },
     { name = "pytest", specifier = ">=9.0.2" },
     { name = "pytest-benchmark", specifier = ">=5.1.0" },
 ]
@@ -431,21 +370,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/37/a8/d832f7293ebb21690
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e0/a9/023730ba63db1e494a271cb018dcd361bd2c917ba7004c3e49d5daf795a2/py_cpuinfo-9.0.0-py3-none-any.whl", hash = "sha256:859625bc251f64e21f077d099d4162689c762b5d6a4c3c97553d56241c9674d5", size = 22335, upload-time = "2022-10-25T20:38:27.636Z" },
 ]
-
-[[package]]
-name = "pydub-core"
-version = "0.1.0"
-source = { editable = "pydub-core" }
-
-[package.dev-dependencies]
-dev = [
-    { name = "pytest-benchmark" },
-]
-
-[package.metadata]
-
-[package.metadata.requires-dev]
-dev = [{ name = "pytest-benchmark", specifier = ">=5.1.0" }]
 
 [[package]]
 name = "pygments"

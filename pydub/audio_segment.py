@@ -16,6 +16,7 @@ from tempfile import NamedTemporaryFile
 from typing import IO, Any, Literal, Self, TypedDict, Unpack
 
 from . import _compression, _meter
+from ._pydub_core import extend_24bit_to_32bit, overlay_segments
 from ._subprocess import _ConversionCommand, _PopenParams
 from .exceptions import (
     CouldntDecodeError,
@@ -27,8 +28,6 @@ from .exceptions import (
     TooManyMissingFrames,
 )
 from .logging_utils import log_conversion, log_subprocess_output
-from .overlay import overlay_segments
-from .sample import extend_24bit_to_32bit
 from .utils import (
     _fd_or_path_or_tempfile,
     db_to_float,
@@ -397,11 +396,11 @@ class AudioSegment:
         """
         if rarg == 0:
             return self
-        raise TypeError("Gains must be the second addend after the " "AudioSegment")
+        raise TypeError("Gains must be the second addend after the AudioSegment")
 
     def __sub__(self, arg):
         if isinstance(arg, AudioSegment):
-            raise TypeError("AudioSegment objects can't be subtracted from " "each other")
+            raise TypeError("AudioSegment objects can't be subtracted from each other")
         else:
             return self.apply_gain(-arg)
 
@@ -500,7 +499,7 @@ class AudioSegment:
 
         if segs[0].channels != 1:
             raise ValueError(
-                "AudioSegment.from_mono_audiosegments requires all arguments are mono AudioSegment instances"  # noqa: E501
+                "AudioSegment.from_mono_audiosegments requires all arguments are mono AudioSegment instances"
             )
 
         channels = len(segs)
@@ -1362,8 +1361,7 @@ class AudioSegment:
         """
         if None not in [duration, end, start]:
             raise TypeError(
-                'Only two of the three arguments, "start", '
-                '"end", and "duration" may be specified'
+                'Only two of the three arguments, "start", "end", and "duration" may be specified'
             )
 
         # no fade == the same audio
@@ -1480,4 +1478,4 @@ class AudioSegment:
         return [(amplitude / max_amplitude) for amplitude in amplitudes]
 
 
-from . import effects  # noqa: E402, F401, F403
+from . import effects  # noqa: E402, F401

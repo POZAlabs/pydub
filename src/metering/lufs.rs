@@ -1,4 +1,4 @@
-use super::sample::{cast_samples, validate_data, Sample};
+use super::sample::{Sample, cast_samples, validate_data};
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::types::PyList;

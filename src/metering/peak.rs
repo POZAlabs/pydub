@@ -1,4 +1,4 @@
-use super::sample::{cast_samples, validate_data, Sample};
+use super::sample::{Sample, cast_samples, validate_data};
 use crate::utils::ratio_to_db;
 use pyo3::prelude::*;
 
@@ -18,12 +18,7 @@ fn compute_peak<T: Sample>(samples: &[T], channels: usize) -> f64 {
 }
 
 #[pyfunction]
-pub fn measure_peak(
-    py: Python,
-    data: &[u8],
-    sample_width: u8,
-    channels: u32,
-) -> PyResult<f64> {
+pub fn measure_peak(py: Python, data: &[u8], sample_width: u8, channels: u32) -> PyResult<f64> {
     validate_data(data, sample_width)?;
     let channels = channels as usize;
     let ptr = data.as_ptr() as usize;

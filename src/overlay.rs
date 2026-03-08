@@ -6,8 +6,10 @@ macro_rules! define_gain {
     ($fn_name:ident, $sample_type:ty, $wider_type:ty) => {
         fn $fn_name(sample: $sample_type, factor: f64) -> $sample_type {
             let val = (sample as f64 * factor) as $wider_type;
-            val.clamp(<$sample_type>::MIN as $wider_type, <$sample_type>::MAX as $wider_type)
-                as $sample_type
+            val.clamp(
+                <$sample_type>::MIN as $wider_type,
+                <$sample_type>::MAX as $wider_type,
+            ) as $sample_type
         }
     };
 }
@@ -16,8 +18,10 @@ macro_rules! define_mix {
     ($fn_name:ident, $sample_type:ty, $wider_type:ty) => {
         fn $fn_name(a: $sample_type, b: $sample_type) -> $sample_type {
             let val = a as $wider_type + b as $wider_type;
-            val.clamp(<$sample_type>::MIN as $wider_type, <$sample_type>::MAX as $wider_type)
-                as $sample_type
+            val.clamp(
+                <$sample_type>::MIN as $wider_type,
+                <$sample_type>::MAX as $wider_type,
+            ) as $sample_type
         }
     };
 }

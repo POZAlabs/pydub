@@ -1,4 +1,4 @@
-use super::sample::{cast_samples, validate_data, Sample};
+use super::sample::{Sample, cast_samples, validate_data};
 use crate::utils::ratio_to_db;
 use pyo3::prelude::*;
 

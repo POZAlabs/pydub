@@ -3,7 +3,6 @@ use pyo3::prelude::*;
 mod metering;
 mod overlay;
 mod sample;
-pub(crate) mod types;
 pub(crate) mod utils;
 
 #[pymodule]

@@ -22,9 +22,9 @@ class AudioLevel(TypedDict, total=False):
 def measure_rms(audio_segment: AudioSegment) -> float:
     return round(
         _pydub_core.measure_rms(
-            samples=audio_segment.get_array_of_samples(),
+            data=audio_segment.raw_data,
+            sample_width=audio_segment.sample_width,
             channels=audio_segment.channels,
-            max_amplitude=audio_segment.max_possible_amplitude,
             sample_rate=audio_segment.frame_rate,
         ),
         1,
@@ -34,9 +34,9 @@ def measure_rms(audio_segment: AudioSegment) -> float:
 def measure_peak(audio_segment: AudioSegment) -> float:
     return round(
         _pydub_core.measure_peak(
-            samples=audio_segment.get_array_of_samples(),
+            data=audio_segment.raw_data,
+            sample_width=audio_segment.sample_width,
             channels=audio_segment.channels,
-            max_amplitude=audio_segment.max_possible_amplitude,
         ),
         1,
     )
@@ -44,9 +44,9 @@ def measure_peak(audio_segment: AudioSegment) -> float:
 
 def measure_loudness(audio_segment: AudioSegment) -> Loudness:
     result = _pydub_core.measure_loudness(
-        samples=audio_segment.get_array_of_samples(),
+        data=audio_segment.raw_data,
+        sample_width=audio_segment.sample_width,
         channels=audio_segment.channels,
-        max_amplitude=audio_segment.max_possible_amplitude,
         sample_rate=audio_segment.frame_rate,
     )
     return Loudness(

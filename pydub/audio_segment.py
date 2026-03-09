@@ -12,8 +12,9 @@ import subprocess
 import sys
 import wave
 from collections import namedtuple
+from collections.abc import Generator
 from tempfile import NamedTemporaryFile
-from typing import IO, Any, Literal, Self, TypedDict, Unpack
+from typing import IO, Any, Literal, Self, TypedDict, Unpack, overload
 
 from . import _compression, _meter, _pydub_core
 from ._subprocess import _ConversionCommand, _PopenParams
@@ -323,11 +324,17 @@ class AudioSegment:
     def __iter__(self):
         return (self[i] for i in range(len(self)))
 
-    def __getitem__(self, millisecond):
+    @overload
+    def __getitem__(self, millisecond: int) -> Self: ...
+    @overload
+    def __getitem__(self, millisecond: slice) -> Self | Generator[Self, None, None]: ...
+
+    def __getitem__(self, millisecond: int | slice) -> Self | Generator[Self, None, None]:
         if isinstance(millisecond, slice):
             if millisecond.step:
                 return (
-                    self[i : i + millisecond.step] for i in range(*millisecond.indices(len(self)))
+                    self._get_segment(i, i + millisecond.step)
+                    for i in range(*millisecond.indices(len(self)))
                 )
 
             start = millisecond.start if millisecond.start is not None else 0
@@ -339,6 +346,9 @@ class AudioSegment:
             start = millisecond
             end = millisecond + 1
 
+        return self._get_segment(start=start, end=end)
+
+    def _get_segment(self, start: int, end: int) -> Self:
         start = self._parse_position(start) * self.frame_width
         end = self._parse_position(end) * self.frame_width
         data = self._data[start:end]
@@ -349,9 +359,7 @@ class AudioSegment:
         if missing_frames:
             if missing_frames > self.frame_count(ms=2):
                 raise TooManyMissingFrames(
-                    "You should never be filling in "
-                    "   more than 2 ms with silence here, "
-                    "missing frames: %s" % missing_frames
+                    f"You should never be filling in more than 2 ms with silence here, missing frames: {missing_frames}"
                 )
             silence = audioop.mul(data[: self.frame_width], self.sample_width, 0)
             data += silence * missing_frames

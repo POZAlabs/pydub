@@ -1,17 +1,6 @@
 import io
-from unittest.mock import patch
 
 from pydub._compression import Compressor, is_compressed
-
-
-def test_is_compressed_return_false_when_optional_dependency_not_installed():
-    non_compressed_stream = io.BytesIO(b"\x00\x00\x00\x00")
-
-    with patch.dict("sys.modules", {"zstandard": None}):
-        result, compressor = is_compressed(non_compressed_stream)
-
-    assert result is False
-    assert compressor is None
 
 
 def test_is_compressed_detect_gzip():
@@ -21,6 +10,15 @@ def test_is_compressed_detect_gzip():
 
     assert result is True
     assert compressor == Compressor.GZIP
+
+
+def test_is_compressed_detect_zstd():
+    zstd_stream = io.BytesIO(b"\x28\xb5\x2f\xfd" + b"\x00" * 10)
+
+    result, compressor = is_compressed(zstd_stream)
+
+    assert result is True
+    assert compressor == Compressor.ZSTD
 
 
 def test_is_compressed_return_false_for_non_compressed_stream():

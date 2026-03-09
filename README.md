@@ -37,9 +37,9 @@ This is a [Pozalabs](https://github.com/Pozalabs) fork of [jiaaro/pydub](https:/
 - Rust(PyO3) native extension compiled via maturin
 - Wheel distribution via GitHub Actions
 
-### Optional Dependencies
+### Dependencies
 
-- `zstandard` (>=0.23.0) - Zstandard compression (`pip install pozalabs-pydub[zstd]`)
+- `backports.zstd` (>=1.3.0) - Zstandard compression (Python <3.14, stdlib `compression.zstd` on 3.14+)
 
 For general usage, API documentation, and ffmpeg setup, see the [upstream README](https://github.com/jiaaro/pydub#readme).
 

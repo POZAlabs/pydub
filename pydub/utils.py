@@ -9,8 +9,6 @@ import subprocess
 import sys
 import tempfile as _tempfile
 import warnings
-from collections.abc import Callable
-from typing import Any, ParamSpec, TypeVar
 
 FRAME_WIDTHS = {
     8: 1,
@@ -412,21 +410,3 @@ def ms_to_stereo(audio_segment):
         channel[0].overlay(channel[1].invert_phase()) - 3,
     ]
     return AudioSegment.from_mono_audiosegments(channel[0], channel[1])
-
-
-P = ParamSpec("P")
-T = TypeVar("T")
-
-
-def create_extra_required(module: Any | None, message: str) -> Callable[[Callable[P, T]], T]:
-    def decorator(func: Callable[P, T]) -> T:
-        @functools.wraps(func)
-        def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
-            if module is None:
-                raise ImportError(message)
-
-            return func(*args, **kwargs)
-
-        return wrapper
-
-    return decorator

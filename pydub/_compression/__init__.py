@@ -14,9 +14,9 @@ class Compressor(enum.StrEnum):
     ZSTD = enum.auto()
 
 
-def compress(compressor: Compressor, content: bytes, **kwargs) -> bytes:
+def compress(compressor: Compressor, content: bytes) -> bytes:
     module = importlib.import_module(f".{compressor}", package="pydub._compression")
-    return module.compress(content, **kwargs)
+    return module.compress(content)
 
 
 def decompress(compressor: Compressor, content: bytes) -> bytes:

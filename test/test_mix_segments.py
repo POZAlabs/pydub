@@ -1,6 +1,5 @@
 import audioop
 import struct
-import time
 from pathlib import Path
 
 import pytest
@@ -146,29 +145,3 @@ def test_mix_all_wav_files():
     result = AudioSegment.mix(*segs)
     expected_len = max(len(s) for s in segs)
     assert len(result) == expected_len
-
-
-def test_mix_performance():
-    wav_files = sorted(DATA_DIR.glob("*.wav"))
-    segs = [AudioSegment.from_file(f) for f in wav_files]
-    n_runs = 5
-
-    times_overlay = []
-    for _ in range(n_runs):
-        start = time.perf_counter()
-        result = segs[0]
-        for seg in segs[1:]:
-            result = result.overlay(seg, position=0)
-        times_overlay.append(time.perf_counter() - start)
-
-    times_mix = []
-    for _ in range(n_runs):
-        start = time.perf_counter()
-        result = AudioSegment.mix(*segs)
-        times_mix.append(time.perf_counter() - start)
-
-    avg_overlay = sum(times_overlay) / n_runs
-    avg_mix = sum(times_mix) / n_runs
-    print(f"\noverlay chaining: {avg_overlay:.4f}s (avg of {n_runs} runs)")
-    print(f"mix:              {avg_mix:.4f}s (avg of {n_runs} runs)")
-    print(f"speedup:          {avg_overlay / avg_mix:.2f}x")

@@ -1,6 +1,7 @@
 ## 빌드
 
 - Rust 확장은 maturin이 빌드 (`pyproject.toml`의 `[tool.maturin]` 참조)
+- 개발 중 Rust 확장 빌드: `uv run maturin develop --uv` (`--uv` 플래그 필수, 없으면 pip `--group` 옵션 오류 발생)
 - Wheel은 배포 워크플로우에서 생성되므로 로컬에서는 sdist만 빌드: `uv build --sdist`
 
 ## 테스트

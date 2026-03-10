@@ -155,8 +155,6 @@ mod tests {
             .collect()
     }
 
-    // --- 8-bit ---
-
     #[test]
     fn test_8bit_linear() {
         let data: Vec<u8> = vec![100i8, 100, 100, 100].iter().map(|s| *s as u8).collect();
@@ -179,8 +177,6 @@ mod tests {
         assert_eq!(out[0] as i8, i8::MAX);
         assert_eq!(out[1] as i8, i8::MIN);
     }
-
-    // --- 16-bit ---
 
     #[test]
     fn test_16bit_linear() {
@@ -212,8 +208,6 @@ mod tests {
         assert_eq!(to_i16_samples(&out), [i16::MAX, i16::MAX]);
     }
 
-    // --- 32-bit ---
-
     #[test]
     fn test_32bit_linear() {
         let data: Vec<u8> = vec![100_000i32, 100_000, 100_000, 100_000]
@@ -244,15 +238,12 @@ mod tests {
         assert_eq!(to_i32_samples(&out), [i32::MAX, i32::MIN]);
     }
 
-    // --- edge cases ---
-
     #[test]
     fn test_empty_fade_region() {
         let data: Vec<u8> = vec![1000i16, 2000, 3000, 4000]
             .iter()
             .flat_map(|s| s.to_ne_bytes())
             .collect();
-        // start_byte == end_byte: no fade region, before gets from_power, after gets to_power
         let out = apply_fade(&data, 2, 4, 4, 0.5, 2.0);
         let samples = to_i16_samples(&out);
         assert_eq!(samples, [500, 1000, 6000, 8000]);
@@ -264,7 +255,6 @@ mod tests {
             .iter()
             .flat_map(|s| s.to_ne_bytes())
             .collect();
-        // entire data is fade region, no before/after
         let out = apply_fade(&data, 2, 0, data.len(), 0.0, 1.0);
         assert_eq!(to_i16_samples(&out), [0, 250, 500, 750]);
     }
@@ -275,7 +265,6 @@ mod tests {
             .iter()
             .flat_map(|s| s.to_ne_bytes())
             .collect();
-        // fade first 2 samples, after region copies as-is (to_power=1.0)
         let out = apply_fade(&data, 2, 0, 4, 0.0, 1.0);
         let samples = to_i16_samples(&out);
         assert_eq!(samples[0], 0);
@@ -290,7 +279,6 @@ mod tests {
             .iter()
             .flat_map(|s| s.to_ne_bytes())
             .collect();
-        // before region copies as-is (from_power=1.0), fade last 2 samples
         let out = apply_fade(&data, 2, 4, 8, 1.0, 0.0);
         let samples = to_i16_samples(&out);
         assert_eq!(samples[0], 1000);

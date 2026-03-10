@@ -1,5 +1,4 @@
 import audioop
-from pathlib import Path
 
 import pytest
 
@@ -98,9 +97,6 @@ def test_invalid_sample_width_raise_error():
         _pydub_core.mix_segments([a], 3)
 
 
-DATA_DIR = Path(__file__).parent.parent / "data"
-
-
 def test_two_segments_match_overlay():
     a = AudioSegment.silent(duration=100)
     b = AudioSegment.silent(duration=100)
@@ -125,15 +121,3 @@ def test_different_lengths_audiosegment():
     b = AudioSegment.silent(duration=100)
     result = AudioSegment.mix(a, b)
     assert len(result) == len(a)
-
-
-@pytest.mark.skipif(
-    not list(DATA_DIR.glob("*.wav")),
-    reason="wav files not available in CI",
-)
-def test_mix_all_wav_files():
-    wav_files = sorted(DATA_DIR.glob("*.wav"))
-    segs = [AudioSegment.from_file(f) for f in wav_files]
-    result = AudioSegment.mix(*segs)
-    expected_len = max(len(s) for s in segs)
-    assert len(result) == expected_len

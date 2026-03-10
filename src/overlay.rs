@@ -161,52 +161,47 @@ pub fn mix_segments<'py>(
         }
     }
 
-    let max_len = slices.iter().map(|s| s.len()).max().unwrap();
-
-    let base_idx = slices
+    let (base_idx, max_len) = slices
         .iter()
         .enumerate()
-        .max_by_key(|(_, s)| s.len())
-        .unwrap()
-        .0;
+        .map(|(i, s)| (i, s.len()))
+        .max_by_key(|&(_, len)| len)
+        .unwrap();
 
     let output = PyBytes::new_with(py, max_len, |out_buf| {
-        out_buf[..slices[base_idx].len()].copy_from_slice(slices[base_idx]);
-        if slices[base_idx].len() < max_len {
-            out_buf[slices[base_idx].len()..].fill(0);
-        }
+        out_buf.copy_from_slice(slices[base_idx]);
 
-        macro_rules! mix_loop {
-            ($out:expr, $seg:expr, $sample_type:ty, $mix_fn:ident) => {{
-                let num_samples = $seg.len() / std::mem::size_of::<$sample_type>();
-                let out_slice = unsafe {
-                    std::slice::from_raw_parts_mut(
-                        $out.as_mut_ptr() as *mut $sample_type,
-                        num_samples,
-                    )
-                };
-                let seg_slice = unsafe {
-                    std::slice::from_raw_parts(
-                        $seg.as_ptr() as *const $sample_type,
-                        num_samples,
-                    )
-                };
-                for i in 0..num_samples {
-                    out_slice[i] = $mix_fn(out_slice[i], seg_slice[i]);
+        macro_rules! mix_remaining {
+            ($sample_type:ty, $mix_fn:ident) => {
+                for (i, seg) in slices.iter().enumerate() {
+                    if i == base_idx {
+                        continue;
+                    }
+                    let num_samples = seg.len() / std::mem::size_of::<$sample_type>();
+                    let out_slice = unsafe {
+                        std::slice::from_raw_parts_mut(
+                            out_buf.as_mut_ptr() as *mut $sample_type,
+                            num_samples,
+                        )
+                    };
+                    let seg_slice = unsafe {
+                        std::slice::from_raw_parts(
+                            seg.as_ptr() as *const $sample_type,
+                            num_samples,
+                        )
+                    };
+                    for j in 0..num_samples {
+                        out_slice[j] = $mix_fn(out_slice[j], seg_slice[j]);
+                    }
                 }
-            }};
+            };
         }
 
-        for (i, seg) in slices.iter().enumerate() {
-            if i == base_idx {
-                continue;
-            }
-            match sample_width {
-                1 => mix_loop!(out_buf, seg, i8, mix_8),
-                2 => mix_loop!(out_buf, seg, i16, mix_16),
-                4 => mix_loop!(out_buf, seg, i32, mix_32),
-                _ => unreachable!(),
-            }
+        match sample_width {
+            1 => mix_remaining!(i8, mix_8),
+            2 => mix_remaining!(i16, mix_16),
+            4 => mix_remaining!(i32, mix_32),
+            _ => unreachable!(),
         }
 
         Ok(())

@@ -1,22 +1,10 @@
 import audioop
-import struct
 from pathlib import Path
 
 import pytest
 
 from pydub import AudioSegment, _pydub_core
-
-
-def _make_8bit(*samples):
-    return struct.pack(f"{len(samples)}b", *samples)
-
-
-def _make_16bit(*samples):
-    return struct.pack(f"<{len(samples)}h", *samples)
-
-
-def _make_32bit(*samples):
-    return struct.pack(f"<{len(samples)}i", *samples)
+from test.helpers import make_8bit, make_16bit, make_32bit
 
 
 def _reference_mix(segments, sample_width):
@@ -31,37 +19,37 @@ def _reference_mix(segments, sample_width):
 
 
 def test_8bit_two_segments():
-    a = _make_8bit(10, 20, 30)
-    b = _make_8bit(5, 10, 15)
+    a = make_8bit(10, 20, 30)
+    b = make_8bit(5, 10, 15)
     result = _pydub_core.mix_segments([a, b], 1)
     assert result == _reference_mix([a, b], 1)
 
 
 def test_16bit_two_segments():
-    a = _make_16bit(1000, 2000, 3000)
-    b = _make_16bit(100, 200, 300)
+    a = make_16bit(1000, 2000, 3000)
+    b = make_16bit(100, 200, 300)
     result = _pydub_core.mix_segments([a, b], 2)
     assert result == _reference_mix([a, b], 2)
 
 
 def test_32bit_two_segments():
-    a = _make_32bit(100000, 200000, 300000)
-    b = _make_32bit(10000, 20000, 30000)
+    a = make_32bit(100000, 200000, 300000)
+    b = make_32bit(10000, 20000, 30000)
     result = _pydub_core.mix_segments([a, b], 4)
     assert result == _reference_mix([a, b], 4)
 
 
 def test_three_or_more_segments():
-    a = _make_16bit(1000, 2000, 3000)
-    b = _make_16bit(100, 200, 300)
-    c = _make_16bit(10, 20, 30)
+    a = make_16bit(1000, 2000, 3000)
+    b = make_16bit(100, 200, 300)
+    c = make_16bit(10, 20, 30)
     result = _pydub_core.mix_segments([a, b, c], 2)
     assert result == _reference_mix([a, b, c], 2)
 
 
 def test_different_lengths():
-    a = _make_16bit(1000, 2000, 3000, 4000)
-    b = _make_16bit(100, 200)
+    a = make_16bit(1000, 2000, 3000, 4000)
+    b = make_16bit(100, 200)
     result = _pydub_core.mix_segments([a, b], 2)
     expected = _reference_mix([a, b], 2)
     assert result == expected
@@ -69,9 +57,9 @@ def test_different_lengths():
 
 
 def test_different_lengths_three_segments():
-    a = _make_16bit(1000, 2000)
-    b = _make_16bit(100, 200, 300, 400)
-    c = _make_16bit(10, 20, 30)
+    a = make_16bit(1000, 2000)
+    b = make_16bit(100, 200, 300, 400)
+    c = make_16bit(10, 20, 30)
     result = _pydub_core.mix_segments([a, b, c], 2)
     expected = _reference_mix([a, b, c], 2)
     assert result == expected
@@ -79,22 +67,22 @@ def test_different_lengths_three_segments():
 
 
 def test_saturation_clamp_8bit():
-    a = _make_8bit(120, -120)
-    b = _make_8bit(120, -120)
+    a = make_8bit(120, -120)
+    b = make_8bit(120, -120)
     result = _pydub_core.mix_segments([a, b], 1)
     assert result == _reference_mix([a, b], 1)
 
 
 def test_saturation_clamp_16bit():
-    a = _make_16bit(32000, -32000)
-    b = _make_16bit(32000, -32000)
+    a = make_16bit(32000, -32000)
+    b = make_16bit(32000, -32000)
     result = _pydub_core.mix_segments([a, b], 2)
     assert result == _reference_mix([a, b], 2)
 
 
 def test_saturation_clamp_32bit():
-    a = _make_32bit(2147483000, -2147483000)
-    b = _make_32bit(2147483000, -2147483000)
+    a = make_32bit(2147483000, -2147483000)
+    b = make_32bit(2147483000, -2147483000)
     result = _pydub_core.mix_segments([a, b], 4)
     assert result == _reference_mix([a, b], 4)
 
@@ -105,7 +93,7 @@ def test_empty_list_raise_error():
 
 
 def test_invalid_sample_width_raise_error():
-    a = _make_16bit(1000)
+    a = make_16bit(1000)
     with pytest.raises(ValueError):
         _pydub_core.mix_segments([a], 3)
 

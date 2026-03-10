@@ -2,17 +2,7 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
 
-macro_rules! define_gain {
-    ($fn_name:ident, $sample_type:ty, $wider_type:ty) => {
-        fn $fn_name(sample: $sample_type, factor: f64) -> $sample_type {
-            let val = (sample as f64 * factor) as $wider_type;
-            val.clamp(
-                <$sample_type>::MIN as $wider_type,
-                <$sample_type>::MAX as $wider_type,
-            ) as $sample_type
-        }
-    };
-}
+use crate::utils::define_gain;
 
 macro_rules! define_mix {
     ($fn_name:ident, $sample_type:ty, $wider_type:ty) => {

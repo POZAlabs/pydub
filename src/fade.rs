@@ -2,86 +2,49 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
 
+use crate::utils::define_gain;
+
 macro_rules! fade_impl {
-    ($sample_type:ty, $wider_type:ty, $data:expr, $start:expr, $end:expr, $from_power:expr, $to_power:expr, $out:expr) => {{
+    ($gain_fn:ident, $sample_type:ty, $data:expr, $start:expr, $end:expr, $from_power:expr, $to_power:expr, $out:expr) => {{
         let sample_size = std::mem::size_of::<$sample_type>();
 
         if $from_power != 1.0 && $start > 0 {
-            let before_samples = $start / sample_size;
-            let src = unsafe {
-                std::slice::from_raw_parts($data.as_ptr() as *const $sample_type, before_samples)
-            };
-            let dst = unsafe {
-                std::slice::from_raw_parts_mut(
-                    $out.as_mut_ptr() as *mut $sample_type,
-                    before_samples,
-                )
-            };
-            for i in 0..before_samples {
-                let val = (src[i] as f64 * $from_power) as $wider_type;
-                dst[i] = val.clamp(
-                    <$sample_type>::MIN as $wider_type,
-                    <$sample_type>::MAX as $wider_type,
-                ) as $sample_type;
+            let n = $start / sample_size;
+            let src = unsafe { std::slice::from_raw_parts($data.as_ptr() as *const $sample_type, n) };
+            let dst = unsafe { std::slice::from_raw_parts_mut($out.as_mut_ptr() as *mut $sample_type, n) };
+            for i in 0..n {
+                dst[i] = $gain_fn(src[i], $from_power);
             }
         } else {
             $out[..$start].copy_from_slice(&$data[..$start]);
         }
 
-        let fade_start_sample = $start / sample_size;
-        let fade_end_sample = $end / sample_size;
-        let fade_samples = fade_end_sample - fade_start_sample;
+        let fade_samples = ($end - $start) / sample_size;
         if fade_samples > 0 {
-            let gain_delta = $to_power - $from_power;
-            let scale_step = gain_delta / fade_samples as f64;
-            let src = unsafe {
-                std::slice::from_raw_parts(
-                    $data.as_ptr().add($start) as *const $sample_type,
-                    fade_samples,
-                )
-            };
-            let dst = unsafe {
-                std::slice::from_raw_parts_mut(
-                    $out.as_mut_ptr().add($start) as *mut $sample_type,
-                    fade_samples,
-                )
-            };
+            let scale_step = ($to_power - $from_power) / fade_samples as f64;
+            let src = unsafe { std::slice::from_raw_parts($data.as_ptr().add($start) as *const $sample_type, fade_samples) };
+            let dst = unsafe { std::slice::from_raw_parts_mut($out.as_mut_ptr().add($start) as *mut $sample_type, fade_samples) };
             for i in 0..fade_samples {
-                let gain = $from_power + scale_step * i as f64;
-                let val = (src[i] as f64 * gain) as $wider_type;
-                dst[i] = val.clamp(
-                    <$sample_type>::MIN as $wider_type,
-                    <$sample_type>::MAX as $wider_type,
-                ) as $sample_type;
+                dst[i] = $gain_fn(src[i], $from_power + scale_step * i as f64);
             }
         }
 
         if $to_power != 1.0 && $end < $data.len() {
-            let after_samples = ($data.len() - $end) / sample_size;
-            let src = unsafe {
-                std::slice::from_raw_parts(
-                    $data.as_ptr().add($end) as *const $sample_type,
-                    after_samples,
-                )
-            };
-            let dst = unsafe {
-                std::slice::from_raw_parts_mut(
-                    $out.as_mut_ptr().add($end) as *mut $sample_type,
-                    after_samples,
-                )
-            };
-            for i in 0..after_samples {
-                let val = (src[i] as f64 * $to_power) as $wider_type;
-                dst[i] = val.clamp(
-                    <$sample_type>::MIN as $wider_type,
-                    <$sample_type>::MAX as $wider_type,
-                ) as $sample_type;
+            let n = ($data.len() - $end) / sample_size;
+            let src = unsafe { std::slice::from_raw_parts($data.as_ptr().add($end) as *const $sample_type, n) };
+            let dst = unsafe { std::slice::from_raw_parts_mut($out.as_mut_ptr().add($end) as *mut $sample_type, n) };
+            for i in 0..n {
+                dst[i] = $gain_fn(src[i], $to_power);
             }
         } else {
             $out[$end..].copy_from_slice(&$data[$end..]);
         }
     }};
 }
+
+define_gain!(gain_8, i8, i16);
+define_gain!(gain_16, i16, i32);
+define_gain!(gain_32, i32, i64);
 
 fn fade_raw(
     data: &[u8],
@@ -93,9 +56,9 @@ fn fade_raw(
     out: &mut [u8],
 ) {
     match sample_width {
-        1 => fade_impl!(i8, i16, data, start_byte, end_byte, from_power, to_power, out),
-        2 => fade_impl!(i16, i32, data, start_byte, end_byte, from_power, to_power, out),
-        4 => fade_impl!(i32, i64, data, start_byte, end_byte, from_power, to_power, out),
+        1 => fade_impl!(gain_8, i8, data, start_byte, end_byte, from_power, to_power, out),
+        2 => fade_impl!(gain_16, i16, data, start_byte, end_byte, from_power, to_power, out),
+        4 => fade_impl!(gain_32, i32, data, start_byte, end_byte, from_power, to_power, out),
         _ => unreachable!(),
     }
 }

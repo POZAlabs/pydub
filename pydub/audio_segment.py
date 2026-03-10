@@ -1396,51 +1396,17 @@ class AudioSegment:
 
         start_bytes = self._parse_position(start) * self.frame_width
         end_bytes = self._parse_position(end) * self.frame_width
-        data = memoryview(self._data)
 
-        # original data - up until the crossfade portion, as is
-        before_fade = data[:start_bytes]
+        result = _pydub_core.fade_segment(
+            data=bytes(self._data),
+            sample_width=self.sample_width,
+            start_byte=start_bytes,
+            end_byte=end_bytes,
+            from_power=db_to_float(from_gain),
+            to_power=db_to_float(to_gain),
+        )
 
-        from_power = db_to_float(from_gain)
-        if from_gain != 0:
-            before_fade = audioop.mul(before_fade, self.sample_width, from_power)
-
-        output = [before_fade]
-
-        gain_delta = db_to_float(to_gain) - from_power
-
-        # fades longer than 100ms can use coarse fading (one gain step per ms),
-        # shorter fades will have audible clicks so they use precise fading
-        # (one gain step per sample)
-        if duration > 100:
-            scale_step = gain_delta / duration
-
-            for i in range(duration):
-                volume_change = from_power + (scale_step * i)
-                chunk = self[start + i]
-                chunk = audioop.mul(chunk._data, self.sample_width, volume_change)
-
-                output.append(chunk)
-        else:
-            start_frame = self.frame_count(ms=start)
-            end_frame = self.frame_count(ms=end)
-            fade_frames = end_frame - start_frame
-            scale_step = gain_delta / fade_frames
-
-            for i in range(int(fade_frames)):
-                volume_change = from_power + (scale_step * i)
-                sample = self.get_frame(int(start_frame + i))
-                sample = audioop.mul(sample, self.sample_width, volume_change)
-
-                output.append(sample)
-
-        # original data after the crossfade portion, at the new volume
-        after_fade = data[end_bytes:]
-        if to_gain != 0:
-            after_fade = audioop.mul(after_fade, self.sample_width, db_to_float(to_gain))
-        output.append(after_fade)
-
-        return self._spawn(data=output)
+        return self._spawn(data=result)
 
     def fade_out(self, duration: int) -> Self:
         return self.fade(to_gain=-120, duration=duration, end=len(self))

@@ -15,7 +15,7 @@ This is a [Pozalabs](https://github.com/Pozalabs) fork of [jiaaro/pydub](https:/
 
 - `overlay_segments` - Pre-allocated buffer overlay replacing audioop.add/mul (16-bit 4-5x, 32-bit 11-16x faster)
 - `extend_24bit_to_32bit` - Zero-copy 24-bit to 32-bit sample extension via direct PyBytes allocation (~400x faster than pure Python)
-- `fade()` - Memory-efficient fade using `memoryview`, with coarse/precise two-path implementation
+- `fade_segment` - Single-pass fade replacing per-sample audioop.mul loop (used by fade/fade_in/fade_out). Upstream applies gain per millisecond (>100ms) or per sample (<=100ms); this implementation always applies gain per sample for consistent precision
 
 ### New Features
 

@@ -1,3 +1,17 @@
+macro_rules! define_gain {
+    ($fn_name:ident, $sample_type:ty, $wider_type:ty) => {
+        fn $fn_name(sample: $sample_type, factor: f64) -> $sample_type {
+            let val = (sample as f64 * factor) as $wider_type;
+            val.clamp(
+                <$sample_type>::MIN as $wider_type,
+                <$sample_type>::MAX as $wider_type,
+            ) as $sample_type
+        }
+    };
+}
+
+pub(crate) use define_gain;
+
 pub fn ratio_to_db(ratio: f64, using_amplitude: bool) -> f64 {
     if ratio == 0.0 {
         return f64::NEG_INFINITY;

@@ -135,6 +135,86 @@ pub fn overlay_segments<'py>(
     Ok(output)
 }
 
+#[pyfunction]
+pub fn mix_segments<'py>(
+    py: Python<'py>,
+    segments: Vec<Bound<'py, PyBytes>>,
+    sample_width: i32,
+) -> PyResult<Bound<'py, PyBytes>> {
+    if segments.is_empty() {
+        return Err(PyValueError::new_err("segments must not be empty"));
+    }
+
+    if !matches!(sample_width, 1 | 2 | 4) {
+        return Err(PyValueError::new_err(format!(
+            "sample_width must be 1, 2, or 4 (got {sample_width})"
+        )));
+    }
+
+    let slices: Vec<&[u8]> = segments.iter().map(|s| s.as_bytes()).collect();
+
+    for (i, s) in slices.iter().enumerate() {
+        if s.len() % sample_width as usize != 0 {
+            return Err(PyValueError::new_err(format!(
+                "segment {i} length is not a multiple of sample_width"
+            )));
+        }
+    }
+
+    let max_len = slices.iter().map(|s| s.len()).max().unwrap();
+
+    let base_idx = slices
+        .iter()
+        .enumerate()
+        .max_by_key(|(_, s)| s.len())
+        .unwrap()
+        .0;
+
+    let output = PyBytes::new_with(py, max_len, |out_buf| {
+        out_buf[..slices[base_idx].len()].copy_from_slice(slices[base_idx]);
+        if slices[base_idx].len() < max_len {
+            out_buf[slices[base_idx].len()..].fill(0);
+        }
+
+        macro_rules! mix_loop {
+            ($out:expr, $seg:expr, $sample_type:ty, $mix_fn:ident) => {{
+                let num_samples = $seg.len() / std::mem::size_of::<$sample_type>();
+                let out_slice = unsafe {
+                    std::slice::from_raw_parts_mut(
+                        $out.as_mut_ptr() as *mut $sample_type,
+                        num_samples,
+                    )
+                };
+                let seg_slice = unsafe {
+                    std::slice::from_raw_parts(
+                        $seg.as_ptr() as *const $sample_type,
+                        num_samples,
+                    )
+                };
+                for i in 0..num_samples {
+                    out_slice[i] = $mix_fn(out_slice[i], seg_slice[i]);
+                }
+            }};
+        }
+
+        for (i, seg) in slices.iter().enumerate() {
+            if i == base_idx {
+                continue;
+            }
+            match sample_width {
+                1 => mix_loop!(out_buf, seg, i8, mix_8),
+                2 => mix_loop!(out_buf, seg, i16, mix_16),
+                4 => mix_loop!(out_buf, seg, i32, mix_32),
+                _ => unreachable!(),
+            }
+        }
+
+        Ok(())
+    })?;
+
+    Ok(output)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

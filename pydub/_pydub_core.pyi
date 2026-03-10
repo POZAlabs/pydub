@@ -6,6 +6,10 @@ def overlay_segments(
     times: int,
     gain_during_overlay: int = 0,
 ) -> bytes: ...
+def mix_segments(
+    segments: list[bytes],
+    sample_width: int,
+) -> bytes: ...
 def extend_24bit_to_32bit(data: bytes) -> bytes: ...
 def measure_rms(
     data: bytes,

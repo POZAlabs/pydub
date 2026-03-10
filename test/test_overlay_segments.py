@@ -1,7 +1,7 @@
 import audioop
 
 from pydub import _pydub_core
-from test.helpers import make_16bit, make_32bit
+from test.helper import make_16bit, make_32bit
 
 
 def _reference_overlay_segments(

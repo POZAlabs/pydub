@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from pydub import AudioSegment, _pydub_core
-from test.helpers import make_8bit, make_16bit, make_32bit
+from test.helper import make_8bit, make_16bit, make_32bit
 
 
 def _reference_mix(segments, sample_width):

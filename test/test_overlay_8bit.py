@@ -3,7 +3,7 @@ import audioop
 import pytest
 
 from pydub import _pydub_core
-from test.helpers import make_8bit
+from test.helper import make_8bit
 
 
 def _audioop_overlay_8bit(seg1, seg2, position, times, gain=0):

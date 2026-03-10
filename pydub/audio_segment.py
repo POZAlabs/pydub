@@ -143,7 +143,7 @@ def _normalize_format(audio_format: str | None) -> str | None:
     return audio_format and AUDIO_FILE_EXT_ALIASES.get(audio_format, audio_format)
 
 
-def _matches_format(audio_format: str | None, filename: str | None, target: str) -> bool:
+def _match_format(audio_format: str | None, filename: str | None, target: str) -> bool:
     target = target.lower()
     if audio_format == target:
         return True
@@ -751,28 +751,28 @@ class AudioSegment:
 
         audio_format = _normalize_format(format)
 
-        if _matches_format(audio_format, filename, "wav"):
+        if _match_format(audio_format=audio_format, filename=filename, target="wav"):
             try:
                 return cls._from_safe_wav(file)._segmented(
                     start_second=start_second, duration=duration
                 )
             except:  # noqa: E722
                 file.seek(0)
-        elif _matches_format(audio_format, filename, "raw") or _matches_format(
-            audio_format, filename, "pcm"
-        ):
-            return cls._from_raw(file, start_second, duration, **kwargs)
+        elif _match_format(
+            audio_format=audio_format, filename=filename, target="raw"
+        ) or _match_format(audio_format=audio_format, filename=filename, target="pcm"):
+            return cls._from_raw(file=file, start_second=start_second, duration=duration, **kwargs)
 
         return cls._from_ffmpeg(
-            file,
-            orig_file,
-            filename,
-            close_file,
-            audio_format,
-            codec,
-            parameters,
-            start_second,
-            duration,
+            file=file,
+            orig_file=orig_file,
+            filename=filename,
+            close_file=close_file,
+            audio_format=audio_format,
+            codec=codec,
+            parameters=parameters,
+            start_second=start_second,
+            duration=duration,
             **kwargs,
         )
 

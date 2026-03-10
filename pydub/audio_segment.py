@@ -4,6 +4,7 @@ import array
 import audioop
 import base64
 import dataclasses
+import functools
 import io
 import os
 import struct
@@ -750,17 +751,16 @@ class AudioSegment:
             )
 
         audio_format = _normalize_format(format)
+        is_format = functools.partial(_match_format, audio_format=audio_format, filename=filename)
 
-        if _match_format(audio_format=audio_format, filename=filename, target="wav"):
+        if is_format(target="wav"):
             try:
                 return cls._from_safe_wav(file)._segmented(
                     start_second=start_second, duration=duration
                 )
             except:  # noqa: E722
                 file.seek(0)
-        elif _match_format(
-            audio_format=audio_format, filename=filename, target="raw"
-        ) or _match_format(audio_format=audio_format, filename=filename, target="pcm"):
+        elif is_format(target="raw") or is_format(target="pcm"):
             return cls._from_raw(file=file, start_second=start_second, duration=duration, **kwargs)
 
         return cls._from_ffmpeg(

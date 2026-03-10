@@ -139,6 +139,29 @@ def fix_wav_headers(data):
     data[pos + 4 : pos + 8] = struct.pack("<I", len(data) - pos - 8)
 
 
+def _normalize_format(audio_format: str | None) -> str | None:
+    audio_format = audio_format and audio_format.lower()
+    return audio_format and AUDIO_FILE_EXT_ALIASES.get(audio_format, audio_format)
+
+
+def _match_format(audio_format: str | None, filename: str | None, target: str) -> bool:
+    target = target.lower()
+    if audio_format == target:
+        return True
+    if filename is not None:
+        return filename.lower().endswith(f".{target}")
+    return False
+
+
+def _infer_codec(info: dict[str, Any]) -> str:
+    audio_streams = [x for x in info["streams"] if x["codec_type"] == "audio"]
+    audio_codec = audio_streams[0].get("codec_name")
+    is_fltp = audio_streams[0].get("sample_fmt") == "fltp"
+    is_only_16bit_codec = audio_codec in {"mp3", "mp4", "aac", "webm", "ogg"}
+    bits_per_sample = 16 if is_fltp and is_only_16bit_codec else audio_streams[0]["bits_per_sample"]
+    return "pcm_u8" if bits_per_sample == 8 else f"pcm_s{bits_per_sample}le"
+
+
 @dataclasses.dataclass
 class _AudioParams:
     sample_width: int | None = None
@@ -706,34 +729,6 @@ class AudioSegment:
         duration: int | None = None,
         **kwargs: Any,
     ) -> Self:
-        def _is_format(
-            _format: str,
-            _current_format: str,
-            _filename: str | None = None,
-        ) -> bool:
-            _format = _format.lower()
-
-            if _current_format == _format:
-                return True
-
-            if _filename is not None:
-                return filename.lower().endswith(f".{_format}")
-
-            return False
-
-        def _infer_codec(_file: Any, _info: dict[str, Any]) -> str:
-            audio_streams = [x for x in info["streams"] if x["codec_type"] == "audio"]
-            # This is a workaround for some ffprobe versions that always say
-            # that mp3/mp4/aac/webm/ogg files contain fltp samples
-            audio_codec = audio_streams[0].get("codec_name")
-            is_fltp = audio_streams[0].get("sample_fmt") == "fltp"
-            is_only_16bit_codec = audio_codec in {"mp3", "mp4", "aac", "webm", "ogg"}
-
-            bits_per_sample = (
-                16 if is_fltp and is_only_16bit_codec else audio_streams[0]["bits_per_sample"]
-            )
-            return "pcm_u8" if bits_per_sample == 8 else f"pcm_s{bits_per_sample}le"
-
         orig_file = file
         try:
             filename = os.fsdecode(file)
@@ -755,99 +750,31 @@ class AudioSegment:
                 **kwargs,
             )
 
-        audio_format = format and format.lower()
-        audio_format = audio_format and AUDIO_FILE_EXT_ALIASES.get(audio_format, audio_format)
+        audio_format = _normalize_format(format)
+        is_format = functools.partial(_match_format, audio_format=audio_format, filename=filename)
 
-        is_format = functools.partial(
-            _is_format,
-            _current_format=audio_format,
-            _filename=filename,
-        )
-
-        if is_format("wav"):
+        if is_format(target="wav"):
             try:
                 return cls._from_safe_wav(file)._segmented(
                     start_second=start_second, duration=duration
                 )
             except:  # noqa: E722
                 file.seek(0)
-        elif is_format("raw") or is_format("pcm"):
-            return cls(
-                data=file.read(),
-                metadata={
-                    "sample_width": (sample_width := kwargs["sample_width"]),
-                    "frame_rate": kwargs["frame_rate"],
-                    "channels": (channels := kwargs["channels"]),
-                    "frame_width": channels * sample_width,
-                },
-            )._segmented(start_second=start_second, duration=duration)
+        elif is_format(target="raw") or is_format(target="pcm"):
+            return cls._from_raw(file=file, start_second=start_second, duration=duration, **kwargs)
 
-        conversion_command = _ConversionCommand.init(cls.converter)
-        # If format is not defined
-        # ffmpeg/avconv will detect it automatically
-        if audio_format is not None:
-            conversion_command = conversion_command.with_format(audio_format)
-
-        if codec is not None:
-            # force audio decoder
-            conversion_command = conversion_command.with_codec(codec)
-
-        read_ahead_limit = kwargs.get("read_ahead_limit", -1)
-        if filename is not None:
-            conversion_command = conversion_command.with_filename(filename)
-            popen_params = _PopenParams.empty()
-        else:
-            conversion_command = conversion_command.without_filename(read_ahead_limit)
-            popen_params = _PopenParams.pipe(file.read())
-
-        info = mediainfo_json(orig_file, read_ahead_limit=read_ahead_limit) if codec is None else {}
-
-        if info:
-            acodec = _infer_codec(_file=orig_file, _info=info)
-            conversion_command = conversion_command.with_codec(acodec)
-
-        conversion_command = conversion_command.remove_video().with_format("wav")
-
-        if start_second is not None:
-            conversion_command = conversion_command.with_start_second(start_second)
-
-        if duration is not None:
-            conversion_command = conversion_command.with_duration(duration)
-
-        conversion_command = conversion_command.from_stdin()
-
-        if parameters is not None:
-            conversion_command = conversion_command.with_parameters(parameters)
-
-        log_conversion(conversion_command)
-
-        p = subprocess.Popen(
-            conversion_command,
-            stdin=popen_params.stdin,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+        return cls._from_ffmpeg(
+            file=file,
+            orig_file=orig_file,
+            filename=filename,
+            close_file=close_file,
+            audio_format=audio_format,
+            codec=codec,
+            parameters=parameters,
+            start_second=start_second,
+            duration=duration,
+            **kwargs,
         )
-        p_out, p_err = p.communicate(input=popen_params.data)
-
-        if p.returncode or not p_out:
-            if close_file:
-                file.close()
-            error = p_err.decode(errors="ignore")
-            raise CouldntDecodeError(
-                "Decoding failed. "
-                f"ffmpeg returned error code: {p.returncode}\n\nOutput from ffmpeg/avlib:\n\n{error}"
-            )
-
-        p_out = bytearray(p_out)
-        fix_wav_headers(p_out)
-        p_out = bytes(p_out)
-        obj = cls(p_out)
-
-        if close_file:
-            file.close()
-
-        # start_second is applied by ffmpeg
-        return obj._segmented(start_second=None, duration=duration)
 
     @classmethod
     def from_mp3(cls, file, parameters=None):
@@ -883,6 +810,96 @@ class AudioSegment:
         if close_file:
             file.close()
         return obj
+
+    @classmethod
+    def _from_raw(
+        cls,
+        file: IO[bytes],
+        start_second: int | None,
+        duration: int | None,
+        **kwargs: Any,
+    ) -> Self:
+        return cls(
+            data=file.read(),
+            metadata={
+                "sample_width": (sample_width := kwargs["sample_width"]),
+                "frame_rate": kwargs["frame_rate"],
+                "channels": (channels := kwargs["channels"]),
+                "frame_width": channels * sample_width,
+            },
+        )._segmented(start_second=start_second, duration=duration)
+
+    @classmethod
+    def _from_ffmpeg(
+        cls,
+        file: IO[bytes],
+        orig_file: Any,
+        filename: str | None,
+        close_file: bool,
+        audio_format: str | None,
+        codec: str | None,
+        parameters: list[str] | None,
+        start_second: int | None,
+        duration: int | None,
+        **kwargs: Any,
+    ) -> Self:
+        try:
+            conversion_command = _ConversionCommand.init(cls.converter)
+            if audio_format is not None:
+                conversion_command = conversion_command.with_format(audio_format)
+            if codec is not None:
+                conversion_command = conversion_command.with_codec(codec)
+
+            read_ahead_limit = kwargs.get("read_ahead_limit", -1)
+            if filename is not None:
+                conversion_command = conversion_command.with_filename(filename)
+                popen_params = _PopenParams.empty()
+            else:
+                conversion_command = conversion_command.without_filename(read_ahead_limit)
+                popen_params = _PopenParams.pipe(file.read())
+
+            if codec is None:
+                info = mediainfo_json(orig_file, read_ahead_limit=read_ahead_limit)
+                if info:
+                    conversion_command = conversion_command.with_codec(_infer_codec(info))
+
+            conversion_command = conversion_command.remove_video().with_format("wav")
+
+            if start_second is not None:
+                conversion_command = conversion_command.with_start_second(start_second)
+            if duration is not None:
+                conversion_command = conversion_command.with_duration(duration)
+
+            conversion_command = conversion_command.from_stdin()
+
+            if parameters is not None:
+                conversion_command = conversion_command.with_parameters(parameters)
+
+            log_conversion(conversion_command)
+
+            p = subprocess.Popen(
+                conversion_command,
+                stdin=popen_params.stdin,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            p_out, p_err = p.communicate(input=popen_params.data)
+
+            if p.returncode or not p_out:
+                error = p_err.decode(errors="ignore")
+                raise CouldntDecodeError(
+                    "Decoding failed. "
+                    f"ffmpeg returned error code: {p.returncode}\n\nOutput from ffmpeg/avlib:\n\n{error}"
+                )
+
+            p_out = bytearray(p_out)
+            fix_wav_headers(p_out)
+            obj = cls(bytes(p_out))
+
+            return obj._segmented(start_second=None, duration=duration)
+        finally:
+            if close_file:
+                file.close()
 
     def _segmented(self, start_second: int | None = None, duration: int | None = None) -> Self:
         match start_second, duration:

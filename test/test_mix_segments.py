@@ -127,6 +127,10 @@ def test_different_lengths_audiosegment():
     assert len(result) == len(a)
 
 
+@pytest.mark.skipif(
+    not list(DATA_DIR.glob("*.wav")),
+    reason="wav files not available in CI",
+)
 def test_mix_all_wav_files():
     wav_files = sorted(DATA_DIR.glob("*.wav"))
     segs = [AudioSegment.from_file(f) for f in wav_files]

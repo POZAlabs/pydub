@@ -1,13 +1,9 @@
 import audioop
-import struct
 
 import pytest
 
 from pydub import _pydub_core
-
-
-def _make_8bit(*samples):
-    return struct.pack(f"<{len(samples)}b", *samples)
+from test.helper import make_8bit
 
 
 def _audioop_overlay_8bit(seg1, seg2, position, times, gain=0):
@@ -40,43 +36,43 @@ def _audioop_overlay_8bit(seg1, seg2, position, times, gain=0):
 
 
 def test_8bit_no_gain():
-    seg1 = _make_8bit(50, 60, 70, 80, 90, 100, 110, 120)
-    seg2 = _make_8bit(10, 20, 30, 40)
+    seg1 = make_8bit(50, 60, 70, 80, 90, 100, 110, 120)
+    seg2 = make_8bit(10, 20, 30, 40)
     expected = _audioop_overlay_8bit(seg1, seg2, 0, 1)
     assert _pydub_core.overlay_segments(seg1, seg2, 1, 0, 1) == expected
 
 
 def test_8bit_positive_gain():
-    seg1 = _make_8bit(50, 60, 70, 80)
-    seg2 = _make_8bit(10, 20)
+    seg1 = make_8bit(50, 60, 70, 80)
+    seg2 = make_8bit(10, 20)
     expected = _audioop_overlay_8bit(seg1, seg2, 0, 1, gain=6)
     assert _pydub_core.overlay_segments(seg1, seg2, 1, 0, 1, 6) == expected
 
 
 def test_8bit_negative_gain():
-    seg1 = _make_8bit(50, 60, 70, 80)
-    seg2 = _make_8bit(10, 20)
+    seg1 = make_8bit(50, 60, 70, 80)
+    seg2 = make_8bit(10, 20)
     expected = _audioop_overlay_8bit(seg1, seg2, 0, 1, gain=-6)
     assert _pydub_core.overlay_segments(seg1, seg2, 1, 0, 1, -6) == expected
 
 
 def test_8bit_saturation():
-    seg1 = _make_8bit(120, -120)
-    seg2 = _make_8bit(120, -120)
+    seg1 = make_8bit(120, -120)
+    seg2 = make_8bit(120, -120)
     expected = _audioop_overlay_8bit(seg1, seg2, 0, 1)
     assert _pydub_core.overlay_segments(seg1, seg2, 1, 0, 1) == expected
 
 
 def test_8bit_repeat_to_fill():
-    seg1 = _make_8bit(10, 20, 30, 40, 50, 60, 70, 80)
-    seg2 = _make_8bit(5, 10)
+    seg1 = make_8bit(10, 20, 30, 40, 50, 60, 70, 80)
+    seg2 = make_8bit(5, 10)
     expected = _audioop_overlay_8bit(seg1, seg2, 0, -1)
     assert _pydub_core.overlay_segments(seg1, seg2, 1, 0, -1) == expected
 
 
 def test_8bit_with_position():
-    seg1 = _make_8bit(10, 20, 30, 40, 50, 60)
-    seg2 = _make_8bit(5, 10)
+    seg1 = make_8bit(10, 20, 30, 40, 50, 60)
+    seg2 = make_8bit(5, 10)
     expected = _audioop_overlay_8bit(seg1, seg2, 2, 1)
     assert _pydub_core.overlay_segments(seg1, seg2, 1, 2, 1) == expected
 

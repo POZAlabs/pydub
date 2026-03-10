@@ -527,6 +527,20 @@ class AudioSegment:
         )
 
     @classmethod
+    def mix(cls, *segs: Self) -> Self:
+        if not segs:
+            raise ValueError("At least one AudioSegment is required")
+        if len(segs) == 1:
+            return segs[0]
+
+        synced = cls._sync(*segs)
+        result = _pydub_core.mix_segments(
+            [seg.raw_data for seg in synced],
+            synced[0].sample_width,
+        )
+        return synced[0]._spawn(data=result)
+
+    @classmethod
     def from_file_using_temporary_files(
         cls,
         file,

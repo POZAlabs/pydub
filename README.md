@@ -16,6 +16,7 @@ This is a [Pozalabs](https://github.com/Pozalabs) fork of [jiaaro/pydub](https:/
 - `overlay_segments` - Pre-allocated buffer overlay replacing audioop.add/mul (16-bit 4-5x, 32-bit 11-16x faster)
 - `extend_24bit_to_32bit` - Zero-copy 24-bit to 32-bit sample extension via direct PyBytes allocation (~400x faster than pure Python)
 - `fade_segment` - Single-pass fade replacing per-sample audioop.mul loop (used by fade/fade_in/fade_out). Upstream applies gain per millisecond (>100ms) or per sample (<=100ms); this implementation always applies gain per sample for consistent precision
+- `mix_segments` - N-segment single-pass mix in Rust (~2.9x faster than sequential overlay chaining with 19 segments)
 
 ### New Features
 
@@ -23,6 +24,7 @@ This is a [Pozalabs](https://github.com/Pozalabs) fork of [jiaaro/pydub](https:/
 - **Audio level metering** - `measure_audio_level()` for RMS, peak, and LUFS measurement
 - **Waveform data** - `get_normalized_amplitudes()` computes normalized amplitude values for waveform visualization
 - **Silent audio generation** - Create silent audio matching the original segment's parameters
+- **Multi-segment mix** - `AudioSegment.mix(*segs)` classmethod for mixing N segments simultaneously
 - **Audio processing framework** - Command-based processor architecture for merge, overlay, and format conversion
 - **Python 3.13 support** - Via `audioop-lts` dependency
 

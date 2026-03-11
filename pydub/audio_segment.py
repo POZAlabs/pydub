@@ -189,11 +189,11 @@ class AudioSegment:
         self.sample_width = 4
 
     @classmethod
-    def empty(cls):
+    def empty(cls) -> Self:
         return cls(b"", sample_width=1, frame_rate=1, channels=1)
 
     @classmethod
-    def silent(cls, duration=1000, frame_rate=11025):
+    def silent(cls, duration: int = 1000, frame_rate: int = 11025) -> Self:
         """
         Generate a silent audio segment.
         duration specified in milliseconds (default duration: 1000ms, default frame_rate: 11025).
@@ -203,7 +203,7 @@ class AudioSegment:
         return cls(data, sample_width=2, frame_rate=frame_rate, channels=1)
 
     @classmethod
-    def from_mono_audiosegments(cls, *mono_segments):
+    def from_mono_audiosegments(cls, *mono_segments: Self) -> Self:
         if not len(mono_segments):
             raise ValueError("At least one AudioSegment instance is required")
 
@@ -304,23 +304,31 @@ class AudioSegment:
         )
 
     @classmethod
-    def from_mp3(cls, file, parameters=None):
+    def from_mp3(
+        cls, file: str | os.PathLike | IO[bytes], parameters: list[str] | None = None
+    ) -> Self:
         return cls.from_file(file, "mp3", parameters=parameters)
 
     @classmethod
-    def from_flv(cls, file, parameters=None):
+    def from_flv(
+        cls, file: str | os.PathLike | IO[bytes], parameters: list[str] | None = None
+    ) -> Self:
         return cls.from_file(file, "flv", parameters=parameters)
 
     @classmethod
-    def from_ogg(cls, file, parameters=None):
+    def from_ogg(
+        cls, file: str | os.PathLike | IO[bytes], parameters: list[str] | None = None
+    ) -> Self:
         return cls.from_file(file, "ogg", parameters=parameters)
 
     @classmethod
-    def from_wav(cls, file, parameters=None):
+    def from_wav(
+        cls, file: str | os.PathLike | IO[bytes], parameters: list[str] | None = None
+    ) -> Self:
         return cls.from_file(file, "wav", parameters=parameters)
 
     @classmethod
-    def from_raw(cls, file, **kwargs):
+    def from_raw(cls, file: str | os.PathLike | IO[bytes], **kwargs: Any) -> Self:
         return cls.from_file(
             file,
             "raw",
@@ -330,7 +338,7 @@ class AudioSegment:
         )
 
     @classmethod
-    def _from_safe_wav(cls, file) -> Self:
+    def _from_safe_wav(cls, file: str | os.PathLike | IO[bytes]) -> Self:
         file, close_file = _fd_or_path_or_tempfile(file, "rb", tempfile=False)
         file.seek(0)
         obj = cls(data=file)
@@ -536,7 +544,7 @@ class AudioSegment:
         return src.format(base64=data)
 
     @property
-    def raw_data(self):
+    def raw_data(self) -> bytes:
         """
         public access to the raw audio data as a bytestring
         """
@@ -547,26 +555,26 @@ class AudioSegment:
         return self.channels * self.sample_width
 
     @property
-    def array_type(self):
+    def array_type(self) -> str:
         return get_array_type(self.sample_width * 8)
 
     @property
-    def rms(self):
+    def rms(self) -> int:
         return audioop.rms(self._data, self.sample_width)
 
     @property
-    def dBFS(self):
+    def dBFS(self) -> float:
         rms = self.rms
         if not rms:
             return -float("infinity")
         return ratio_to_db(self.rms / self.max_possible_amplitude)
 
     @property
-    def max(self):
+    def max(self) -> int:
         return audioop.max(self._data, self.sample_width)
 
     @property
-    def max_possible_amplitude(self):
+    def max_possible_amplitude(self) -> float:
         bits = self.sample_width * 8
         max_possible_val = 2**bits
 
@@ -574,11 +582,11 @@ class AudioSegment:
         return max_possible_val / 2
 
     @property
-    def max_dBFS(self):
+    def max_dBFS(self) -> float:
         return ratio_to_db(self.max, self.max_possible_amplitude)
 
     @property
-    def duration_seconds(self):
+    def duration_seconds(self) -> float:
         return self.frame_rate and self.frame_count() / self.frame_rate or 0.0
 
     def get_array_of_samples(self, array_type_override=None):
@@ -1142,7 +1150,7 @@ class AudioSegment:
         )
 
     @classmethod
-    def _sync(cls, *segs):
+    def _sync(cls, *segs: Self) -> tuple[Self, ...]:
         channels = max(seg.channels for seg in segs)
         frame_rate = max(seg.frame_rate for seg in segs)
         sample_width = max(seg.sample_width for seg in segs)

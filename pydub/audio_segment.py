@@ -3,6 +3,7 @@ from __future__ import annotations
 import array
 import audioop
 import base64
+import contextlib
 import dataclasses
 import functools
 import io
@@ -13,7 +14,6 @@ import sys
 import wave
 from collections import namedtuple
 from collections.abc import Generator
-from contextlib import contextmanager
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import IO, Any, Literal, Self, TypedDict, Unpack, overload
@@ -206,7 +206,7 @@ class _AudioSegmentInitDef(TypedDict, total=False):
     metadata: _AudioSegmentMetadata
 
 
-@contextmanager
+@contextlib.contextmanager
 def _ffmpeg_tmp_files(audio_segment: "AudioSegment") -> Generator[tuple[IO[bytes], IO[bytes]]]:
     data = NamedTemporaryFile(mode="wb", delete=False)
     output = NamedTemporaryFile(mode="w+b", delete=False)

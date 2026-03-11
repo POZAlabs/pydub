@@ -7,7 +7,6 @@ import re
 import shutil
 import subprocess
 import sys
-import tempfile as _tempfile
 import warnings
 
 FRAME_WIDTHS = {
@@ -40,31 +39,6 @@ def get_array_type(bit_depth, signed=True):
 
 def get_min_max_value(bit_depth):
     return ARRAY_RANGES[bit_depth]
-
-
-def _fd_or_path_or_tempfile(fd, mode="w+b", tempfile=True):
-    close_fd = False
-    if fd is None and tempfile:
-        fd = _tempfile.TemporaryFile(mode=mode)
-        close_fd = True
-
-    if isinstance(fd, str):
-        fd = open(fd, mode=mode)
-        close_fd = True
-
-    if isinstance(fd, io.BufferedReader):
-        close_fd = True
-
-    try:
-        if isinstance(fd, os.PathLike):
-            fd = open(fd, mode=mode)
-            close_fd = True
-    except AttributeError:
-        # module os has no attribute PathLike, so we're on python < 3.6.
-        # The protocol we're trying to support doesn't exist, so just pass.
-        pass
-
-    return fd, close_fd
 
 
 def db_to_float(db, using_amplitude=True):

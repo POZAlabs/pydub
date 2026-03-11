@@ -240,13 +240,13 @@ class AudioSegment:
         if not audio_params.is_data_frame_width_valid(data):
             raise ValueError("data length must be a multiple of '(sample_width * channels)'")
 
-        self.frame_width = audio_params.frame_width
         self._data = data
 
     def _init_with_metadata(self, data: bytes, metadata: dict[str, Any]) -> None:
         self._data = data
         for key, value in metadata.items():
-            setattr(self, key, value)
+            if key != "frame_width":
+                setattr(self, key, value)
 
     def _init_with_data(self, data: str | bytes | IO) -> None:
         try:
@@ -264,7 +264,6 @@ class AudioSegment:
         self.channels = wav_data.channels
         self.sample_width = wav_data.bits_per_sample // 8
         self.frame_rate = wav_data.sample_rate
-        self.frame_width = self.channels * self.sample_width
         self._data = wav_data.raw_data
         if self.sample_width == 1:
             # convert from unsigned integers in wav
@@ -276,7 +275,6 @@ class AudioSegment:
 
         self._data = _pydub_core.extend_24bit_to_32bit(self._data)
         self.sample_width = 4
-        self.frame_width = self.channels * self.sample_width
 
     @classmethod
     def empty(cls):
@@ -641,6 +639,10 @@ class AudioSegment:
         public access to the raw audio data as a bytestring
         """
         return self._data
+
+    @property
+    def frame_width(self) -> int:
+        return self.channels * self.sample_width
 
     @property
     def array_type(self):

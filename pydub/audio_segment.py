@@ -261,14 +261,21 @@ class AudioSegment:
             filename = os.fsdecode(file)
         except TypeError:
             filename = None
-        file, close_file = _fd_or_path_or_tempfile(file, "rb", tempfile=False)
+
+        close_file = False
+        if isinstance(file, (str, os.PathLike)):
+            file = open(file, "rb")
+            close_file = True
+        elif isinstance(file, io.BufferedReader):
+            close_file = True
 
         is_compressed, compressor = _compression.is_compressed(file)
         if is_compressed:
+            content = file.read()
+            if close_file:
+                file.close()
             return cls.from_file(
-                file=io.BytesIO(
-                    _compression.decompress(compressor=compressor, content=file.read())
-                ),
+                file=io.BytesIO(_compression.decompress(compressor=compressor, content=content)),
                 format=format,
                 codec=codec,
                 parameters=parameters,
@@ -282,13 +289,19 @@ class AudioSegment:
 
         if is_format(target="wav"):
             try:
-                return cls._from_safe_wav(file)._segmented(
+                obj = cls._from_safe_wav(file)._segmented(
                     start_second=start_second, duration=duration
                 )
+                if close_file:
+                    file.close()
+                return obj
             except:  # noqa: E722
                 file.seek(0)
         elif is_format(target="raw") or is_format(target="pcm"):
-            return cls._from_raw(file=file, start_second=start_second, duration=duration, **kwargs)
+            obj = cls._from_raw(file=file, start_second=start_second, duration=duration, **kwargs)
+            if close_file:
+                file.close()
+            return obj
 
         return cls._from_ffmpeg(
             file=file,
@@ -338,13 +351,9 @@ class AudioSegment:
         )
 
     @classmethod
-    def _from_safe_wav(cls, file: str | os.PathLike | IO[bytes]) -> Self:
-        file, close_file = _fd_or_path_or_tempfile(file, "rb", tempfile=False)
+    def _from_safe_wav(cls, file: IO[bytes]) -> Self:
         file.seek(0)
-        obj = cls(data=file)
-        if close_file:
-            file.close()
-        return obj
+        return cls(data=file)
 
     @classmethod
     def _from_raw(

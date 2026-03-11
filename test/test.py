@@ -232,7 +232,7 @@ class AudioSegmentTests(unittest.TestCase):
 
     def test_24_bit_audio(self):
         path24 = os.path.join(data_dir, "test1-24bit.wav")
-        seg24 = AudioSegment._from_safe_wav(path24)
+        seg24 = AudioSegment.from_file(path24, format="wav")
         # The data length lies at bytes 40-44
         with open(path24, "rb") as f:
             raw24 = f.read()

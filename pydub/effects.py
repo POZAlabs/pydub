@@ -339,4 +339,4 @@ def apply_gain_stereo(seg, left_gain=0.0, right_gain=0.0):
 
     output = audioop.add(left_data, right_data, seg.sample_width)
 
-    return seg._spawn(data=output, overrides={"channels": 2, "frame_width": 2 * seg.sample_width})
+    return seg._spawn(data=output, channels=2)

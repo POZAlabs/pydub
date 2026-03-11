@@ -1211,9 +1211,9 @@ class AudioSegment:
 
         return self.__class__(
             data=data,
-            sample_width=sample_width if sample_width is not None else self.sample_width,
-            frame_rate=frame_rate if frame_rate is not None else self.frame_rate,
-            channels=channels if channels is not None else self.channels,
+            sample_width=sample_width or self.sample_width,
+            frame_rate=frame_rate or self.frame_rate,
+            channels=channels or self.channels,
         )
 
     @classmethod

@@ -1,5 +1,7 @@
 # Pydub (Pozalabs Fork)
 
+> **Note:** This is a fork tailored for Pozalabs internal use. The API may differ significantly from upstream.
+
 Pydub lets you do stuff to audio in a way that isn't stupid.
 
 This is a [Pozalabs](https://github.com/Pozalabs) fork of [jiaaro/pydub](https://github.com/jiaaro/pydub), published as `pozalabs-pydub` on PyPI.
@@ -32,6 +34,7 @@ This is a [Pozalabs](https://github.com/Pozalabs) fork of [jiaaro/pydub](https:/
 
 - `from_file_using_temporary_files` - Redundant legacy method replaced by `from_file` (pipe I/O, codec inference, compression support)
 - `AudioSegment.ffmpeg` - Legacy class property alias for `AudioSegment.converter`
+- `effects` / `scipy_effects` modules - All dynamically registered effects (`normalize`, `speedup`, `compress_dynamic_range`, `invert_phase`, `low_pass_filter`, `high_pass_filter`, `pan`, `apply_gain_stereo`, `strip_silence`, `eq`, etc.) and the `register_pydub_effect` decorator
 
 ### Type Safety
 

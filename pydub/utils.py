@@ -74,31 +74,6 @@ def ratio_to_db(ratio, val2=None, using_amplitude=True):
         return 10 * math.log(ratio, 10)
 
 
-def register_pydub_effect(fn, name=None):
-    """
-    decorator for adding pydub effects to the AudioSegment objects.
-    example use:
-        @register_pydub_effect
-        def normalize(audio_segment):
-            ...
-    or you can specify a name:
-        @register_pydub_effect("normalize")
-        def normalize_audio_segment(audio_segment):
-            ...
-    """
-    if isinstance(fn, str):
-        name = fn
-        return lambda fn: register_pydub_effect(fn, name)
-
-    if name is None:
-        name = fn.__name__
-
-    from .audio_segment import AudioSegment
-
-    setattr(AudioSegment, name, fn)
-    return fn
-
-
 def make_chunks(audio_segment, chunk_length):
     """
     Breaks an AudioSegment into chunks that are <chunk_length> milliseconds
@@ -358,28 +333,3 @@ def get_supported_decoders():
 
 def get_supported_encoders():
     return get_supported_codecs()[1]
-
-
-def stereo_to_ms(audio_segment):
-    """
-    Left-Right -> Mid-Side
-    """
-    from .audio_segment import AudioSegment
-
-    channel = audio_segment.split_to_mono()
-    channel = [channel[0].overlay(channel[1]), channel[0].overlay(channel[1].invert_phase())]
-    return AudioSegment.from_mono_audiosegments(channel[0], channel[1])
-
-
-def ms_to_stereo(audio_segment):
-    """
-    Mid-Side -> Left-Right
-    """
-    from .audio_segment import AudioSegment
-
-    channel = audio_segment.split_to_mono()
-    channel = [
-        channel[0].overlay(channel[1]) - 3,
-        channel[0].overlay(channel[1].invert_phase()) - 3,
-    ]
-    return AudioSegment.from_mono_audiosegments(channel[0], channel[1])

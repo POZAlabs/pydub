@@ -1,5 +1,7 @@
 # Pydub (Pozalabs Fork)
 
+> **Note:** This is a fork tailored for Pozalabs internal use. The API may differ significantly from upstream.
+
 Pydub lets you do stuff to audio in a way that isn't stupid.
 
 This is a [Pozalabs](https://github.com/Pozalabs) fork of [jiaaro/pydub](https://github.com/jiaaro/pydub), published as `pozalabs-pydub` on PyPI.

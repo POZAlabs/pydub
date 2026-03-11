@@ -207,7 +207,7 @@ class _AudioSegmentInitDef(TypedDict, total=False):
 
 
 @contextmanager
-def _ffmpeg_tmp_files(audio_segment: "AudioSegment"):
+def _ffmpeg_tmp_files(audio_segment: "AudioSegment") -> Generator[tuple[IO[bytes], IO[bytes]]]:
     data = NamedTemporaryFile(mode="wb", delete=False)
     output = NamedTemporaryFile(mode="w+b", delete=False)
     try:

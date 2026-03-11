@@ -873,7 +873,14 @@ class AudioSegment:
             return self._export_wav(out_f)
 
         return self._export_via_ffmpeg(
-            out_f, format, codec, bitrate, parameters, tags, id3v2_version, cover
+            out_f,
+            format=format,
+            codec=codec,
+            bitrate=bitrate,
+            parameters=parameters,
+            tags=tags,
+            id3v2_version=id3v2_version,
+            cover=cover,
         )
 
     def _export_raw(self, out_f):
@@ -898,7 +905,7 @@ class AudioSegment:
         return out_f
 
     def _export_via_ffmpeg(
-        self, out_f, format, codec, bitrate, parameters, tags, id3v2_version, cover
+        self, out_f, *, format, codec, bitrate, parameters, tags, id3v2_version, cover
     ):
         with _ffmpeg_temp_files(self) as (data, output):
             conversion_command = _ConversionCommand.init(self.converter)

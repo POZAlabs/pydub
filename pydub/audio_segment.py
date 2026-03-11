@@ -686,55 +686,6 @@ class AudioSegment:
     def __deepcopy__(self, memo: dict[int, object]) -> AudioSegment:
         return self._spawn(self._data)
 
-    def _spawn(
-        self,
-        data: bytes | list[bytes] | array.array | IO[bytes],
-        overrides: dict[str, Any] | None = None,
-    ) -> Self:
-        """
-        Creates a new audio segment using the metadata from the current one
-        and the data passed in. Should be used whenever an AudioSegment is
-        being returned by an operation that would alters the current one,
-        since AudioSegment objects are immutable.
-        """
-        match data:
-            case list():
-                data = b"".join(data)
-            case array.array():
-                data = data.tobytes()
-            case io.IOBase():
-                data.seek(0)
-                data = data.read()
-
-        overrides = overrides or {}
-        metadata = (
-            _AudioSegmentMetadata(
-                sample_width=self.sample_width,
-                frame_rate=self.frame_rate,
-                frame_width=self.frame_width,
-                channels=self.channels,
-            )
-            | overrides
-        )
-        return self.__class__(data=data, metadata=metadata)
-
-    @classmethod
-    def _sync(cls, *segs):
-        channels = max(seg.channels for seg in segs)
-        frame_rate = max(seg.frame_rate for seg in segs)
-        sample_width = max(seg.sample_width for seg in segs)
-
-        return tuple(
-            seg.set_channels(channels).set_frame_rate(frame_rate).set_sample_width(sample_width)
-            for seg in segs
-        )
-
-    def _parse_position(self, val):
-        if val < 0:
-            val = len(self) - abs(val)
-        val = self.frame_count(ms=len(self)) if val == float("inf") else self.frame_count(ms=val)
-        return int(val)
-
     def export(
         self,
         out_f: str | os.PathLike | None = None,
@@ -1272,6 +1223,55 @@ class AudioSegment:
         ]
         max_amplitude = max(amplitudes)
         return [(amplitude / max_amplitude) for amplitude in amplitudes]
+
+    def _spawn(
+        self,
+        data: bytes | list[bytes] | array.array | IO[bytes],
+        overrides: dict[str, Any] | None = None,
+    ) -> Self:
+        """
+        Creates a new audio segment using the metadata from the current one
+        and the data passed in. Should be used whenever an AudioSegment is
+        being returned by an operation that would alters the current one,
+        since AudioSegment objects are immutable.
+        """
+        match data:
+            case list():
+                data = b"".join(data)
+            case array.array():
+                data = data.tobytes()
+            case io.IOBase():
+                data.seek(0)
+                data = data.read()
+
+        overrides = overrides or {}
+        metadata = (
+            _AudioSegmentMetadata(
+                sample_width=self.sample_width,
+                frame_rate=self.frame_rate,
+                frame_width=self.frame_width,
+                channels=self.channels,
+            )
+            | overrides
+        )
+        return self.__class__(data=data, metadata=metadata)
+
+    @classmethod
+    def _sync(cls, *segs):
+        channels = max(seg.channels for seg in segs)
+        frame_rate = max(seg.frame_rate for seg in segs)
+        sample_width = max(seg.sample_width for seg in segs)
+
+        return tuple(
+            seg.set_channels(channels).set_frame_rate(frame_rate).set_sample_width(sample_width)
+            for seg in segs
+        )
+
+    def _parse_position(self, val):
+        if val < 0:
+            val = len(self) - abs(val)
+        val = self.frame_count(ms=len(self)) if val == float("inf") else self.frame_count(ms=val)
+        return int(val)
 
 
 from . import effects  # noqa: E402, F401

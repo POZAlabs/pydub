@@ -925,7 +925,7 @@ class AudioSegment:
         channel (1 for left, 2 for right).
         """
         if not 1 <= channel <= 2:
-            raise ValueError("Channel value must be 1 (left) or 2 (right)")
+            raise ValueError("'channel' must be 1 (left) or 2 (right)")
 
         if self.channels == 1:
             data = self._data
@@ -943,10 +943,10 @@ class AudioSegment:
         DC offset from all available channels.
         """
         if channel and not 1 <= channel <= 2:
-            raise ValueError("Channel value must be None, 1 (left) or 2 (right)")
+            raise ValueError("'channel' must be None, 1 (left) or 2 (right)")
 
         if offset and not -1.0 <= offset <= 1.0:
-            raise ValueError("Offset value must be in range -1.0 to 1.0")
+            raise ValueError("'offset' must be in range -1.0 to 1.0")
 
         if offset:
             offset = int(round(offset * self.max_possible_amplitude))

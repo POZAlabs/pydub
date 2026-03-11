@@ -14,6 +14,7 @@ import wave
 from collections import namedtuple
 from collections.abc import Generator
 from contextlib import contextmanager
+from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import IO, Any, Literal, Self, TypedDict, Unpack, overload
 
@@ -226,8 +227,8 @@ def _ffmpeg_tmp_files(audio_segment: "AudioSegment"):
     finally:
         data.close()
         output.close()
-        os.unlink(data.name)
-        os.unlink(output.name)
+        Path(data.name).unlink()
+        Path(output.name).unlink()
 
 
 class AudioSegment:

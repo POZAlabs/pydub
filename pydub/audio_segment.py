@@ -8,17 +8,15 @@ import dataclasses
 import functools
 import io
 import os
-import struct
 import subprocess
 import sys
 import wave
-from collections import namedtuple
 from collections.abc import Generator
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import IO, Any, Literal, Self, TypedDict, Unpack, overload
 
-from . import _compression, _meter, _pydub_core
+from . import _compression, _meter, _pydub_core, _wav
 from ._subprocess import _ConversionCommand, _PopenParams
 from .exceptions import (
     CouldntDecodeError,
@@ -41,71 +39,6 @@ AUDIO_FILE_EXT_ALIASES = {
     "m4a": "mp4",
     "wave": "wav",
 }
-
-WavSubChunk = namedtuple("WavSubChunk", ["id", "position", "size"])
-WavData = namedtuple(
-    "WavData", ["audio_format", "channels", "sample_rate", "bits_per_sample", "raw_data"]
-)
-
-
-def extract_wav_headers(data):
-    # def search_subchunk(data, subchunk_id):
-    pos = 12  # The size of the RIFF chunk descriptor
-    subchunks = []
-    while pos + 8 <= len(data) and len(subchunks) < 10:
-        subchunk_id = data[pos : pos + 4]
-        subchunk_size = struct.unpack_from("<I", data[pos + 4 : pos + 8])[0]
-        subchunks.append(WavSubChunk(subchunk_id, pos, subchunk_size))
-        if subchunk_id == b"data":
-            # 'data' is the last subchunk
-            break
-        pos += subchunk_size + 8
-
-    return subchunks
-
-
-def read_wav_audio(data, headers=None):
-    if not headers:
-        headers = extract_wav_headers(data)
-
-    fmt = [x for x in headers if x.id == b"fmt "]
-    if not fmt or fmt[0].size < 16:
-        raise CouldntDecodeError("Could not find fmt header in wav data")
-    fmt = fmt[0]
-    pos = fmt.position + 8
-    audio_format = struct.unpack_from("<H", data[pos : pos + 2])[0]
-    if audio_format != 1 and audio_format != 0xFFFE:
-        raise CouldntDecodeError(f"Unknown audio format 0x{audio_format:X} in wav data")
-
-    channels = struct.unpack_from("<H", data[pos + 2 : pos + 4])[0]
-    sample_rate = struct.unpack_from("<I", data[pos + 4 : pos + 8])[0]
-    bits_per_sample = struct.unpack_from("<H", data[pos + 14 : pos + 16])[0]
-
-    data_hdr = headers[-1]
-    if data_hdr.id != b"data":
-        raise CouldntDecodeError("Could not find data header in wav data")
-
-    pos = data_hdr.position + 8
-    return WavData(
-        audio_format, channels, sample_rate, bits_per_sample, data[pos : pos + data_hdr.size]
-    )
-
-
-def fix_wav_headers(data):
-    headers = extract_wav_headers(data)
-    if not headers or headers[-1].id != b"data":
-        return
-
-    # TODO: Handle huge files in some other way
-    if len(data) > 2**32:
-        raise CouldntDecodeError("Unable to process >4GB files")
-
-    # Set the file size in the RIFF chunk descriptor
-    data[4:8] = struct.pack("<I", len(data) - 8)
-
-    # Set the data size in the data subchunk
-    pos = headers[-1].position
-    data[pos + 4 : pos + 8] = struct.pack("<I", len(data) - pos - 8)
 
 
 def _normalize_format(audio_format: str | None) -> str | None:
@@ -238,9 +171,7 @@ class AudioSegment:
                 d += reader
             data = d
 
-        wav_data = read_wav_audio(data)
-        if not wav_data:
-            raise CouldntDecodeError("Could not read wav audio from data")
+        wav_data = _wav.read_audio(data)
 
         self.channels = wav_data.channels
         self.sample_width = wav_data.bits_per_sample // 8
@@ -484,9 +415,8 @@ class AudioSegment:
                     f"Decoding failed. {cls.converter} returned error code: {p.returncode}\n\nOutput from {cls.converter}:\n\n{error}"
                 )
 
-            p_out = bytearray(p_out)
-            fix_wav_headers(p_out)
-            obj = cls(bytes(p_out))
+            p_out = _wav.fix_headers(p_out)
+            obj = cls(p_out)
 
             return obj._segmented(start_second=None, duration=duration)
         finally:

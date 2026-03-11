@@ -7,7 +7,7 @@ from functools import partial
 from tempfile import NamedTemporaryFile, gettempdir, mkdtemp
 
 from pydub import AudioSegment
-from pydub.audio_segment import extract_wav_headers
+from pydub._wav import extract_headers
 from pydub.exceptions import (
     CouldntDecodeError,
     InvalidDuration,
@@ -281,7 +281,7 @@ class AudioSegmentTests(unittest.TestCase):
         path = os.path.join(data_dir, base_file)
         base = AudioSegment.from_file(path)
 
-        headers = extract_wav_headers(open(path, "rb").read())
+        headers = extract_headers(open(path, "rb").read())
         data16_size = headers[-1].size
         self.assertEqual(len(base.raw_data), data16_size)
         self.assertEqual(base.frame_rate, 192000)

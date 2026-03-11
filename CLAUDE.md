@@ -15,3 +15,4 @@ uv run pytest ...
 ## README
 
 - 영어로 작성
+- upstream과 외부 동작이 달라지는 변경(API 삭제, 동작 변경, 새 기능 등)은 `README.md`의 "Changes from Upstream" 섹션에 반드시 반영

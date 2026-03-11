@@ -93,16 +93,11 @@ class _ConversionCommand(list[str]):
         return self
 
     def with_cover(self, cover: str, file_format: str) -> Self:
-        if (
-            cover.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff"))
-            and file_format == "mp3"
-        ):
-            self.extend(["-i", cover, "-map", "0", "-map", "1", "-c:v", "mjpeg"])
-        else:
-            raise AttributeError(
-                "Currently cover images are only supported by MP3 files. "
-                "The allowed image formats are: .tif, .jpg, .bmp, .jpeg and .png."
-            )
+        if file_format != "mp3":
+            raise AttributeError("Currently cover images are only supported by MP3 files.")
+        if not cover.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff")):
+            raise AttributeError("The allowed image formats are: .tif, .jpg, .bmp, .jpeg and .png.")
+        self.extend(["-i", cover, "-map", "0", "-map", "1", "-c:v", "mjpeg"])
         return self
 
     def with_output(self, file_format: str, filename: str) -> Self:

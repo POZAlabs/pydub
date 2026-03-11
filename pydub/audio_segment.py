@@ -803,7 +803,7 @@ class AudioSegment:
             return self._spawn(self._data)
 
         seg1, seg2 = AudioSegment._sync(self, seg)
-        position_in_bytes = self._ms_to_byte_offset(position, seg1.frame_width)
+        position_in_bytes = self._ms_to_byte_offset(ms=position, frame_width=seg1.frame_width)
         result = _pydub_core.overlay_segments(
             seg1_data=seg1.raw_data,
             seg2_data=seg2.raw_data,

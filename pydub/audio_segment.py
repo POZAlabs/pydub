@@ -472,7 +472,8 @@ class AudioSegment:
             case array.array():
                 data = data.tobytes()
             case io.IOBase():
-                data.seek(0)
+                if data.seekable():
+                    data.seek(0)
                 data = data.read()
 
         overrides = overrides or {}

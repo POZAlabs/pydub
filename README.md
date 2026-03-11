@@ -32,6 +32,7 @@ This is a [Pozalabs](https://github.com/Pozalabs) fork of [jiaaro/pydub](https:/
 
 - `from_file_using_temporary_files` - Redundant legacy method replaced by `from_file` (pipe I/O, codec inference, compression support)
 - `AudioSegment.ffmpeg` - Legacy class property alias for `AudioSegment.converter`
+- `effects` / `scipy_effects` modules - All dynamically registered effects (`normalize`, `speedup`, `compress_dynamic_range`, `invert_phase`, `low_pass_filter`, `high_pass_filter`, `pan`, `apply_gain_stereo`, `strip_silence`, `eq`, etc.) and the `register_pydub_effect` decorator
 
 ### Type Safety
 

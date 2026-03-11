@@ -1177,6 +1177,3 @@ class AudioSegment:
         if ms == float("inf"):
             ms = len(self)
         return int(self.frame_count(ms=ms)) * (frame_width or self.frame_width)
-
-
-from . import effects  # noqa: E402, F401

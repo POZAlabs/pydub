@@ -525,66 +525,6 @@ class AudioSegmentTests(unittest.TestCase):
         self.assertEqual(seg_lchannel.frame_count(), seg.frame_count())
         self.assertEqual(seg_rchannel.frame_count(), seg.frame_count())
 
-    def test_apply_gain_stereo(self):
-        seg = self.seg1
-
-        orig_l, orig_r = seg.split_to_mono()
-        orig_dbfs_l = orig_l.dBFS
-        orig_dbfs_r = orig_r.dBFS
-
-        # for readability: infinity
-        inf = float("inf")
-
-        def assertAlmostEqual(v1, v2, **kwargs):
-            if v1 in (inf, -inf):
-                self.assertEqual(v1, v2)
-            else:
-                self.assertAlmostEqual(v1, v2, **kwargs)
-
-        def check_stereo_gain(left_dbfs_change, right_dbfs_change):
-            panned = seg.apply_gain_stereo(left_dbfs_change, right_dbfs_change)
-            self.assertEqual(panned.channels, 2)
-
-            l, r = panned.split_to_mono()  # noqa: E741
-            assertAlmostEqual(l.dBFS, orig_dbfs_l + left_dbfs_change, places=2)
-            assertAlmostEqual(r.dBFS, orig_dbfs_r + right_dbfs_change, places=2)
-
-        # hard left
-        check_stereo_gain(0.0, -inf)
-        check_stereo_gain(0.0, -6.0)
-        check_stereo_gain(0.0, 0.0)
-        check_stereo_gain(-6.0, 0.0)
-        check_stereo_gain(-inf, 0.0)
-
-    def test_pan(self):
-        seg = self.seg1
-
-        orig_l, orig_r = seg.split_to_mono()
-        orig_dbfs_l = orig_l.dBFS
-        orig_dbfs_r = orig_r.dBFS
-
-        # for readability: infinity
-        inf = float("inf")
-
-        def assertAlmostEqual(v1, v2, **kwargs):
-            if v1 in (inf, -inf):
-                self.assertEqual(v1, v2)
-            else:
-                self.assertAlmostEqual(v1, v2, **kwargs)
-
-        def check_pan(pan, left_dbfs_change, right_dbfs_change):
-            panned = seg.pan(pan)
-
-            l, r = panned.split_to_mono()  # noqa: E741
-            assertAlmostEqual(l.dBFS, orig_dbfs_l + left_dbfs_change, places=1)
-            assertAlmostEqual(r.dBFS, orig_dbfs_r + right_dbfs_change, places=1)
-
-        check_pan(-1.0, 3.0, -inf)
-        check_pan(-0.5, 1.5, -4.65)
-        check_pan(0.0, 0.0, 0.0)
-        check_pan(0.5, -4.65, 1.5)
-        check_pan(1.0, -inf, 3.0)
-
     def test_export_as_mp3(self):
         seg = self.seg1
         exported_mp3 = seg.export()
@@ -703,16 +643,6 @@ class AudioSegmentTests(unittest.TestCase):
 
         # if you reverse it twice you should get an identical AudioSegment
         self.assertEqual(seg, r2seg)
-
-    def test_normalize(self):
-        seg = self.seg1
-        normalized = seg.normalize(0.0)
-
-        self.assertEqual(len(normalized), len(seg))
-        self.assertTrue(normalized.rms > seg.rms)
-        self.assertWithinTolerance(
-            normalized.max, normalized.max_possible_amplitude, percentage=0.0001
-        )
 
     def test_for_accidental_shortening(self):
         seg = self.mp3_seg_party
@@ -919,27 +849,12 @@ class AudioSegmentTests(unittest.TestCase):
         self.assertEqual(len(self.seg2), len(self.seg2 + AudioSegment.empty()))
         self.assertEqual(len(self.seg3), len(self.seg3 + AudioSegment.empty()))
 
-    def test_speedup(self):
-        speedup_seg = self.seg1.speedup(2.0)
-
-        self.assertWithinTolerance(len(self.seg1) / 2, len(speedup_seg), percentage=0.02)
-
     def test_dBFS(self):
         seg_8bit = self.seg1.set_sample_width(1)
         self.assertWithinTolerance(seg_8bit.dBFS, -18.06, tolerance=1.5)
         self.assertWithinTolerance(self.seg1.dBFS, -17.76, tolerance=1.5)
         self.assertWithinTolerance(self.seg2.dBFS, -20.78, tolerance=1.5)
         self.assertWithinTolerance(self.seg3.dBFS, -12.94, tolerance=1.5)
-
-    def test_compress(self):
-        compressed = self.seg1.compress_dynamic_range()
-        self.assertWithinTolerance(self.seg1.dBFS - compressed.dBFS, 10.0, tolerance=10.0)
-
-        # Highest peak should be lower
-        self.assertTrue(compressed.max < self.seg1.max)
-
-        # average volume should be reduced
-        self.assertTrue(compressed.rms < self.seg1.rms)
 
     @unittest.skipUnless("aac" in get_supported_decoders(), "Unsupported codecs")
     def test_exporting_to_ogg_uses_default_codec_when_codec_param_is_none(self):
@@ -961,38 +876,6 @@ class AudioSegmentTests(unittest.TestCase):
 
     def test_zero_length_segment(self):
         self.assertEqual(0, len(self.seg1[0:0]))
-
-    def test_invert(self):
-        s_mono = Sine(100).to_audio_segment()
-        s = s_mono.set_channels(2)
-
-        try:
-            s_mono.invert_phase(channels=(1, 0))
-        except Exception:
-            pass
-        else:
-            raise Exception("AudioSegment.invert_phase() didn't catch a bad input (mono)")
-
-        s_inv = s.invert_phase()
-        self.assertFalse(s == s_inv)
-        self.assertTrue(s.rms == s_inv.rms)
-        self.assertTrue(s == s_inv.invert_phase())
-
-        s_inv_right = s.invert_phase(channels=(0, 1))
-        left, right = s_inv_right.split_to_mono()
-
-        self.assertFalse(s_mono == s_inv_right)
-        self.assertFalse(s_inv == s_inv_right)
-        self.assertTrue(left == s_mono)
-        self.assertFalse(right == s_mono)
-
-        s_inv_left = s.invert_phase(channels=(1, 0))
-        left, right = s_inv_left.split_to_mono()
-
-        self.assertFalse(s_mono == s_inv_left)
-        self.assertFalse(s_inv == s_inv_left)
-        self.assertFalse(left == s_mono)
-        self.assertTrue(right == s_mono)
 
     def test_max_dBFS(self):
         sine_0_dbfs = Sine(1000).to_audio_segment()
@@ -1262,42 +1145,6 @@ class NoConverterTests(unittest.TestCase):
 
         seg = AudioSegment.from_file(self.wave_empty, format="wav")
         self.assertTrue(len(seg) == 0)
-
-
-class FilterTests(unittest.TestCase):
-    def setUp(self):
-        global test1wav
-        if not test1wav:
-            test1wav = AudioSegment.from_wav(os.path.join(data_dir, "test1.wav"))
-
-        self.seg1 = test1wav
-
-    def test_highpass_works_on_multichannel_segments(self):
-        self.assertEqual(self.seg1.channels, 2)
-        less_bass = self.seg1.high_pass_filter(800)
-        self.assertTrue(less_bass.dBFS < self.seg1.dBFS)
-
-    def test_highpass_filter_reduces_loudness(self):
-        s = Square(200).to_audio_segment()
-        less_bass = s.high_pass_filter(400)
-        self.assertTrue(less_bass.dBFS < s.dBFS)
-
-    def test_highpass_filter_cutoff_frequency(self):
-        # A Sine wave should not be affected by a HPF 3 octaves lower
-        s = Sine(800).to_audio_segment()
-        less_bass = s.high_pass_filter(100)
-        self.assertAlmostEqual(less_bass.dBFS, s.dBFS, places=0)
-
-    def test_lowpass_filter_reduces_loudness(self):
-        s = Square(200).to_audio_segment()
-        less_treble = s.low_pass_filter(400)
-        self.assertTrue(less_treble.dBFS < s.dBFS)
-
-    def test_lowpass_filter_cutoff_frequency(self):
-        # A Sine wave should not be affected by a LPF 3 octaves Higher
-        s = Sine(100).to_audio_segment()
-        less_treble = s.low_pass_filter(800)
-        self.assertAlmostEqual(less_treble.dBFS, s.dBFS, places=0)
 
 
 class PartialAudioSegmentLoadTests(unittest.TestCase):

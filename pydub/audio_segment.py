@@ -247,7 +247,7 @@ class AudioSegment:
     @classmethod
     def from_file(
         cls,
-        file,
+        file: str | os.PathLike | IO[bytes],
         format: str | None = None,
         codec: str | None = None,
         parameters: list[str] | None = None,

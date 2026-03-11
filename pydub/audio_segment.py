@@ -161,18 +161,10 @@ class _AudioParams:
         return len(data) % self.frame_width == 0
 
 
-class _AudioSegmentMetadata(TypedDict):
-    sample_width: int
-    frame_rate: int
-    frame_width: int
-    channels: int
-
-
 class _AudioSegmentInitDef(TypedDict, total=False):
     sample_width: int
     frame_rate: int
     channels: int
-    metadata: _AudioSegmentMetadata
 
 
 @contextlib.contextmanager
@@ -225,12 +217,7 @@ class AudioSegment:
 
         if audio_params.has_params:
             self._init_with_audio_params(data=data, audio_params=audio_params)
-
-        # keep support for 'metadata' until audio params are used everywhere
-        elif metadata := kwargs.get("metadata", {}):
-            self._init_with_metadata(data=data, metadata=metadata)
         else:
-            # normal construction
             self._init_with_data(data)
 
         if self.sample_width == 3:
@@ -240,13 +227,7 @@ class AudioSegment:
         if not audio_params.is_data_frame_width_valid(data):
             raise ValueError("data length must be a multiple of '(sample_width * channels)'")
 
-        self.frame_width = audio_params.frame_width
         self._data = data
-
-    def _init_with_metadata(self, data: bytes, metadata: dict[str, Any]) -> None:
-        self._data = data
-        for key, value in metadata.items():
-            setattr(self, key, value)
 
     def _init_with_data(self, data: str | bytes | IO) -> None:
         try:
@@ -264,7 +245,6 @@ class AudioSegment:
         self.channels = wav_data.channels
         self.sample_width = wav_data.bits_per_sample // 8
         self.frame_rate = wav_data.sample_rate
-        self.frame_width = self.channels * self.sample_width
         self._data = wav_data.raw_data
         if self.sample_width == 1:
             # convert from unsigned integers in wav
@@ -276,13 +256,10 @@ class AudioSegment:
 
         self._data = _pydub_core.extend_24bit_to_32bit(self._data)
         self.sample_width = 4
-        self.frame_width = self.channels * self.sample_width
 
     @classmethod
     def empty(cls):
-        return cls(
-            b"", metadata={"channels": 1, "sample_width": 1, "frame_rate": 1, "frame_width": 1}
-        )
+        return cls(b"", sample_width=1, frame_rate=1, channels=1)
 
     @classmethod
     def silent(cls, duration=1000, frame_rate=11025):
@@ -292,10 +269,7 @@ class AudioSegment:
         """
         frames = int(frame_rate * (duration / 1000.0))
         data = b"\0\0" * frames
-        return cls(
-            data,
-            metadata={"channels": 1, "sample_width": 2, "frame_rate": frame_rate, "frame_width": 2},
-        )
+        return cls(data, sample_width=2, frame_rate=frame_rate, channels=1)
 
     @classmethod
     def from_mono_audiosegments(cls, *mono_segments):
@@ -443,12 +417,9 @@ class AudioSegment:
     ) -> Self:
         return cls(
             data=file.read(),
-            metadata={
-                "sample_width": (sample_width := kwargs["sample_width"]),
-                "frame_rate": kwargs["frame_rate"],
-                "channels": (channels := kwargs["channels"]),
-                "frame_width": channels * sample_width,
-            },
+            sample_width=kwargs["sample_width"],
+            frame_rate=kwargs["frame_rate"],
+            channels=kwargs["channels"],
         )._segmented(start_second=start_second, duration=duration)
 
     @classmethod
@@ -643,6 +614,10 @@ class AudioSegment:
         return self._data
 
     @property
+    def frame_width(self) -> int:
+        return self.channels * self.sample_width
+
+    @property
     def array_type(self):
         return get_array_type(self.sample_width * 8)
 
@@ -747,11 +722,9 @@ class AudioSegment:
         if sample_width == self.sample_width:
             return self
 
-        frame_width = self.channels * sample_width
-
         return self._spawn(
             audioop.lin2lin(self._data, self.sample_width, sample_width),
-            overrides={"sample_width": sample_width, "frame_width": frame_width},
+            sample_width=sample_width,
         )
 
     def set_frame_rate(self, frame_rate):
@@ -765,22 +738,16 @@ class AudioSegment:
         else:
             converted = self._data
 
-        return self._spawn(data=converted, overrides={"frame_rate": frame_rate})
+        return self._spawn(data=converted, frame_rate=frame_rate)
 
     def set_channels(self, channels):
         if channels == self.channels:
             return self
 
         if channels == 2 and self.channels == 1:
-            fn = audioop.tostereo
-            frame_width = self.frame_width * 2
-            fac = 1
-            converted = fn(self._data, self.sample_width, fac, fac)
+            converted = audioop.tostereo(self._data, self.sample_width, 1, 1)
         elif channels == 1 and self.channels == 2:
-            fn = audioop.tomono
-            frame_width = self.frame_width // 2
-            fac = 0.5
-            converted = fn(self._data, self.sample_width, fac, fac)
+            converted = audioop.tomono(self._data, self.sample_width, 0.5, 0.5)
         elif channels == 1:
             channels_data = [seg.get_array_of_samples() for seg in self.split_to_mono()]
             frame_count = int(self.frame_count())
@@ -790,7 +757,6 @@ class AudioSegment:
             for raw_channel_data in channels_data:
                 for i in range(frame_count):
                     converted[i] += raw_channel_data[i] // self.channels
-            frame_width = self.frame_width // self.channels
         elif self.channels == 1:
             dup_channels = [self for iChannel in range(channels)]
             return AudioSegment.from_mono_audiosegments(*dup_channels)
@@ -800,9 +766,7 @@ class AudioSegment:
                 "and multi-to-mono channel conversion"
             )
 
-        return self._spawn(
-            data=converted, overrides={"channels": channels, "frame_width": frame_width}
-        )
+        return self._spawn(data=converted, channels=channels)
 
     def split_to_mono(self):
         if self.channels == 1:
@@ -814,9 +778,7 @@ class AudioSegment:
         for i in range(self.channels):
             samples_for_current_channel = samples[i :: self.channels]
             mono_data = samples_for_current_channel.tobytes()
-            mono_channels.append(
-                self._spawn(mono_data, overrides={"channels": 1, "frame_width": self.sample_width})
-            )
+            mono_channels.append(self._spawn(mono_data, channels=1))
 
         return mono_channels
 
@@ -1227,7 +1189,10 @@ class AudioSegment:
     def _spawn(
         self,
         data: bytes | list[bytes] | array.array | IO[bytes],
-        overrides: dict[str, Any] | None = None,
+        *,
+        sample_width: int | None = None,
+        frame_rate: int | None = None,
+        channels: int | None = None,
     ) -> Self:
         """
         Creates a new audio segment using the metadata from the current one
@@ -1244,17 +1209,12 @@ class AudioSegment:
                 data.seek(0)
                 data = data.read()
 
-        overrides = overrides or {}
-        metadata = (
-            _AudioSegmentMetadata(
-                sample_width=self.sample_width,
-                frame_rate=self.frame_rate,
-                frame_width=self.frame_width,
-                channels=self.channels,
-            )
-            | overrides
+        return self.__class__(
+            data=data,
+            sample_width=sample_width or self.sample_width,
+            frame_rate=frame_rate or self.frame_rate,
+            channels=channels or self.channels,
         )
-        return self.__class__(data=data, metadata=metadata)
 
     @classmethod
     def _sync(cls, *segs):

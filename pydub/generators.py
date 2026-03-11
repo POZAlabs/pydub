@@ -42,12 +42,9 @@ class SignalGenerator(object):
 
         return AudioSegment(
             data=data,
-            metadata={
-                "channels": 1,
-                "sample_width": sample_width,
-                "frame_rate": self.sample_rate,
-                "frame_width": sample_width,
-            },
+            sample_width=sample_width,
+            frame_rate=self.sample_rate,
+            channels=1,
         )
 
     def generate(self):

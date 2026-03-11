@@ -237,11 +237,10 @@ def mediainfo_json(filepath, read_ahead_limit=-1):
         else:
             command_args += ["-"]
         stdin_parameter = subprocess.PIPE
-        file, close_file = _fd_or_path_or_tempfile(filepath, "rb", tempfile=False)
-        file.seek(0)
-        stdin_data = file.read()
-        if close_file:
-            file.close()
+        filepath.seek(0)
+        stdin_data = filepath.read()
+        if isinstance(filepath, io.BufferedReader):
+            filepath.close()
 
     command = [prober, "-of", "json"] + command_args
     res = subprocess.Popen(

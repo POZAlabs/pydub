@@ -883,12 +883,12 @@ class AudioSegment:
             cover=cover,
         )
 
-    def _export_raw(self, out_f):
+    def _export_raw(self, out_f: IO[bytes]) -> IO[bytes]:
         out_f.write(self._data)
         out_f.seek(0)
         return out_f
 
-    def _export_wav(self, out_f):
+    def _export_wav(self, out_f: IO[bytes]) -> IO[bytes]:
         pcm_for_wav = self._data
         if self.sample_width == 1:
             pcm_for_wav = audioop.bias(self._data, 1, 128)
@@ -905,8 +905,17 @@ class AudioSegment:
         return out_f
 
     def _export_via_ffmpeg(
-        self, out_f, *, format, codec, bitrate, parameters, tags, id3v2_version, cover
-    ):
+        self,
+        out_f: IO[bytes],
+        *,
+        format: str,
+        codec: str | None,
+        bitrate: str | None,
+        parameters: list[str] | None,
+        tags: dict[str, str] | None,
+        id3v2_version: str,
+        cover: str | None,
+    ) -> IO[bytes]:
         with _ffmpeg_temp_files(self) as (data, output):
             conversion_command = _ConversionCommand.init(self.converter)
             conversion_command = conversion_command.with_format("wav")

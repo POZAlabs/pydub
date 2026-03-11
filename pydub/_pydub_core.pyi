@@ -10,6 +10,14 @@ def mix_segments(
     segments: list[bytes],
     sample_width: int,
 ) -> bytes: ...
+def fade_segment(
+    data: bytes,
+    sample_width: int,
+    start_byte: int,
+    end_byte: int,
+    from_power: float,
+    to_power: float,
+) -> bytes: ...
 def extend_24bit_to_32bit(data: bytes) -> bytes: ...
 def measure_rms(
     data: bytes,

@@ -161,18 +161,10 @@ class _AudioParams:
         return len(data) % self.frame_width == 0
 
 
-class _AudioSegmentMetadata(TypedDict):
-    sample_width: int
-    frame_rate: int
-    frame_width: int
-    channels: int
-
-
 class _AudioSegmentInitDef(TypedDict, total=False):
     sample_width: int
     frame_rate: int
     channels: int
-    metadata: _AudioSegmentMetadata
 
 
 @contextlib.contextmanager
@@ -225,12 +217,7 @@ class AudioSegment:
 
         if audio_params.has_params:
             self._init_with_audio_params(data=data, audio_params=audio_params)
-
-        # keep support for 'metadata' until audio params are used everywhere
-        elif metadata := kwargs.get("metadata", {}):
-            self._init_with_metadata(data=data, metadata=metadata)
         else:
-            # normal construction
             self._init_with_data(data)
 
         if self.sample_width == 3:
@@ -241,12 +228,6 @@ class AudioSegment:
             raise ValueError("data length must be a multiple of '(sample_width * channels)'")
 
         self._data = data
-
-    def _init_with_metadata(self, data: bytes, metadata: dict[str, Any]) -> None:
-        self._data = data
-        for key, value in metadata.items():
-            if key != "frame_width":
-                setattr(self, key, value)
 
     def _init_with_data(self, data: str | bytes | IO) -> None:
         try:
@@ -278,9 +259,7 @@ class AudioSegment:
 
     @classmethod
     def empty(cls):
-        return cls(
-            b"", metadata={"channels": 1, "sample_width": 1, "frame_rate": 1, "frame_width": 1}
-        )
+        return cls(b"", sample_width=1, frame_rate=1, channels=1)
 
     @classmethod
     def silent(cls, duration=1000, frame_rate=11025):
@@ -290,10 +269,7 @@ class AudioSegment:
         """
         frames = int(frame_rate * (duration / 1000.0))
         data = b"\0\0" * frames
-        return cls(
-            data,
-            metadata={"channels": 1, "sample_width": 2, "frame_rate": frame_rate, "frame_width": 2},
-        )
+        return cls(data, sample_width=2, frame_rate=frame_rate, channels=1)
 
     @classmethod
     def from_mono_audiosegments(cls, *mono_segments):
@@ -441,12 +417,9 @@ class AudioSegment:
     ) -> Self:
         return cls(
             data=file.read(),
-            metadata={
-                "sample_width": (sample_width := kwargs["sample_width"]),
-                "frame_rate": kwargs["frame_rate"],
-                "channels": (channels := kwargs["channels"]),
-                "frame_width": channels * sample_width,
-            },
+            sample_width=kwargs["sample_width"],
+            frame_rate=kwargs["frame_rate"],
+            channels=kwargs["channels"],
         )._segmented(start_second=start_second, duration=duration)
 
     @classmethod
@@ -1247,16 +1220,12 @@ class AudioSegment:
                 data = data.read()
 
         overrides = overrides or {}
-        metadata = (
-            _AudioSegmentMetadata(
-                sample_width=self.sample_width,
-                frame_rate=self.frame_rate,
-                frame_width=self.frame_width,
-                channels=self.channels,
-            )
-            | overrides
+        return self.__class__(
+            data=data,
+            sample_width=overrides.get("sample_width", self.sample_width),
+            frame_rate=overrides.get("frame_rate", self.frame_rate),
+            channels=overrides.get("channels", self.channels),
         )
-        return self.__class__(data=data, metadata=metadata)
 
     @classmethod
     def _sync(cls, *segs):

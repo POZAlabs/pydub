@@ -82,12 +82,12 @@ class _ConversionCommand(list[str]):
         if not isinstance(tags, dict):
             raise InvalidTag("Tags must be a dictionary.")
         for key, value in tags.items():
-            self.extend(["-metadata", "{0}={1}".format(key, value)])
+            self.extend(["-metadata", f"{key}={value}"])
         if file_format == "mp3":
             id3v2_allowed_versions = ["3", "4"]
             if id3v2_version not in id3v2_allowed_versions:
                 raise InvalidID3TagVersion(
-                    "id3v2_version not allowed, allowed versions: %s" % id3v2_allowed_versions
+                    f"id3v2_version not allowed, allowed versions: {id3v2_allowed_versions}"
                 )
             self.extend(["-id3v2_version", id3v2_version])
         return self

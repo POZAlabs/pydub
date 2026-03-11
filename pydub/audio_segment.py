@@ -959,10 +959,9 @@ class AudioSegment:
 
             if p.returncode != 0:
                 raise CouldntEncodeError(
-                    "Encoding failed. ffmpeg/avlib returned error code: "
-                    "{0}\n\nCommand:{1}\n\nOutput from ffmpeg/avlib:\n\n{2}".format(
-                        p.returncode, conversion_command, p_err.decode(errors="ignore")
-                    )
+                    f"Encoding failed. ffmpeg/avlib returned error code: "
+                    f"{p.returncode}\n\nCommand:{conversion_command}\n\n"
+                    f"Output from ffmpeg/avlib:\n\n{p_err.decode(errors='ignore')}"
                 )
 
             output.seek(0)

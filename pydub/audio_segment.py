@@ -602,49 +602,6 @@ class AudioSegment:
 
         return self._get_segment(start=start, end=end)
 
-    def _get_segment(self, start: int, end: int) -> Self:
-        start = self._parse_position(start) * self.frame_width
-        end = self._parse_position(end) * self.frame_width
-        data = self._data[start:end]
-
-        # ensure the output is as long as the requester is expecting
-        expected_length = end - start
-        missing_frames = (expected_length - len(data)) // self.frame_width
-        if missing_frames:
-            if missing_frames > self.frame_count(ms=2):
-                raise TooManyMissingFrames(
-                    f"You should never be filling in more than 2 ms with silence here, missing frames: {missing_frames}"
-                )
-            silence = audioop.mul(data[: self.frame_width], self.sample_width, 0)
-            data += silence * missing_frames
-
-        return self._spawn(data)
-
-    def get_sample_slice(self, start_sample=None, end_sample=None):
-        """
-        Get a section of the audio segment by sample index.
-
-        NOTE: Negative indices do *not* address samples backword
-        from the end of the audio segment like a python list.
-        This is intentional.
-        """
-        max_val = int(self.frame_count())
-
-        def bounded(val, default):
-            if val is None:
-                return default
-            if val < 0:
-                return 0
-            if val > max_val:
-                return max_val
-            return val
-
-        start_i = bounded(start_sample, 0) * self.frame_width
-        end_i = bounded(end_sample, max_val) * self.frame_width
-
-        data = self._data[start_i:end_i]
-        return self._spawn(data)
-
     def __add__(self, arg):
         if isinstance(arg, AudioSegment):
             return self.append(arg, crossfade=0)
@@ -685,6 +642,17 @@ class AudioSegment:
 
     def __deepcopy__(self, memo: dict[int, object]) -> AudioSegment:
         return self._spawn(self._data)
+
+    def _repr_html_(self):
+        src = """
+                    <audio controls>
+                        <source src="data:audio/mpeg;base64,{base64}" type="audio/mpeg"/>
+                        Your browser does not support the audio element.
+                    </audio>
+                  """
+        fh = self.export()
+        data = base64.b64encode(fh.read()).decode("ascii")
+        return src.format(base64=data)
 
     def export(
         self,
@@ -886,6 +854,49 @@ class AudioSegment:
             return ms * (self.frame_rate / 1000.0)
         else:
             return float(len(self._data) // self.frame_width)
+
+    def get_sample_slice(self, start_sample=None, end_sample=None):
+        """
+        Get a section of the audio segment by sample index.
+
+        NOTE: Negative indices do *not* address samples backword
+        from the end of the audio segment like a python list.
+        This is intentional.
+        """
+        max_val = int(self.frame_count())
+
+        def bounded(val, default):
+            if val is None:
+                return default
+            if val < 0:
+                return 0
+            if val > max_val:
+                return max_val
+            return val
+
+        start_i = bounded(start_sample, 0) * self.frame_width
+        end_i = bounded(end_sample, max_val) * self.frame_width
+
+        data = self._data[start_i:end_i]
+        return self._spawn(data)
+
+    def _get_segment(self, start: int, end: int) -> Self:
+        start = self._parse_position(start) * self.frame_width
+        end = self._parse_position(end) * self.frame_width
+        data = self._data[start:end]
+
+        # ensure the output is as long as the requester is expecting
+        expected_length = end - start
+        missing_frames = (expected_length - len(data)) // self.frame_width
+        if missing_frames:
+            if missing_frames > self.frame_count(ms=2):
+                raise TooManyMissingFrames(
+                    f"You should never be filling in more than 2 ms with silence here, missing frames: {missing_frames}"
+                )
+            silence = audioop.mul(data[: self.frame_width], self.sample_width, 0)
+            data += silence * missing_frames
+
+        return self._spawn(data)
 
     def set_sample_width(self, sample_width):
         if sample_width == self.sample_width:
@@ -1190,17 +1201,6 @@ class AudioSegment:
 
     def reverse(self):
         return self._spawn(data=audioop.reverse(self._data, self.sample_width))
-
-    def _repr_html_(self):
-        src = """
-                    <audio controls>
-                        <source src="data:audio/mpeg;base64,{base64}" type="audio/mpeg"/>
-                        Your browser does not support the audio element.
-                    </audio>
-                  """
-        fh = self.export()
-        data = base64.b64encode(fh.read()).decode("ascii")
-        return src.format(base64=data)
 
     def measure_audio_level(
         self, *names: Unpack[tuple[Literal["rms", "peak", "loudness"], ...]]

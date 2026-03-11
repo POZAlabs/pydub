@@ -701,8 +701,8 @@ class AudioSegment:
         return self._spawn(data)
 
     def _get_segment(self, start: int, end: int) -> Self:
-        start = self._ms_to_frame_offset(start) * self.frame_width
-        end = self._ms_to_frame_offset(end) * self.frame_width
+        start = self._ms_to_byte_offset(start)
+        end = self._ms_to_byte_offset(end)
         data = self._data[start:end]
 
         # ensure the output is as long as the requester is expecting
@@ -803,7 +803,7 @@ class AudioSegment:
             return self._spawn(self._data)
 
         seg1, seg2 = AudioSegment._sync(self, seg)
-        position_in_bytes = self._ms_to_frame_offset(position) * seg1.frame_width
+        position_in_bytes = self._ms_to_byte_offset(position)
         result = _pydub_core.overlay_segments(
             seg1_data=seg1.raw_data,
             seg2_data=seg2.raw_data,
@@ -901,8 +901,8 @@ class AudioSegment:
         else:
             duration = end - start
 
-        start_bytes = self._ms_to_frame_offset(start) * self.frame_width
-        end_bytes = self._ms_to_frame_offset(end) * self.frame_width
+        start_bytes = self._ms_to_byte_offset(start)
+        end_bytes = self._ms_to_byte_offset(end)
 
         result = _pydub_core.fade_segment(
             data=bytes(self._data),
@@ -1227,12 +1227,12 @@ class AudioSegment:
             for seg in segs
         )
 
-    def _ms_to_frame_offset(self, ms: float) -> int:
+    def _ms_to_byte_offset(self, ms: float) -> int:
         if ms < 0:
             ms = len(self) + ms
         if ms == float("inf"):
             ms = len(self)
-        return int(self.frame_count(ms=ms))
+        return int(self.frame_count(ms=ms)) * self.frame_width
 
 
 from . import effects  # noqa: E402, F401

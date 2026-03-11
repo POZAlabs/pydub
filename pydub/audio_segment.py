@@ -515,7 +515,7 @@ class AudioSegment:
 
     def __eq__(self, other):
         try:
-            return self._data == other._data
+            return self._data == other.raw_data
         except:  # noqa: E722
             return False
 
@@ -819,7 +819,7 @@ class AudioSegment:
         seg1, seg2 = AudioSegment._sync(self, seg)
 
         if not crossfade:
-            return seg1._spawn(seg1._data + seg2._data)
+            return seg1._spawn(seg1.raw_data + seg2.raw_data)
         elif crossfade > len(self):
             raise ValueError(
                 "Crossfade is longer than the original AudioSegment ({}ms > {}ms)".format(
@@ -838,9 +838,9 @@ class AudioSegment:
 
         output = io.BytesIO()
 
-        output.write(seg1[:-crossfade]._data)
-        output.write(xf._data)
-        output.write(seg2[crossfade:]._data)
+        output.write(seg1[:-crossfade].raw_data)
+        output.write(xf.raw_data)
+        output.write(seg2[crossfade:].raw_data)
 
         output.seek(0)
         obj = seg1._spawn(data=output)

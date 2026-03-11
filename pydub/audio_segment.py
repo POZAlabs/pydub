@@ -13,7 +13,7 @@ import sys
 import wave
 from collections.abc import Generator
 from pathlib import Path
-from tempfile import NamedTemporaryFile
+from tempfile import NamedTemporaryFile, TemporaryFile
 from typing import IO, Any, Literal, Self, TypedDict, Unpack, overload
 
 from . import _compression, _meter, _pydub_core, _wav
@@ -27,7 +27,6 @@ from .exceptions import (
 )
 from .logging_utils import log_conversion, log_subprocess_output
 from .utils import (
-    _fd_or_path_or_tempfile,
     db_to_float,
     get_array_type,
     get_encoder_name,
@@ -997,7 +996,10 @@ class AudioSegment:
                 "or call export(format='raw') with no codec or parameters"
             )
 
-        out_f, _ = _fd_or_path_or_tempfile(out_f, "wb+")
+        if out_f is None:
+            out_f = TemporaryFile(mode="wb+")
+        elif isinstance(out_f, (str, os.PathLike)):
+            out_f = open(out_f, mode="wb+")
         out_f.seek(0)
 
         if format == "raw":

@@ -196,7 +196,7 @@ def invert_phase(seg, channels=(1, 1)):
     Note that mono AudioSegments will become stereo.
     """
     if channels == (1, 1):
-        inverted = audioop.mul(seg._data, seg.sample_width, -1.0)
+        inverted = audioop.mul(seg.raw_data, seg.sample_width, -1.0)
         return seg._spawn(data=inverted)
 
     else:
@@ -331,10 +331,10 @@ def apply_gain_stereo(seg, left_gain=0.0, right_gain=0.0):
     l_mult_factor = db_to_float(left_gain)
     r_mult_factor = db_to_float(right_gain)
 
-    left_data = audioop.mul(left._data, left.sample_width, l_mult_factor)
+    left_data = audioop.mul(left.raw_data, left.sample_width, l_mult_factor)
     left_data = audioop.tostereo(left_data, left.sample_width, 1, 0)
 
-    right_data = audioop.mul(right._data, right.sample_width, r_mult_factor)
+    right_data = audioop.mul(right.raw_data, right.sample_width, r_mult_factor)
     right_data = audioop.tostereo(right_data, right.sample_width, 0, 1)
 
     output = audioop.add(left_data, right_data, seg.sample_width)

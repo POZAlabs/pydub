@@ -211,18 +211,7 @@ def _ffmpeg_tmp_files(audio_segment: "AudioSegment"):
     data = NamedTemporaryFile(mode="wb", delete=False)
     output = NamedTemporaryFile(mode="w+b", delete=False)
     try:
-        pcm_for_wav = audio_segment.raw_data
-        if audio_segment.sample_width == 1:
-            pcm_for_wav = audioop.bias(audio_segment.raw_data, 1, 128)
-
-        wave_data = wave.open(data, "wb")
-        wave_data.setnchannels(audio_segment.channels)
-        wave_data.setsampwidth(audio_segment.sample_width)
-        wave_data.setframerate(audio_segment.frame_rate)
-        wave_data.setnframes(int(audio_segment.frame_count()))
-        wave_data.writeframesraw(pcm_for_wav)
-        wave_data.close()
-
+        audio_segment._write_wav(data)
         yield data, output
     finally:
         data.close()
@@ -889,7 +878,7 @@ class AudioSegment:
         out_f.seek(0)
         return out_f
 
-    def _export_wav(self, out_f: IO[bytes]) -> IO[bytes]:
+    def _write_wav(self, out_f: IO[bytes]) -> None:
         pcm_for_wav = self._data
         if self.sample_width == 1:
             pcm_for_wav = audioop.bias(self._data, 1, 128)
@@ -902,6 +891,8 @@ class AudioSegment:
         wave_data.writeframesraw(pcm_for_wav)
         wave_data.close()
 
+    def _export_wav(self, out_f: IO[bytes]) -> IO[bytes]:
+        self._write_wav(out_f)
         out_f.seek(0)
         return out_f
 

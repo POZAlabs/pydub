@@ -536,25 +536,6 @@ class AudioSegment:
 
         raise ValueError("Invalid arguments for start_second and duration")
 
-    @property
-    def raw_data(self):
-        """
-        public access to the raw audio data as a bytestring
-        """
-        return self._data
-
-    def get_array_of_samples(self, array_type_override=None):
-        """
-        returns the raw_data as an array of samples
-        """
-        if array_type_override is None:
-            array_type_override = self.array_type
-        return array.array(array_type_override, self._data)
-
-    @property
-    def array_type(self):
-        return get_array_type(self.sample_width * 8)
-
     def __len__(self):
         """
         returns the length of this audio segment in milliseconds
@@ -653,6 +634,48 @@ class AudioSegment:
         fh = self.export()
         data = base64.b64encode(fh.read()).decode("ascii")
         return src.format(base64=data)
+
+    @property
+    def raw_data(self):
+        """
+        public access to the raw audio data as a bytestring
+        """
+        return self._data
+
+    @property
+    def array_type(self):
+        return get_array_type(self.sample_width * 8)
+
+    @property
+    def rms(self):
+        return audioop.rms(self._data, self.sample_width)
+
+    @property
+    def dBFS(self):
+        rms = self.rms
+        if not rms:
+            return -float("infinity")
+        return ratio_to_db(self.rms / self.max_possible_amplitude)
+
+    @property
+    def max(self):
+        return audioop.max(self._data, self.sample_width)
+
+    @property
+    def max_possible_amplitude(self):
+        bits = self.sample_width * 8
+        max_possible_val = 2**bits
+
+        # since half is above 0 and half is below the max amplitude is divided
+        return max_possible_val / 2
+
+    @property
+    def max_dBFS(self):
+        return ratio_to_db(self.max, self.max_possible_amplitude)
+
+    @property
+    def duration_seconds(self):
+        return self.frame_rate and self.frame_count() / self.frame_rate or 0.0
 
     def export(
         self,
@@ -840,6 +863,14 @@ class AudioSegment:
         out_f.seek(0)
         return out_f
 
+    def get_array_of_samples(self, array_type_override=None):
+        """
+        returns the raw_data as an array of samples
+        """
+        if array_type_override is None:
+            array_type_override = self.array_type
+        return array.array(array_type_override, self._data)
+
     def get_frame(self, index):
         frame_start = index * self.frame_width
         frame_end = frame_start + self.frame_width
@@ -974,37 +1005,6 @@ class AudioSegment:
             )
 
         return mono_channels
-
-    @property
-    def rms(self):
-        return audioop.rms(self._data, self.sample_width)
-
-    @property
-    def dBFS(self):
-        rms = self.rms
-        if not rms:
-            return -float("infinity")
-        return ratio_to_db(self.rms / self.max_possible_amplitude)
-
-    @property
-    def max(self):
-        return audioop.max(self._data, self.sample_width)
-
-    @property
-    def max_possible_amplitude(self):
-        bits = self.sample_width * 8
-        max_possible_val = 2**bits
-
-        # since half is above 0 and half is below the max amplitude is divided
-        return max_possible_val / 2
-
-    @property
-    def max_dBFS(self):
-        return ratio_to_db(self.max, self.max_possible_amplitude)
-
-    @property
-    def duration_seconds(self):
-        return self.frame_rate and self.frame_count() / self.frame_rate or 0.0
 
     def get_dc_offset(self, channel=1):
         """

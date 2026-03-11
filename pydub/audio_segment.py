@@ -210,9 +210,9 @@ def _ffmpeg_tmp_files(audio_segment: "AudioSegment"):
     data = NamedTemporaryFile(mode="wb", delete=False)
     output = NamedTemporaryFile(mode="w+b", delete=False)
     try:
-        pcm_for_wav = audio_segment._data
+        pcm_for_wav = audio_segment.raw_data
         if audio_segment.sample_width == 1:
-            pcm_for_wav = audioop.bias(audio_segment._data, 1, 128)
+            pcm_for_wav = audioop.bias(audio_segment.raw_data, 1, 128)
 
         wave_data = wave.open(data, "wb")
         wave_data.setnchannels(audio_segment.channels)

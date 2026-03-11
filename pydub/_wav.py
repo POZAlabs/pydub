@@ -28,7 +28,7 @@ def extract_headers(data: bytes) -> list[SubChunk]:
     while pos + 8 <= len(data) and len(subchunks) < 10:
         subchunk_id = data[pos : pos + 4]
         subchunk_size = struct.unpack_from("<I", data[pos + 4 : pos + 8])[0]
-        subchunks.append(SubChunk(subchunk_id, pos, subchunk_size))
+        subchunks.append(SubChunk(id=subchunk_id, position=pos, size=subchunk_size))
         if subchunk_id == b"data":
             break
         pos += subchunk_size + 8
@@ -59,7 +59,11 @@ def read_audio(data: bytes, headers: list[SubChunk] | None = None) -> AudioData:
 
     pos = data_hdr.position + 8
     return AudioData(
-        audio_format, channels, sample_rate, bits_per_sample, data[pos : pos + data_hdr.size]
+        audio_format=audio_format,
+        channels=channels,
+        sample_rate=sample_rate,
+        bits_per_sample=bits_per_sample,
+        raw_data=data[pos : pos + data_hdr.size],
     )
 
 

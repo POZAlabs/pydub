@@ -481,7 +481,7 @@ class AudioSegment:
             if p.returncode or not p_out:
                 error = p_err.decode(errors="ignore")
                 raise CouldntDecodeError(
-                    f"Decoding failed. ffmpeg returned error code: {p.returncode}\n\nOutput from ffmpeg/avlib:\n\n{error}"
+                    f"Decoding failed. {cls.converter} returned error code: {p.returncode}\n\nOutput from {cls.converter}:\n\n{error}"
                 )
 
             p_out = bytearray(p_out)
@@ -1148,9 +1148,9 @@ class AudioSegment:
 
             if p.returncode != 0:
                 raise CouldntEncodeError(
-                    f"Encoding failed. ffmpeg/avlib returned error code: "
-                    f"{p.returncode}\n\nCommand:{conversion_command}\n\n"
-                    f"Output from ffmpeg/avlib:\n\n{p_err.decode(errors='ignore')}"
+                    f"Encoding failed. {self.converter} returned error code: "
+                    f"{p.returncode}\n\nCommand: {conversion_command}\n\n"
+                    f"Output from {self.converter}:\n\n{p_err.decode(errors='ignore')}"
                 )
 
             output.seek(0)

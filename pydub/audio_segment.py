@@ -13,7 +13,7 @@ import sys
 import wave
 from collections.abc import Generator
 from pathlib import Path
-from tempfile import NamedTemporaryFile
+from tempfile import NamedTemporaryFile, TemporaryFile
 from typing import IO, Any, Literal, Self, TypedDict, Unpack, overload
 
 from . import _compression, _meter, _pydub_core, _wav
@@ -27,7 +27,6 @@ from .exceptions import (
 )
 from .logging_utils import log_conversion, log_subprocess_output
 from .utils import (
-    _fd_or_path_or_tempfile,
     db_to_float,
     get_array_type,
     get_encoder_name,
@@ -248,7 +247,7 @@ class AudioSegment:
     @classmethod
     def from_file(
         cls,
-        file,
+        file: str | os.PathLike | IO[bytes],
         format: str | None = None,
         codec: str | None = None,
         parameters: list[str] | None = None,
@@ -261,14 +260,21 @@ class AudioSegment:
             filename = os.fsdecode(file)
         except TypeError:
             filename = None
-        file, close_file = _fd_or_path_or_tempfile(file, "rb", tempfile=False)
+
+        close_file = False
+        if isinstance(file, (str, os.PathLike)):
+            file = open(file, "rb")
+            close_file = True
+        elif isinstance(file, io.BufferedReader):
+            close_file = True
 
         is_compressed, compressor = _compression.is_compressed(file)
         if is_compressed:
+            content = file.read()
+            if close_file:
+                file.close()
             return cls.from_file(
-                file=io.BytesIO(
-                    _compression.decompress(compressor=compressor, content=file.read())
-                ),
+                file=io.BytesIO(_compression.decompress(compressor=compressor, content=content)),
                 format=format,
                 codec=codec,
                 parameters=parameters,
@@ -282,13 +288,19 @@ class AudioSegment:
 
         if is_format(target="wav"):
             try:
-                return cls._from_safe_wav(file)._segmented(
+                obj = cls._from_safe_wav(file)._segmented(
                     start_second=start_second, duration=duration
                 )
+                if close_file:
+                    file.close()
+                return obj
             except:  # noqa: E722
                 file.seek(0)
         elif is_format(target="raw") or is_format(target="pcm"):
-            return cls._from_raw(file=file, start_second=start_second, duration=duration, **kwargs)
+            obj = cls._from_raw(file=file, start_second=start_second, duration=duration, **kwargs)
+            if close_file:
+                file.close()
+            return obj
 
         return cls._from_ffmpeg(
             file=file,
@@ -338,13 +350,9 @@ class AudioSegment:
         )
 
     @classmethod
-    def _from_safe_wav(cls, file: str | os.PathLike | IO[bytes]) -> Self:
-        file, close_file = _fd_or_path_or_tempfile(file, "rb", tempfile=False)
+    def _from_safe_wav(cls, file: IO[bytes]) -> Self:
         file.seek(0)
-        obj = cls(data=file)
-        if close_file:
-            file.close()
-        return obj
+        return cls(data=file)
 
     @classmethod
     def _from_raw(
@@ -988,7 +996,10 @@ class AudioSegment:
                 "or call export(format='raw') with no codec or parameters"
             )
 
-        out_f, _ = _fd_or_path_or_tempfile(out_f, "wb+")
+        if out_f is None:
+            out_f = TemporaryFile(mode="wb+")
+        elif isinstance(out_f, (str, os.PathLike)):
+            out_f = open(out_f, mode="wb+")
         out_f.seek(0)
 
         if format == "raw":

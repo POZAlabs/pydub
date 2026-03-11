@@ -70,12 +70,12 @@ def read_wav_audio(data, headers=None):
 
     fmt = [x for x in headers if x.id == b"fmt "]
     if not fmt or fmt[0].size < 16:
-        raise CouldntDecodeError("Couldn't find fmt header in wav data")
+        raise CouldntDecodeError("Could not find fmt header in wav data")
     fmt = fmt[0]
     pos = fmt.position + 8
     audio_format = struct.unpack_from("<H", data[pos : pos + 2])[0]
     if audio_format != 1 and audio_format != 0xFFFE:
-        raise CouldntDecodeError("Unknown audio format 0x%X in wav data" % audio_format)
+        raise CouldntDecodeError(f"Unknown audio format 0x{audio_format:X} in wav data")
 
     channels = struct.unpack_from("<H", data[pos + 2 : pos + 4])[0]
     sample_rate = struct.unpack_from("<I", data[pos + 4 : pos + 8])[0]
@@ -83,7 +83,7 @@ def read_wav_audio(data, headers=None):
 
     data_hdr = headers[-1]
     if data_hdr.id != b"data":
-        raise CouldntDecodeError("Couldn't find data header in wav data")
+        raise CouldntDecodeError("Could not find data header in wav data")
 
     pos = data_hdr.position + 8
     return WavData(
@@ -155,7 +155,7 @@ class _AudioParams:
         if self.has_params:
             return self.sample_width * self.channels
 
-        raise ValueError("`frame_width` is not available until all audio parameters are specified")
+        raise ValueError("'frame_width' is not available until all audio parameters are specified")
 
     def is_data_frame_width_valid(self, data: bytes) -> bool:
         return len(data) % self.frame_width == 0
@@ -225,7 +225,7 @@ class AudioSegment:
 
     def _init_with_audio_params(self, data: bytes, audio_params: _AudioParams) -> None:
         if not audio_params.is_data_frame_width_valid(data):
-            raise ValueError("data length must be a multiple of '(sample_width * channels)'")
+            raise ValueError("Data length must be a multiple of '(sample_width * channels)'")
 
         self._data = data
 
@@ -240,7 +240,7 @@ class AudioSegment:
 
         wav_data = read_wav_audio(data)
         if not wav_data:
-            raise CouldntDecodeError("Couldn't read wav audio from data")
+            raise CouldntDecodeError("Could not read wav audio from data")
 
         self.channels = wav_data.channels
         self.sample_width = wav_data.bits_per_sample // 8
@@ -481,8 +481,7 @@ class AudioSegment:
             if p.returncode or not p_out:
                 error = p_err.decode(errors="ignore")
                 raise CouldntDecodeError(
-                    "Decoding failed. "
-                    f"ffmpeg returned error code: {p.returncode}\n\nOutput from ffmpeg/avlib:\n\n{error}"
+                    f"Decoding failed. ffmpeg returned error code: {p.returncode}\n\nOutput from ffmpeg/avlib:\n\n{error}"
                 )
 
             p_out = bytearray(p_out)
@@ -570,7 +569,7 @@ class AudioSegment:
 
     def __sub__(self, arg):
         if isinstance(arg, AudioSegment):
-            raise TypeError("AudioSegment objects can't be subtracted from each other")
+            raise TypeError("AudioSegment objects cannot be subtracted from each other")
         else:
             return self.apply_gain(-arg)
 
@@ -711,7 +710,7 @@ class AudioSegment:
         if missing_frames:
             if missing_frames > self.frame_count(ms=2):
                 raise TooManyMissingFrames(
-                    f"You should never be filling in more than 2 ms with silence here, missing frames: {missing_frames}"
+                    f"Missing frames exceed 2 ms of silence: {missing_frames}"
                 )
             silence = audioop.mul(data[: self.frame_width], self.sample_width, 0)
             data += silence * missing_frames
@@ -822,15 +821,11 @@ class AudioSegment:
             return seg1._spawn(seg1.raw_data + seg2.raw_data)
         elif crossfade > len(self):
             raise ValueError(
-                "Crossfade is longer than the original AudioSegment ({}ms > {}ms)".format(
-                    crossfade, len(self)
-                )
+                f"Crossfade is longer than the original AudioSegment ({crossfade}ms > {len(self)}ms)"
             )
         elif crossfade > len(seg):
             raise ValueError(
-                "Crossfade is longer than the appended AudioSegment ({}ms > {}ms)".format(
-                    crossfade, len(seg)
-                )
+                f"Crossfade is longer than the appended AudioSegment ({crossfade}ms > {len(seg)}ms)"
             )
 
         xf = seg1[-crossfade:].fade(to_gain=-120, start=0, end=float("inf"))
@@ -875,7 +870,7 @@ class AudioSegment:
         """
         if None not in [duration, end, start]:
             raise TypeError(
-                'Only two of the three arguments, "start", "end", and "duration" may be specified'
+                "Only two of the three arguments, 'start', 'end', and 'duration' may be specified"
             )
 
         # no fade == the same audio
@@ -891,7 +886,7 @@ class AudioSegment:
             end += len(self)
 
         if duration is not None and duration < 0:
-            raise InvalidDuration("duration must be a positive integer")
+            raise InvalidDuration("Duration must be a positive integer")
 
         if duration:
             if start is not None:
@@ -930,7 +925,7 @@ class AudioSegment:
         channel (1 for left, 2 for right).
         """
         if not 1 <= channel <= 2:
-            raise ValueError("channel value must be 1 (left) or 2 (right)")
+            raise ValueError("Channel value must be 1 (left) or 2 (right)")
 
         if self.channels == 1:
             data = self._data
@@ -948,10 +943,10 @@ class AudioSegment:
         DC offset from all available channels.
         """
         if channel and not 1 <= channel <= 2:
-            raise ValueError("channel value must be None, 1 (left) or 2 (right)")
+            raise ValueError("Channel value must be None, 1 (left) or 2 (right)")
 
         if offset and not -1.0 <= offset <= 1.0:
-            raise ValueError("offset value must be in range -1.0 to 1.0")
+            raise ValueError("Offset value must be in range -1.0 to 1.0")
 
         if offset:
             offset = int(round(offset * self.max_possible_amplitude))
@@ -1050,9 +1045,9 @@ class AudioSegment:
         """
         if format == "raw" and (codec is not None or parameters is not None):
             raise AttributeError(
-                'Can not invoke ffmpeg when export format is "raw"; '
-                'specify an ffmpeg raw format like format="s16le" instead '
-                'or call export(format="raw") with no codec or parameters'
+                "Cannot invoke ffmpeg when export format is 'raw'; "
+                "specify an ffmpeg raw format like format='s16le' instead "
+                "or call export(format='raw') with no codec or parameters"
             )
 
         out_f, _ = _fd_or_path_or_tempfile(out_f, "wb+")

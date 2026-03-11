@@ -3,6 +3,7 @@ from __future__ import annotations
 import array
 import audioop
 import base64
+import contextlib
 import dataclasses
 import functools
 import io
@@ -13,6 +14,7 @@ import sys
 import wave
 from collections import namedtuple
 from collections.abc import Generator
+from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import IO, Any, Literal, Self, TypedDict, Unpack, overload
 
@@ -22,8 +24,6 @@ from .exceptions import (
     CouldntDecodeError,
     CouldntEncodeError,
     InvalidDuration,
-    InvalidID3TagVersion,
-    InvalidTag,
     MissingAudioParameter,
     TooManyMissingFrames,
 )
@@ -204,6 +204,20 @@ class _AudioSegmentInitDef(TypedDict, total=False):
     frame_rate: int
     channels: int
     metadata: _AudioSegmentMetadata
+
+
+@contextlib.contextmanager
+def _ffmpeg_tmp_files(audio_segment: "AudioSegment") -> Generator[tuple[IO[bytes], IO[bytes]]]:
+    data = NamedTemporaryFile(mode="wb", delete=False)
+    output = NamedTemporaryFile(mode="w+b", delete=False)
+    try:
+        audio_segment._write_wav(data)
+        yield data, output
+    finally:
+        data.close()
+        output.close()
+        Path(data.name).unlink()
+        Path(output.name).unlink()
 
 
 class AudioSegment:
@@ -832,8 +846,6 @@ class AudioSegment:
         cover (file)
             Set cover for audio file from image file. (png or jpg)
         """
-        id3v2_allowed_versions = ["3", "4"]
-
         if format == "raw" and (codec is not None or parameters is not None):
             raise AttributeError(
                 'Can not invoke ffmpeg when export format is "raw"; '
@@ -845,134 +857,107 @@ class AudioSegment:
         out_f.seek(0)
 
         if format == "raw":
-            out_f.write(self._data)
-            out_f.seek(0)
-            return out_f
+            return self._export_raw(out_f)
 
-        # wav with no ffmpeg parameters can just be written directly to out_f
-        easy_wav = format == "wav" and codec is None and parameters is None
+        if format == "wav" and codec is None and parameters is None:
+            return self._export_wav(out_f)
 
-        if easy_wav:
-            data = out_f
-        else:
-            data = NamedTemporaryFile(mode="wb", delete=False)
+        return self._export_via_ffmpeg(
+            out_f,
+            format=format,
+            codec=codec,
+            bitrate=bitrate,
+            parameters=parameters,
+            tags=tags,
+            id3v2_version=id3v2_version,
+            cover=cover,
+        )
 
+    def _export_raw(self, out_f: IO[bytes]) -> IO[bytes]:
+        out_f.write(self._data)
+        out_f.seek(0)
+        return out_f
+
+    def _write_wav(self, out_f: IO[bytes]) -> None:
         pcm_for_wav = self._data
         if self.sample_width == 1:
-            # convert to unsigned integers for wav
             pcm_for_wav = audioop.bias(self._data, 1, 128)
 
-        wave_data = wave.open(data, "wb")
+        wave_data = wave.open(out_f, "wb")
         wave_data.setnchannels(self.channels)
         wave_data.setsampwidth(self.sample_width)
         wave_data.setframerate(self.frame_rate)
-        # For some reason packing the wave header struct with
-        # a float in python 2 doesn't throw an exception
         wave_data.setnframes(int(self.frame_count()))
         wave_data.writeframesraw(pcm_for_wav)
         wave_data.close()
 
-        # for easy wav files, we're done (wav data is written directly to out_f)
-        if easy_wav:
-            out_f.seek(0)
-            return out_f
+    def _export_wav(self, out_f: IO[bytes]) -> IO[bytes]:
+        self._write_wav(out_f)
+        out_f.seek(0)
+        return out_f
 
-        output = NamedTemporaryFile(mode="w+b", delete=False)
+    def _export_via_ffmpeg(
+        self,
+        out_f: IO[bytes],
+        *,
+        format: str,
+        codec: str | None,
+        bitrate: str | None,
+        parameters: list[str] | None,
+        tags: dict[str, str] | None,
+        id3v2_version: str,
+        cover: str | None,
+    ) -> IO[bytes]:
+        with _ffmpeg_tmp_files(self) as (data, output):
+            conversion_command = _ConversionCommand.init(self.converter)
+            conversion_command = conversion_command.with_format("wav")
+            conversion_command = conversion_command.with_filename(data.name)
 
-        # build converter command to export
-        conversion_command = [
-            self.converter,
-            "-y",  # always overwrite existing files
-            "-f",
-            "wav",
-            "-i",
-            data.name,  # input options (filename last)
-        ]
+            if cover is not None:
+                conversion_command = conversion_command.with_cover(cover, format)
 
-        if codec is None:
-            codec = self.DEFAULT_CODECS.get(format, None)
+            if codec is None:
+                codec = self.DEFAULT_CODECS.get(format, None)
+            if codec is not None:
+                conversion_command = conversion_command.with_codec(codec)
 
-        if cover is not None:
-            if (
-                cover.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff"))
-                and format == "mp3"
-            ):
-                conversion_command.extend(["-i", cover, "-map", "0", "-map", "1", "-c:v", "mjpeg"])
-            else:
-                raise AttributeError(
-                    "Currently cover images are only supported by MP3 files. "
-                    "The allowed image formats are: .tif, .jpg, .bmp, .jpeg and .png."
+            if bitrate is not None:
+                conversion_command = conversion_command.with_bitrate(bitrate)
+
+            if parameters is not None:
+                conversion_command = conversion_command.with_parameters(parameters)
+
+            if tags is not None:
+                conversion_command = conversion_command.with_tags(tags, format, id3v2_version)
+
+            if sys.platform == "darwin" and codec == "mp3":
+                conversion_command = conversion_command.with_parameters(["-write_xing", "0"])
+
+            conversion_command = conversion_command.with_output(format, output.name)
+
+            log_conversion(conversion_command)
+
+            with open(os.devnull, "rb") as devnull:
+                p = subprocess.Popen(
+                    conversion_command,
+                    stdin=devnull,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
                 )
+            p_out, p_err = p.communicate()
 
-        if codec is not None:
-            # force audio encoder
-            conversion_command.extend(["-acodec", codec])
+            log_subprocess_output(p_out)
+            log_subprocess_output(p_err)
 
-        if bitrate is not None:
-            conversion_command.extend(["-b:a", bitrate])
-
-        if parameters is not None:
-            # extend arguments with arbitrary set
-            conversion_command.extend(parameters)
-
-        if tags is not None:
-            if not isinstance(tags, dict):
-                raise InvalidTag("Tags must be a dictionary.")
-            else:
-                # Extend converter command with tags
-                # print(tags)
-                for key, value in tags.items():
-                    conversion_command.extend(["-metadata", "{0}={1}".format(key, value)])
-
-                if format == "mp3":
-                    # set id3v2 tag version
-                    if id3v2_version not in id3v2_allowed_versions:
-                        raise InvalidID3TagVersion(
-                            "id3v2_version not allowed, allowed versions: %s"
-                            % id3v2_allowed_versions
-                        )
-                    conversion_command.extend(["-id3v2_version", id3v2_version])
-
-        if sys.platform == "darwin" and codec == "mp3":
-            conversion_command.extend(["-write_xing", "0"])
-
-        conversion_command.extend(
-            [
-                "-f",
-                format,
-                output.name,  # output options (filename last)
-            ]
-        )
-
-        log_conversion(conversion_command)
-
-        # read stdin / write stdout
-        with open(os.devnull, "rb") as devnull:
-            p = subprocess.Popen(
-                conversion_command, stdin=devnull, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
-        p_out, p_err = p.communicate()
-
-        log_subprocess_output(p_out)
-        log_subprocess_output(p_err)
-
-        try:
             if p.returncode != 0:
                 raise CouldntEncodeError(
-                    "Encoding failed. ffmpeg/avlib returned error code: "
-                    "{0}\n\nCommand:{1}\n\nOutput from ffmpeg/avlib:\n\n{2}".format(
-                        p.returncode, conversion_command, p_err.decode(errors="ignore")
-                    )
+                    f"Encoding failed. ffmpeg/avlib returned error code: "
+                    f"{p.returncode}\n\nCommand:{conversion_command}\n\n"
+                    f"Output from ffmpeg/avlib:\n\n{p_err.decode(errors='ignore')}"
                 )
 
             output.seek(0)
             out_f.write(output.read())
-
-        finally:
-            data.close()
-            output.close()
-            os.unlink(data.name)
-            os.unlink(output.name)
 
         out_f.seek(0)
         return out_f

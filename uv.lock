@@ -382,7 +382,7 @@ wheels = [
 
 [[package]]
 name = "pozalabs-pydub"
-version = "0.40.0"
+version = "0.41.0"
 source = { editable = "." }
 dependencies = [
     { name = "audioop-lts", marker = "python_full_version >= '3.13'" },

@@ -28,6 +28,10 @@ This is a [Pozalabs](https://github.com/Pozalabs) fork of [jiaaro/pydub](https:/
 - **Audio processing framework** - Command-based processor architecture for merge, overlay, and format conversion
 - **Python 3.13 support** - Via `audioop-lts` dependency
 
+### Removed
+
+- `from_file_using_temporary_files` - Redundant legacy method replaced by `from_file` (pipe I/O, codec inference, compression support)
+
 ### Type Safety
 
 - Comprehensive type hints using `Self`, `Literal`, `TypedDict`, `Unpack`

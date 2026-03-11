@@ -206,7 +206,7 @@ class _AudioSegmentInitDef(TypedDict, total=False):
 
 
 @contextmanager
-def _ffmpeg_temp_files(audio_segment):
+def _ffmpeg_tmp_files(audio_segment: "AudioSegment"):
     data = NamedTemporaryFile(mode="wb", delete=False)
     output = NamedTemporaryFile(mode="w+b", delete=False)
     try:
@@ -916,7 +916,7 @@ class AudioSegment:
         id3v2_version: str,
         cover: str | None,
     ) -> IO[bytes]:
-        with _ffmpeg_temp_files(self) as (data, output):
+        with _ffmpeg_tmp_files(self) as (data, output):
             conversion_command = _ConversionCommand.init(self.converter)
             conversion_command = conversion_command.with_format("wav")
             conversion_command = conversion_command.with_filename(data.name)

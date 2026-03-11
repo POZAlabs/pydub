@@ -803,7 +803,7 @@ class AudioSegment:
             return self._spawn(self._data)
 
         seg1, seg2 = AudioSegment._sync(self, seg)
-        position_in_bytes = self._ms_to_byte_offset(position)
+        position_in_bytes = self._ms_to_byte_offset(position, seg1.frame_width)
         result = _pydub_core.overlay_segments(
             seg1_data=seg1.raw_data,
             seg2_data=seg2.raw_data,
@@ -1227,12 +1227,12 @@ class AudioSegment:
             for seg in segs
         )
 
-    def _ms_to_byte_offset(self, ms: float) -> int:
+    def _ms_to_byte_offset(self, ms: float, frame_width: int | None = None) -> int:
         if ms < 0:
             ms = len(self) + ms
         if ms == float("inf"):
             ms = len(self)
-        return int(self.frame_count(ms=ms)) * self.frame_width
+        return int(self.frame_count(ms=ms)) * (frame_width or self.frame_width)
 
 
 from . import effects  # noqa: E402, F401

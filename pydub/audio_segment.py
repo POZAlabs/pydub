@@ -278,205 +278,6 @@ class AudioSegment:
         self.sample_width = 4
         self.frame_width = self.channels * self.sample_width
 
-    @property
-    def raw_data(self):
-        """
-        public access to the raw audio data as a bytestring
-        """
-        return self._data
-
-    def get_array_of_samples(self, array_type_override=None):
-        """
-        returns the raw_data as an array of samples
-        """
-        if array_type_override is None:
-            array_type_override = self.array_type
-        return array.array(array_type_override, self._data)
-
-    @property
-    def array_type(self):
-        return get_array_type(self.sample_width * 8)
-
-    def __len__(self):
-        """
-        returns the length of this audio segment in milliseconds
-        """
-        return round(1000 * (self.frame_count() / self.frame_rate))
-
-    def __eq__(self, other):
-        try:
-            return self._data == other._data
-        except:  # noqa: E722
-            return False
-
-    def __hash__(self):
-        return hash(AudioSegment) ^ hash(
-            (self.channels, self.frame_rate, self.sample_width, self._data)
-        )
-
-    def __ne__(self, other):
-        return not (self == other)
-
-    def __iter__(self):
-        return (self[i] for i in range(len(self)))
-
-    @overload
-    def __getitem__(self, millisecond: int) -> Self: ...
-    @overload
-    def __getitem__(self, millisecond: slice) -> Self | Generator[Self, None, None]: ...
-
-    def __getitem__(self, millisecond: int | slice) -> Self | Generator[Self, None, None]:
-        if isinstance(millisecond, slice):
-            if millisecond.step:
-                return (
-                    self._get_segment(i, i + millisecond.step)
-                    for i in range(*millisecond.indices(len(self)))
-                )
-
-            start = millisecond.start if millisecond.start is not None else 0
-            end = millisecond.stop if millisecond.stop is not None else len(self)
-
-            start = min(start, len(self))
-            end = min(end, len(self))
-        else:
-            start = millisecond
-            end = millisecond + 1
-
-        return self._get_segment(start=start, end=end)
-
-    def _get_segment(self, start: int, end: int) -> Self:
-        start = self._parse_position(start) * self.frame_width
-        end = self._parse_position(end) * self.frame_width
-        data = self._data[start:end]
-
-        # ensure the output is as long as the requester is expecting
-        expected_length = end - start
-        missing_frames = (expected_length - len(data)) // self.frame_width
-        if missing_frames:
-            if missing_frames > self.frame_count(ms=2):
-                raise TooManyMissingFrames(
-                    f"You should never be filling in more than 2 ms with silence here, missing frames: {missing_frames}"
-                )
-            silence = audioop.mul(data[: self.frame_width], self.sample_width, 0)
-            data += silence * missing_frames
-
-        return self._spawn(data)
-
-    def get_sample_slice(self, start_sample=None, end_sample=None):
-        """
-        Get a section of the audio segment by sample index.
-
-        NOTE: Negative indices do *not* address samples backword
-        from the end of the audio segment like a python list.
-        This is intentional.
-        """
-        max_val = int(self.frame_count())
-
-        def bounded(val, default):
-            if val is None:
-                return default
-            if val < 0:
-                return 0
-            if val > max_val:
-                return max_val
-            return val
-
-        start_i = bounded(start_sample, 0) * self.frame_width
-        end_i = bounded(end_sample, max_val) * self.frame_width
-
-        data = self._data[start_i:end_i]
-        return self._spawn(data)
-
-    def __add__(self, arg):
-        if isinstance(arg, AudioSegment):
-            return self.append(arg, crossfade=0)
-        else:
-            return self.apply_gain(arg)
-
-    def __radd__(self, rarg):
-        """
-        Permit use of sum() builtin with an iterable of AudioSegments
-        """
-        if rarg == 0:
-            return self
-        raise TypeError("Gains must be the second addend after the AudioSegment")
-
-    def __sub__(self, arg):
-        if isinstance(arg, AudioSegment):
-            raise TypeError("AudioSegment objects can't be subtracted from each other")
-        else:
-            return self.apply_gain(-arg)
-
-    def __mul__(self, arg):
-        """
-        If the argument is an AudioSegment, overlay the multiplied audio
-        segment.
-
-        If it's a number, just use the string multiply operation to repeat the
-        audio.
-
-        The following would return an AudioSegment that contains the
-        audio of audio_seg eight times
-
-        `audio_seg * 8`
-        """
-        if isinstance(arg, AudioSegment):
-            return self.overlay(arg, position=0, loop=True)
-        else:
-            return self._spawn(data=self._data * arg)
-
-    def __deepcopy__(self, memo: dict[int, object]) -> AudioSegment:
-        return self._spawn(self._data)
-
-    def _spawn(
-        self,
-        data: bytes | list[bytes] | array.array | IO[bytes],
-        overrides: dict[str, Any] | None = None,
-    ) -> Self:
-        """
-        Creates a new audio segment using the metadata from the current one
-        and the data passed in. Should be used whenever an AudioSegment is
-        being returned by an operation that would alters the current one,
-        since AudioSegment objects are immutable.
-        """
-        match data:
-            case list():
-                data = b"".join(data)
-            case array.array():
-                data = data.tobytes()
-            case io.IOBase():
-                data.seek(0)
-                data = data.read()
-
-        overrides = overrides or {}
-        metadata = (
-            _AudioSegmentMetadata(
-                sample_width=self.sample_width,
-                frame_rate=self.frame_rate,
-                frame_width=self.frame_width,
-                channels=self.channels,
-            )
-            | overrides
-        )
-        return self.__class__(data=data, metadata=metadata)
-
-    @classmethod
-    def _sync(cls, *segs):
-        channels = max(seg.channels for seg in segs)
-        frame_rate = max(seg.frame_rate for seg in segs)
-        sample_width = max(seg.sample_width for seg in segs)
-
-        return tuple(
-            seg.set_channels(channels).set_frame_rate(frame_rate).set_sample_width(sample_width)
-            for seg in segs
-        )
-
-    def _parse_position(self, val):
-        if val < 0:
-            val = len(self) - abs(val)
-        val = self.frame_count(ms=len(self)) if val == float("inf") else self.frame_count(ms=val)
-        return int(val)
-
     @classmethod
     def empty(cls):
         return cls(
@@ -734,6 +535,205 @@ class AudioSegment:
                 return self[start_second * 1000 : (start_second + duration) * 1000]
 
         raise ValueError("Invalid arguments for start_second and duration")
+
+    @property
+    def raw_data(self):
+        """
+        public access to the raw audio data as a bytestring
+        """
+        return self._data
+
+    def get_array_of_samples(self, array_type_override=None):
+        """
+        returns the raw_data as an array of samples
+        """
+        if array_type_override is None:
+            array_type_override = self.array_type
+        return array.array(array_type_override, self._data)
+
+    @property
+    def array_type(self):
+        return get_array_type(self.sample_width * 8)
+
+    def __len__(self):
+        """
+        returns the length of this audio segment in milliseconds
+        """
+        return round(1000 * (self.frame_count() / self.frame_rate))
+
+    def __eq__(self, other):
+        try:
+            return self._data == other._data
+        except:  # noqa: E722
+            return False
+
+    def __hash__(self):
+        return hash(AudioSegment) ^ hash(
+            (self.channels, self.frame_rate, self.sample_width, self._data)
+        )
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    def __iter__(self):
+        return (self[i] for i in range(len(self)))
+
+    @overload
+    def __getitem__(self, millisecond: int) -> Self: ...
+    @overload
+    def __getitem__(self, millisecond: slice) -> Self | Generator[Self, None, None]: ...
+
+    def __getitem__(self, millisecond: int | slice) -> Self | Generator[Self, None, None]:
+        if isinstance(millisecond, slice):
+            if millisecond.step:
+                return (
+                    self._get_segment(i, i + millisecond.step)
+                    for i in range(*millisecond.indices(len(self)))
+                )
+
+            start = millisecond.start if millisecond.start is not None else 0
+            end = millisecond.stop if millisecond.stop is not None else len(self)
+
+            start = min(start, len(self))
+            end = min(end, len(self))
+        else:
+            start = millisecond
+            end = millisecond + 1
+
+        return self._get_segment(start=start, end=end)
+
+    def _get_segment(self, start: int, end: int) -> Self:
+        start = self._parse_position(start) * self.frame_width
+        end = self._parse_position(end) * self.frame_width
+        data = self._data[start:end]
+
+        # ensure the output is as long as the requester is expecting
+        expected_length = end - start
+        missing_frames = (expected_length - len(data)) // self.frame_width
+        if missing_frames:
+            if missing_frames > self.frame_count(ms=2):
+                raise TooManyMissingFrames(
+                    f"You should never be filling in more than 2 ms with silence here, missing frames: {missing_frames}"
+                )
+            silence = audioop.mul(data[: self.frame_width], self.sample_width, 0)
+            data += silence * missing_frames
+
+        return self._spawn(data)
+
+    def get_sample_slice(self, start_sample=None, end_sample=None):
+        """
+        Get a section of the audio segment by sample index.
+
+        NOTE: Negative indices do *not* address samples backword
+        from the end of the audio segment like a python list.
+        This is intentional.
+        """
+        max_val = int(self.frame_count())
+
+        def bounded(val, default):
+            if val is None:
+                return default
+            if val < 0:
+                return 0
+            if val > max_val:
+                return max_val
+            return val
+
+        start_i = bounded(start_sample, 0) * self.frame_width
+        end_i = bounded(end_sample, max_val) * self.frame_width
+
+        data = self._data[start_i:end_i]
+        return self._spawn(data)
+
+    def __add__(self, arg):
+        if isinstance(arg, AudioSegment):
+            return self.append(arg, crossfade=0)
+        else:
+            return self.apply_gain(arg)
+
+    def __radd__(self, rarg):
+        """
+        Permit use of sum() builtin with an iterable of AudioSegments
+        """
+        if rarg == 0:
+            return self
+        raise TypeError("Gains must be the second addend after the AudioSegment")
+
+    def __sub__(self, arg):
+        if isinstance(arg, AudioSegment):
+            raise TypeError("AudioSegment objects can't be subtracted from each other")
+        else:
+            return self.apply_gain(-arg)
+
+    def __mul__(self, arg):
+        """
+        If the argument is an AudioSegment, overlay the multiplied audio
+        segment.
+
+        If it's a number, just use the string multiply operation to repeat the
+        audio.
+
+        The following would return an AudioSegment that contains the
+        audio of audio_seg eight times
+
+        `audio_seg * 8`
+        """
+        if isinstance(arg, AudioSegment):
+            return self.overlay(arg, position=0, loop=True)
+        else:
+            return self._spawn(data=self._data * arg)
+
+    def __deepcopy__(self, memo: dict[int, object]) -> AudioSegment:
+        return self._spawn(self._data)
+
+    def _spawn(
+        self,
+        data: bytes | list[bytes] | array.array | IO[bytes],
+        overrides: dict[str, Any] | None = None,
+    ) -> Self:
+        """
+        Creates a new audio segment using the metadata from the current one
+        and the data passed in. Should be used whenever an AudioSegment is
+        being returned by an operation that would alters the current one,
+        since AudioSegment objects are immutable.
+        """
+        match data:
+            case list():
+                data = b"".join(data)
+            case array.array():
+                data = data.tobytes()
+            case io.IOBase():
+                data.seek(0)
+                data = data.read()
+
+        overrides = overrides or {}
+        metadata = (
+            _AudioSegmentMetadata(
+                sample_width=self.sample_width,
+                frame_rate=self.frame_rate,
+                frame_width=self.frame_width,
+                channels=self.channels,
+            )
+            | overrides
+        )
+        return self.__class__(data=data, metadata=metadata)
+
+    @classmethod
+    def _sync(cls, *segs):
+        channels = max(seg.channels for seg in segs)
+        frame_rate = max(seg.frame_rate for seg in segs)
+        sample_width = max(seg.sample_width for seg in segs)
+
+        return tuple(
+            seg.set_channels(channels).set_frame_rate(frame_rate).set_sample_width(sample_width)
+            for seg in segs
+        )
+
+    def _parse_position(self, val):
+        if val < 0:
+            val = len(self) - abs(val)
+        val = self.frame_count(ms=len(self)) if val == float("inf") else self.frame_count(ms=val)
+        return int(val)
 
     def export(
         self,

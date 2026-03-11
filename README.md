@@ -31,6 +31,7 @@ This is a [Pozalabs](https://github.com/Pozalabs) fork of [jiaaro/pydub](https:/
 ### Removed
 
 - `from_file_using_temporary_files` - Redundant legacy method replaced by `from_file` (pipe I/O, codec inference, compression support)
+- `AudioSegment.ffmpeg` - Legacy class property alias for `AudioSegment.converter`
 
 ### Type Safety
 

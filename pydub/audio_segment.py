@@ -677,6 +677,345 @@ class AudioSegment:
     def duration_seconds(self):
         return self.frame_rate and self.frame_count() / self.frame_rate or 0.0
 
+    def get_array_of_samples(self, array_type_override=None):
+        """
+        returns the raw_data as an array of samples
+        """
+        if array_type_override is None:
+            array_type_override = self.array_type
+        return array.array(array_type_override, self._data)
+
+    def get_frame(self, index):
+        frame_start = index * self.frame_width
+        frame_end = frame_start + self.frame_width
+        return self._data[frame_start:frame_end]
+
+    def frame_count(self, ms=None):
+        """
+        returns the number of frames for the given number of milliseconds, or
+            if not specified, the number of frames in the whole AudioSegment
+        """
+        if ms is not None:
+            return ms * (self.frame_rate / 1000.0)
+        else:
+            return float(len(self._data) // self.frame_width)
+
+    def get_sample_slice(self, start_sample=None, end_sample=None):
+        """
+        Get a section of the audio segment by sample index.
+
+        NOTE: Negative indices do *not* address samples backword
+        from the end of the audio segment like a python list.
+        This is intentional.
+        """
+        max_val = int(self.frame_count())
+
+        def bounded(val, default):
+            if val is None:
+                return default
+            if val < 0:
+                return 0
+            if val > max_val:
+                return max_val
+            return val
+
+        start_i = bounded(start_sample, 0) * self.frame_width
+        end_i = bounded(end_sample, max_val) * self.frame_width
+
+        data = self._data[start_i:end_i]
+        return self._spawn(data)
+
+    def _get_segment(self, start: int, end: int) -> Self:
+        start = self._parse_position(start) * self.frame_width
+        end = self._parse_position(end) * self.frame_width
+        data = self._data[start:end]
+
+        # ensure the output is as long as the requester is expecting
+        expected_length = end - start
+        missing_frames = (expected_length - len(data)) // self.frame_width
+        if missing_frames:
+            if missing_frames > self.frame_count(ms=2):
+                raise TooManyMissingFrames(
+                    f"You should never be filling in more than 2 ms with silence here, missing frames: {missing_frames}"
+                )
+            silence = audioop.mul(data[: self.frame_width], self.sample_width, 0)
+            data += silence * missing_frames
+
+        return self._spawn(data)
+
+    def set_sample_width(self, sample_width):
+        if sample_width == self.sample_width:
+            return self
+
+        frame_width = self.channels * sample_width
+
+        return self._spawn(
+            audioop.lin2lin(self._data, self.sample_width, sample_width),
+            overrides={"sample_width": sample_width, "frame_width": frame_width},
+        )
+
+    def set_frame_rate(self, frame_rate):
+        if frame_rate == self.frame_rate:
+            return self
+
+        if self._data:
+            converted, _ = audioop.ratecv(
+                self._data, self.sample_width, self.channels, self.frame_rate, frame_rate, None
+            )
+        else:
+            converted = self._data
+
+        return self._spawn(data=converted, overrides={"frame_rate": frame_rate})
+
+    def set_channels(self, channels):
+        if channels == self.channels:
+            return self
+
+        if channels == 2 and self.channels == 1:
+            fn = audioop.tostereo
+            frame_width = self.frame_width * 2
+            fac = 1
+            converted = fn(self._data, self.sample_width, fac, fac)
+        elif channels == 1 and self.channels == 2:
+            fn = audioop.tomono
+            frame_width = self.frame_width // 2
+            fac = 0.5
+            converted = fn(self._data, self.sample_width, fac, fac)
+        elif channels == 1:
+            channels_data = [seg.get_array_of_samples() for seg in self.split_to_mono()]
+            frame_count = int(self.frame_count())
+            converted = array.array(
+                channels_data[0].typecode, b"\0" * (frame_count * self.sample_width)
+            )
+            for raw_channel_data in channels_data:
+                for i in range(frame_count):
+                    converted[i] += raw_channel_data[i] // self.channels
+            frame_width = self.frame_width // self.channels
+        elif self.channels == 1:
+            dup_channels = [self for iChannel in range(channels)]
+            return AudioSegment.from_mono_audiosegments(*dup_channels)
+        else:
+            raise ValueError(
+                "AudioSegment.set_channels only supports mono-to-multi channel "
+                "and multi-to-mono channel conversion"
+            )
+
+        return self._spawn(
+            data=converted, overrides={"channels": channels, "frame_width": frame_width}
+        )
+
+    def split_to_mono(self):
+        if self.channels == 1:
+            return [self]
+
+        samples = self.get_array_of_samples()
+
+        mono_channels = []
+        for i in range(self.channels):
+            samples_for_current_channel = samples[i :: self.channels]
+            mono_data = samples_for_current_channel.tobytes()
+            mono_channels.append(
+                self._spawn(mono_data, overrides={"channels": 1, "frame_width": self.sample_width})
+            )
+
+        return mono_channels
+
+    def apply_gain(self, volume_change):
+        return self._spawn(
+            data=audioop.mul(self._data, self.sample_width, db_to_float(float(volume_change)))
+        )
+
+    def overlay(
+        self,
+        seg: Self,
+        position: int = 0,
+        loop: bool = False,
+        times: int | None = None,
+        gain_during_overlay: int | None = None,
+    ) -> Self:
+        if loop:
+            times = -1
+        elif times is None:
+            times = 1
+        elif times == 0:
+            return self._spawn(self._data)
+
+        seg1, seg2 = AudioSegment._sync(self, seg)
+        position_in_bytes = self._parse_position(position) * seg1.frame_width
+        result = _pydub_core.overlay_segments(
+            seg1_data=seg1.raw_data,
+            seg2_data=seg2.raw_data,
+            sample_width=seg1.sample_width,
+            position=position_in_bytes,
+            times=times,
+            gain_during_overlay=gain_during_overlay or 0,
+        )
+
+        return seg1._spawn(data=result)
+
+    def append(self, seg, crossfade=100):
+        seg1, seg2 = AudioSegment._sync(self, seg)
+
+        if not crossfade:
+            return seg1._spawn(seg1._data + seg2._data)
+        elif crossfade > len(self):
+            raise ValueError(
+                "Crossfade is longer than the original AudioSegment ({}ms > {}ms)".format(
+                    crossfade, len(self)
+                )
+            )
+        elif crossfade > len(seg):
+            raise ValueError(
+                "Crossfade is longer than the appended AudioSegment ({}ms > {}ms)".format(
+                    crossfade, len(seg)
+                )
+            )
+
+        xf = seg1[-crossfade:].fade(to_gain=-120, start=0, end=float("inf"))
+        xf *= seg2[:crossfade].fade(from_gain=-120, start=0, end=float("inf"))
+
+        output = io.BytesIO()
+
+        output.write(seg1[:-crossfade]._data)
+        output.write(xf._data)
+        output.write(seg2[crossfade:]._data)
+
+        output.seek(0)
+        obj = seg1._spawn(data=output)
+        output.close()
+        return obj
+
+    def fade(
+        self,
+        to_gain: float = 0,
+        from_gain: float = 0,
+        start: int | None = None,
+        end: int | None = None,
+        duration: int = None,
+    ) -> Self:
+        """
+        Fade the volume of this audio segment.
+
+        to_gain (float):
+            resulting volume_change in db
+
+        start (int):
+            default = beginning of the segment
+            when in this segment to start fading in milliseconds
+
+        end (int):
+            default = end of the segment
+            when in this segment to start fading in milliseconds
+
+        duration (int):
+            default = until the end of the audio segment
+            the duration of the fade
+        """
+        if None not in [duration, end, start]:
+            raise TypeError(
+                'Only two of the three arguments, "start", "end", and "duration" may be specified'
+            )
+
+        # no fade == the same audio
+        if to_gain == 0 and from_gain == 0:
+            return self
+
+        start = min(len(self), start) if start is not None else None
+        end = min(len(self), end) if end is not None else None
+
+        if start is not None and start < 0:
+            start += len(self)
+        if end is not None and end < 0:
+            end += len(self)
+
+        if duration is not None and duration < 0:
+            raise InvalidDuration("duration must be a positive integer")
+
+        if duration:
+            if start is not None:
+                end = start + duration
+            elif end is not None:
+                start = end - duration
+        else:
+            duration = end - start
+
+        start_bytes = self._parse_position(start) * self.frame_width
+        end_bytes = self._parse_position(end) * self.frame_width
+
+        result = _pydub_core.fade_segment(
+            data=bytes(self._data),
+            sample_width=self.sample_width,
+            start_byte=start_bytes,
+            end_byte=end_bytes,
+            from_power=db_to_float(from_gain),
+            to_power=db_to_float(to_gain),
+        )
+
+        return self._spawn(data=result)
+
+    def fade_out(self, duration: int) -> Self:
+        return self.fade(to_gain=-120, duration=duration, end=len(self))
+
+    def fade_in(self, duration: int) -> Self:
+        return self.fade(from_gain=-120, duration=duration, start=0)
+
+    def reverse(self):
+        return self._spawn(data=audioop.reverse(self._data, self.sample_width))
+
+    def get_dc_offset(self, channel=1):
+        """
+        Returns a value between -1.0 and 1.0 representing the DC offset of a
+        channel (1 for left, 2 for right).
+        """
+        if not 1 <= channel <= 2:
+            raise ValueError("channel value must be 1 (left) or 2 (right)")
+
+        if self.channels == 1:
+            data = self._data
+        elif channel == 1:
+            data = audioop.tomono(self._data, self.sample_width, 1, 0)
+        else:
+            data = audioop.tomono(self._data, self.sample_width, 0, 1)
+
+        return float(audioop.avg(data, self.sample_width)) / self.max_possible_amplitude
+
+    def remove_dc_offset(self, channel=None, offset=None):
+        """
+        Removes DC offset of given channel. Calculates offset if it's not given.
+        Offset values must be in range -1.0 to 1.0. If channel is None, removes
+        DC offset from all available channels.
+        """
+        if channel and not 1 <= channel <= 2:
+            raise ValueError("channel value must be None, 1 (left) or 2 (right)")
+
+        if offset and not -1.0 <= offset <= 1.0:
+            raise ValueError("offset value must be in range -1.0 to 1.0")
+
+        if offset:
+            offset = int(round(offset * self.max_possible_amplitude))
+
+        def remove_data_dc(data, off):
+            if not off:
+                off = audioop.avg(data, self.sample_width)
+            return audioop.bias(data, self.sample_width, -off)
+
+        if self.channels == 1:
+            return self._spawn(data=remove_data_dc(self._data, offset))
+
+        left_channel = audioop.tomono(self._data, self.sample_width, 1, 0)
+        right_channel = audioop.tomono(self._data, self.sample_width, 0, 1)
+
+        if not channel or channel == 1:
+            left_channel = remove_data_dc(left_channel, offset)
+
+        if not channel or channel == 2:
+            right_channel = remove_data_dc(right_channel, offset)
+
+        left_channel = audioop.tostereo(left_channel, self.sample_width, 1, 0)
+        right_channel = audioop.tostereo(right_channel, self.sample_width, 0, 1)
+
+        return self._spawn(data=audioop.add(left_channel, right_channel, self.sample_width))
+
     def export(
         self,
         out_f: str | os.PathLike | None = None,
@@ -862,345 +1201,6 @@ class AudioSegment:
 
         out_f.seek(0)
         return out_f
-
-    def get_array_of_samples(self, array_type_override=None):
-        """
-        returns the raw_data as an array of samples
-        """
-        if array_type_override is None:
-            array_type_override = self.array_type
-        return array.array(array_type_override, self._data)
-
-    def get_frame(self, index):
-        frame_start = index * self.frame_width
-        frame_end = frame_start + self.frame_width
-        return self._data[frame_start:frame_end]
-
-    def frame_count(self, ms=None):
-        """
-        returns the number of frames for the given number of milliseconds, or
-            if not specified, the number of frames in the whole AudioSegment
-        """
-        if ms is not None:
-            return ms * (self.frame_rate / 1000.0)
-        else:
-            return float(len(self._data) // self.frame_width)
-
-    def get_sample_slice(self, start_sample=None, end_sample=None):
-        """
-        Get a section of the audio segment by sample index.
-
-        NOTE: Negative indices do *not* address samples backword
-        from the end of the audio segment like a python list.
-        This is intentional.
-        """
-        max_val = int(self.frame_count())
-
-        def bounded(val, default):
-            if val is None:
-                return default
-            if val < 0:
-                return 0
-            if val > max_val:
-                return max_val
-            return val
-
-        start_i = bounded(start_sample, 0) * self.frame_width
-        end_i = bounded(end_sample, max_val) * self.frame_width
-
-        data = self._data[start_i:end_i]
-        return self._spawn(data)
-
-    def _get_segment(self, start: int, end: int) -> Self:
-        start = self._parse_position(start) * self.frame_width
-        end = self._parse_position(end) * self.frame_width
-        data = self._data[start:end]
-
-        # ensure the output is as long as the requester is expecting
-        expected_length = end - start
-        missing_frames = (expected_length - len(data)) // self.frame_width
-        if missing_frames:
-            if missing_frames > self.frame_count(ms=2):
-                raise TooManyMissingFrames(
-                    f"You should never be filling in more than 2 ms with silence here, missing frames: {missing_frames}"
-                )
-            silence = audioop.mul(data[: self.frame_width], self.sample_width, 0)
-            data += silence * missing_frames
-
-        return self._spawn(data)
-
-    def set_sample_width(self, sample_width):
-        if sample_width == self.sample_width:
-            return self
-
-        frame_width = self.channels * sample_width
-
-        return self._spawn(
-            audioop.lin2lin(self._data, self.sample_width, sample_width),
-            overrides={"sample_width": sample_width, "frame_width": frame_width},
-        )
-
-    def set_frame_rate(self, frame_rate):
-        if frame_rate == self.frame_rate:
-            return self
-
-        if self._data:
-            converted, _ = audioop.ratecv(
-                self._data, self.sample_width, self.channels, self.frame_rate, frame_rate, None
-            )
-        else:
-            converted = self._data
-
-        return self._spawn(data=converted, overrides={"frame_rate": frame_rate})
-
-    def set_channels(self, channels):
-        if channels == self.channels:
-            return self
-
-        if channels == 2 and self.channels == 1:
-            fn = audioop.tostereo
-            frame_width = self.frame_width * 2
-            fac = 1
-            converted = fn(self._data, self.sample_width, fac, fac)
-        elif channels == 1 and self.channels == 2:
-            fn = audioop.tomono
-            frame_width = self.frame_width // 2
-            fac = 0.5
-            converted = fn(self._data, self.sample_width, fac, fac)
-        elif channels == 1:
-            channels_data = [seg.get_array_of_samples() for seg in self.split_to_mono()]
-            frame_count = int(self.frame_count())
-            converted = array.array(
-                channels_data[0].typecode, b"\0" * (frame_count * self.sample_width)
-            )
-            for raw_channel_data in channels_data:
-                for i in range(frame_count):
-                    converted[i] += raw_channel_data[i] // self.channels
-            frame_width = self.frame_width // self.channels
-        elif self.channels == 1:
-            dup_channels = [self for iChannel in range(channels)]
-            return AudioSegment.from_mono_audiosegments(*dup_channels)
-        else:
-            raise ValueError(
-                "AudioSegment.set_channels only supports mono-to-multi channel "
-                "and multi-to-mono channel conversion"
-            )
-
-        return self._spawn(
-            data=converted, overrides={"channels": channels, "frame_width": frame_width}
-        )
-
-    def split_to_mono(self):
-        if self.channels == 1:
-            return [self]
-
-        samples = self.get_array_of_samples()
-
-        mono_channels = []
-        for i in range(self.channels):
-            samples_for_current_channel = samples[i :: self.channels]
-            mono_data = samples_for_current_channel.tobytes()
-            mono_channels.append(
-                self._spawn(mono_data, overrides={"channels": 1, "frame_width": self.sample_width})
-            )
-
-        return mono_channels
-
-    def get_dc_offset(self, channel=1):
-        """
-        Returns a value between -1.0 and 1.0 representing the DC offset of a
-        channel (1 for left, 2 for right).
-        """
-        if not 1 <= channel <= 2:
-            raise ValueError("channel value must be 1 (left) or 2 (right)")
-
-        if self.channels == 1:
-            data = self._data
-        elif channel == 1:
-            data = audioop.tomono(self._data, self.sample_width, 1, 0)
-        else:
-            data = audioop.tomono(self._data, self.sample_width, 0, 1)
-
-        return float(audioop.avg(data, self.sample_width)) / self.max_possible_amplitude
-
-    def remove_dc_offset(self, channel=None, offset=None):
-        """
-        Removes DC offset of given channel. Calculates offset if it's not given.
-        Offset values must be in range -1.0 to 1.0. If channel is None, removes
-        DC offset from all available channels.
-        """
-        if channel and not 1 <= channel <= 2:
-            raise ValueError("channel value must be None, 1 (left) or 2 (right)")
-
-        if offset and not -1.0 <= offset <= 1.0:
-            raise ValueError("offset value must be in range -1.0 to 1.0")
-
-        if offset:
-            offset = int(round(offset * self.max_possible_amplitude))
-
-        def remove_data_dc(data, off):
-            if not off:
-                off = audioop.avg(data, self.sample_width)
-            return audioop.bias(data, self.sample_width, -off)
-
-        if self.channels == 1:
-            return self._spawn(data=remove_data_dc(self._data, offset))
-
-        left_channel = audioop.tomono(self._data, self.sample_width, 1, 0)
-        right_channel = audioop.tomono(self._data, self.sample_width, 0, 1)
-
-        if not channel or channel == 1:
-            left_channel = remove_data_dc(left_channel, offset)
-
-        if not channel or channel == 2:
-            right_channel = remove_data_dc(right_channel, offset)
-
-        left_channel = audioop.tostereo(left_channel, self.sample_width, 1, 0)
-        right_channel = audioop.tostereo(right_channel, self.sample_width, 0, 1)
-
-        return self._spawn(data=audioop.add(left_channel, right_channel, self.sample_width))
-
-    def apply_gain(self, volume_change):
-        return self._spawn(
-            data=audioop.mul(self._data, self.sample_width, db_to_float(float(volume_change)))
-        )
-
-    def overlay(
-        self,
-        seg: Self,
-        position: int = 0,
-        loop: bool = False,
-        times: int | None = None,
-        gain_during_overlay: int | None = None,
-    ) -> Self:
-        if loop:
-            times = -1
-        elif times is None:
-            times = 1
-        elif times == 0:
-            return self._spawn(self._data)
-
-        seg1, seg2 = AudioSegment._sync(self, seg)
-        position_in_bytes = self._parse_position(position) * seg1.frame_width
-        result = _pydub_core.overlay_segments(
-            seg1_data=seg1.raw_data,
-            seg2_data=seg2.raw_data,
-            sample_width=seg1.sample_width,
-            position=position_in_bytes,
-            times=times,
-            gain_during_overlay=gain_during_overlay or 0,
-        )
-
-        return seg1._spawn(data=result)
-
-    def append(self, seg, crossfade=100):
-        seg1, seg2 = AudioSegment._sync(self, seg)
-
-        if not crossfade:
-            return seg1._spawn(seg1._data + seg2._data)
-        elif crossfade > len(self):
-            raise ValueError(
-                "Crossfade is longer than the original AudioSegment ({}ms > {}ms)".format(
-                    crossfade, len(self)
-                )
-            )
-        elif crossfade > len(seg):
-            raise ValueError(
-                "Crossfade is longer than the appended AudioSegment ({}ms > {}ms)".format(
-                    crossfade, len(seg)
-                )
-            )
-
-        xf = seg1[-crossfade:].fade(to_gain=-120, start=0, end=float("inf"))
-        xf *= seg2[:crossfade].fade(from_gain=-120, start=0, end=float("inf"))
-
-        output = io.BytesIO()
-
-        output.write(seg1[:-crossfade]._data)
-        output.write(xf._data)
-        output.write(seg2[crossfade:]._data)
-
-        output.seek(0)
-        obj = seg1._spawn(data=output)
-        output.close()
-        return obj
-
-    def fade(
-        self,
-        to_gain: float = 0,
-        from_gain: float = 0,
-        start: int | None = None,
-        end: int | None = None,
-        duration: int = None,
-    ) -> Self:
-        """
-        Fade the volume of this audio segment.
-
-        to_gain (float):
-            resulting volume_change in db
-
-        start (int):
-            default = beginning of the segment
-            when in this segment to start fading in milliseconds
-
-        end (int):
-            default = end of the segment
-            when in this segment to start fading in milliseconds
-
-        duration (int):
-            default = until the end of the audio segment
-            the duration of the fade
-        """
-        if None not in [duration, end, start]:
-            raise TypeError(
-                'Only two of the three arguments, "start", "end", and "duration" may be specified'
-            )
-
-        # no fade == the same audio
-        if to_gain == 0 and from_gain == 0:
-            return self
-
-        start = min(len(self), start) if start is not None else None
-        end = min(len(self), end) if end is not None else None
-
-        if start is not None and start < 0:
-            start += len(self)
-        if end is not None and end < 0:
-            end += len(self)
-
-        if duration is not None and duration < 0:
-            raise InvalidDuration("duration must be a positive integer")
-
-        if duration:
-            if start is not None:
-                end = start + duration
-            elif end is not None:
-                start = end - duration
-        else:
-            duration = end - start
-
-        start_bytes = self._parse_position(start) * self.frame_width
-        end_bytes = self._parse_position(end) * self.frame_width
-
-        result = _pydub_core.fade_segment(
-            data=bytes(self._data),
-            sample_width=self.sample_width,
-            start_byte=start_bytes,
-            end_byte=end_bytes,
-            from_power=db_to_float(from_gain),
-            to_power=db_to_float(to_gain),
-        )
-
-        return self._spawn(data=result)
-
-    def fade_out(self, duration: int) -> Self:
-        return self.fade(to_gain=-120, duration=duration, end=len(self))
-
-    def fade_in(self, duration: int) -> Self:
-        return self.fade(from_gain=-120, duration=duration, start=0)
-
-    def reverse(self):
-        return self._spawn(data=audioop.reverse(self._data, self.sample_width))
 
     def measure_audio_level(
         self, *names: Unpack[tuple[Literal["rms", "peak", "loudness"], ...]]

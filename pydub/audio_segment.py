@@ -280,7 +280,7 @@ class AudioSegment:
 
         if segs[0].channels != 1:
             raise ValueError(
-                "AudioSegment.from_mono_audiosegments requires all arguments are mono AudioSegment instances"
+                "'from_mono_audiosegments' requires all arguments are mono AudioSegment instances"
             )
 
         channels = len(segs)
@@ -504,7 +504,7 @@ class AudioSegment:
             case _, _:
                 return self[start_second * 1000 : (start_second + duration) * 1000]
 
-        raise ValueError("Invalid arguments for start_second and duration")
+        raise ValueError("Invalid arguments for 'start_second' and 'duration'")
 
     def __len__(self):
         """
@@ -761,7 +761,7 @@ class AudioSegment:
             return AudioSegment.from_mono_audiosegments(*dup_channels)
         else:
             raise ValueError(
-                "AudioSegment.set_channels only supports mono-to-multi channel "
+                "'set_channels' only supports mono-to-multi channel "
                 "and multi-to-mono channel conversion"
             )
 

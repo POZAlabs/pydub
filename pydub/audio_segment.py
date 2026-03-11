@@ -455,33 +455,36 @@ class AudioSegment:
     def __deepcopy__(self, memo: dict[int, object]) -> AudioSegment:
         return self._spawn(self._data)
 
-    def _spawn(self, data, overrides: dict[str, Any] | None = None) -> Self:
+    def _spawn(
+        self,
+        data: bytes | list[bytes] | array.array | IO[bytes],
+        overrides: dict[str, Any] | None = None,
+    ) -> Self:
         """
         Creates a new audio segment using the metadata from the current one
         and the data passed in. Should be used whenever an AudioSegment is
         being returned by an operation that would alters the current one,
         since AudioSegment objects are immutable.
         """
-        # accept lists of data chunks
-        if isinstance(data, list):
-            data = b"".join(data)
-
-        if isinstance(data, array.array):
-            data = data.tobytes()
-
-        # accept file-like objects
-        if hasattr(data, "read"):
-            if hasattr(data, "seek"):
+        match data:
+            case list():
+                data = b"".join(data)
+            case array.array():
+                data = data.tobytes()
+            case io.IOBase():
                 data.seek(0)
-            data = data.read()
+                data = data.read()
 
-        metadata = {
-            "sample_width": self.sample_width,
-            "frame_rate": self.frame_rate,
-            "frame_width": self.frame_width,
-            "channels": self.channels,
-        }
-        metadata.update(overrides or {})
+        overrides = overrides or {}
+        metadata = (
+            _AudioSegmentMetadata(
+                sample_width=self.sample_width,
+                frame_rate=self.frame_rate,
+                frame_width=self.frame_width,
+                channels=self.channels,
+            )
+            | overrides
+        )
         return self.__class__(data=data, metadata=metadata)
 
     @classmethod

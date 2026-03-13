@@ -18,6 +18,7 @@ from typing import IO, Any, Literal, Self, TypedDict, Unpack, overload
 
 from . import _compression, _meter, _pydub_core, _wav
 from ._subprocess import _ConversionCommand, _PopenParams
+from .enums import SampleWidth
 from .exceptions import (
     CouldntDecodeError,
     CouldntEncodeError,
@@ -28,7 +29,6 @@ from .exceptions import (
 from .logging_utils import log_conversion, log_subprocess_output
 from .utils import (
     db_to_float,
-    get_array_type,
     get_encoder_name,
     mediainfo_json,
     ratio_to_db,
@@ -152,7 +152,7 @@ class AudioSegment:
         else:
             self._init_with_data(data)
 
-        if self.sample_width == 3:
+        if self.sample_width == SampleWidth.PCM24:
             self._extend_24bit_to_32bit()
 
     def _init_with_audio_params(self, data: bytes, audio_params: _AudioParams) -> None:
@@ -173,23 +173,23 @@ class AudioSegment:
         wav_data = _wav.read_audio(data)
 
         self.channels = wav_data.channels
-        self.sample_width = wav_data.bits_per_sample // 8
+        self.sample_width = SampleWidth.from_bit_depth(wav_data.bits_per_sample)
         self.frame_rate = wav_data.sample_rate
         self._data = wav_data.raw_data
-        if self.sample_width == 1:
+        if self.sample_width == SampleWidth.PCM8:
             # convert from unsigned integers in wav
             self._data = audioop.bias(self._data, 1, -128)
 
     def _extend_24bit_to_32bit(self) -> None:
-        if self.sample_width != 3:
+        if self.sample_width != SampleWidth.PCM24:
             return
 
         self._data = _pydub_core.extend_24bit_to_32bit(self._data)
-        self.sample_width = 4
+        self.sample_width = SampleWidth.PCM32
 
     @classmethod
     def empty(cls) -> Self:
-        return cls(b"", sample_width=1, frame_rate=1, channels=1)
+        return cls(b"", sample_width=SampleWidth.PCM8, frame_rate=1, channels=1)
 
     @classmethod
     def silent(cls, duration: int = 1000, frame_rate: int = 11025) -> Self:
@@ -199,7 +199,7 @@ class AudioSegment:
         """
         frames = int(frame_rate * (duration / 1000.0))
         data = b"\0\0" * frames
-        return cls(data, sample_width=2, frame_rate=frame_rate, channels=1)
+        return cls(data, sample_width=SampleWidth.PCM16, frame_rate=frame_rate, channels=1)
 
     @classmethod
     def from_mono_audiosegments(cls, *mono_segments: Self) -> Self:
@@ -564,7 +564,7 @@ class AudioSegment:
 
     @property
     def array_type(self) -> str:
-        return get_array_type(self.sample_width * 8)
+        return SampleWidth(self.sample_width).array_type
 
     @property
     def rms(self) -> int:
@@ -583,7 +583,7 @@ class AudioSegment:
 
     @property
     def max_possible_amplitude(self) -> float:
-        bits = self.sample_width * 8
+        bits = SampleWidth(self.sample_width).bit_depth
         max_possible_val = 2**bits
 
         # since half is above 0 and half is below the max amplitude is divided
@@ -1026,7 +1026,7 @@ class AudioSegment:
 
     def _write_wav(self, out_f: IO[bytes]) -> None:
         pcm_for_wav = self._data
-        if self.sample_width == 1:
+        if self.sample_width == SampleWidth.PCM8:
             pcm_for_wav = audioop.bias(self._data, 1, 128)
 
         wave_data = wave.open(out_f, "wb")

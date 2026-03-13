@@ -9,37 +9,6 @@ import subprocess
 import sys
 import warnings
 
-FRAME_WIDTHS = {
-    8: 1,
-    16: 2,
-    32: 4,
-}
-ARRAY_TYPES = {
-    8: "b",
-    16: "h",
-    32: "i",
-}
-ARRAY_RANGES = {
-    8: (-0x80, 0x7F),
-    16: (-0x8000, 0x7FFF),
-    32: (-0x80000000, 0x7FFFFFFF),
-}
-
-
-def get_frame_width(bit_depth):
-    return FRAME_WIDTHS[bit_depth]
-
-
-def get_array_type(bit_depth, signed=True):
-    t = ARRAY_TYPES[bit_depth]
-    if not signed:
-        t = t.upper()
-    return t
-
-
-def get_min_max_value(bit_depth):
-    return ARRAY_RANGES[bit_depth]
-
 
 def db_to_float(db, using_amplitude=True):
     """

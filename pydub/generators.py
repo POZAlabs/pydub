@@ -13,7 +13,8 @@ import math
 import random
 
 from .audio_segment import AudioSegment
-from .utils import db_to_float, get_array_type, get_frame_width, get_min_max_value
+from .enums import SampleWidth
+from .utils import db_to_float
 
 
 class SignalGenerator(object):
@@ -28,9 +29,9 @@ class SignalGenerator(object):
         Volume in DB relative to maximum amplitude
             (default 0.0 dBFS, which is the maximum value)
         """
-        minval, maxval = get_min_max_value(self.bit_depth)
-        sample_width = get_frame_width(self.bit_depth)
-        array_type = get_array_type(self.bit_depth)
+        sw = SampleWidth.from_bit_depth(self.bit_depth)
+        minval, maxval = sw.value_range
+        array_type = sw.array_type
 
         gain = db_to_float(volume)
         sample_count = int(self.sample_rate * (duration / 1000.0))
@@ -42,7 +43,7 @@ class SignalGenerator(object):
 
         return AudioSegment(
             data=data,
-            sample_width=sample_width,
+            sample_width=sw,
             frame_rate=self.sample_rate,
             channels=1,
         )

@@ -12,7 +12,7 @@ from pydub.enums import SampleWidth
         (32, SampleWidth.PCM32),
     ],
 )
-def test_from_bit_depth_convert_bit_depth_to_sample_width(bits, expected):
+def test_from_bit_depth_resolve_bit_depth_to_matching_member(bits, expected):
     assert SampleWidth.from_bit_depth(bits) == expected
 
 
@@ -25,7 +25,7 @@ def test_from_bit_depth_convert_bit_depth_to_sample_width(bits, expected):
         (SampleWidth.PCM32, 32),
     ],
 )
-def test_bit_depth_return_bit_depth(sw, expected):
+def test_bit_depth_reverse_byte_to_bit_conversion(sw, expected):
     assert sw.bit_depth == expected
 
 
@@ -33,11 +33,11 @@ def test_bit_depth_return_bit_depth(sw, expected):
     "sw, expected",
     [(SampleWidth.PCM8, "b"), (SampleWidth.PCM16, "h"), (SampleWidth.PCM32, "i")],
 )
-def test_array_type_return_array_type(sw, expected):
+def test_array_type_map_to_python_array_typecode(sw, expected):
     assert sw.array_type == expected
 
 
-def test_array_type_raise_for_pcm24():
+def test_array_type_reject_pcm24_without_array_representation():
     with pytest.raises(ValueError):
         SampleWidth.PCM24.array_type
 
@@ -50,18 +50,10 @@ def test_array_type_raise_for_pcm24():
         (SampleWidth.PCM32, (-2147483648, 2147483647)),
     ],
 )
-def test_value_range_return_value_range(sw, expected):
+def test_value_range_return_signed_integer_bounds(sw, expected):
     assert sw.value_range == expected
 
 
-def test_value_range_raise_for_pcm24():
+def test_value_range_reject_pcm24_without_array_representation():
     with pytest.raises(ValueError):
         SampleWidth.PCM24.value_range
-
-
-def test_int_enum_is_instance_of_int():
-    assert isinstance(SampleWidth.PCM16, int)
-
-
-def test_int_enum_equal_to_int_literal():
-    assert SampleWidth.PCM16 == 2

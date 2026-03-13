@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import enum
 
+_ARRAY_TYPES = {1: "b", 2: "h", 4: "i"}
+
 
 class SampleWidth(enum.IntEnum):
     PCM8 = 1
@@ -19,14 +21,13 @@ class SampleWidth(enum.IntEnum):
 
     @property
     def array_type(self) -> str:
-        _ARRAY_TYPES = {1: "b", 2: "h", 4: "i"}
         if self.value not in _ARRAY_TYPES:
-            raise ValueError(f"Array type is not available for {self.name} (24-bit)")
+            raise ValueError("'array_type' is not available for 24-bit sample width")
         return _ARRAY_TYPES[self.value]
 
     @property
     def value_range(self) -> tuple[int, int]:
         if self == SampleWidth.PCM24:
-            raise ValueError(f"Value range is not available for {self.name} (24-bit)")
+            raise ValueError("'value_range' is not available for 24-bit sample width")
         bits = self.bit_depth
         return -(1 << (bits - 1)), (1 << (bits - 1)) - 1

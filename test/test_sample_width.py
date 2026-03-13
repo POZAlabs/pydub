@@ -17,7 +17,7 @@ def test_from_bit_depth_resolve_bit_depth_to_matching_member(bits: int, expected
 
 
 @pytest.mark.parametrize(
-    "sw, expected",
+    "sample_width, expected",
     [
         (SampleWidth.PCM8, 8),
         (SampleWidth.PCM16, 16),
@@ -25,16 +25,16 @@ def test_from_bit_depth_resolve_bit_depth_to_matching_member(bits: int, expected
         (SampleWidth.PCM32, 32),
     ],
 )
-def test_bit_depth_reverse_byte_to_bit_conversion(sw: SampleWidth, expected: int):
-    assert sw.bit_depth == expected
+def test_bit_depth_reverse_byte_to_bit_conversion(sample_width: SampleWidth, expected: int):
+    assert sample_width.bit_depth == expected
 
 
 @pytest.mark.parametrize(
-    "sw, expected",
+    "sample_width, expected",
     [(SampleWidth.PCM8, "b"), (SampleWidth.PCM16, "h"), (SampleWidth.PCM32, "i")],
 )
-def test_array_type_map_to_python_array_typecode(sw: SampleWidth, expected: str):
-    assert sw.array_type == expected
+def test_array_type_map_to_python_array_typecode(sample_width: SampleWidth, expected: str):
+    assert sample_width.array_type == expected
 
 
 def test_array_type_reject_pcm24_without_array_representation():
@@ -43,15 +43,17 @@ def test_array_type_reject_pcm24_without_array_representation():
 
 
 @pytest.mark.parametrize(
-    "sw, expected",
+    "sample_width, expected",
     [
         (SampleWidth.PCM8, (-128, 127)),
         (SampleWidth.PCM16, (-32768, 32767)),
         (SampleWidth.PCM32, (-2147483648, 2147483647)),
     ],
 )
-def test_value_range_return_signed_integer_bounds(sw: SampleWidth, expected: tuple[int, int]):
-    assert sw.value_range == expected
+def test_value_range_return_signed_integer_bounds(
+    sample_width: SampleWidth, expected: tuple[int, int]
+):
+    assert sample_width.value_range == expected
 
 
 def test_value_range_reject_pcm24_without_array_representation():
